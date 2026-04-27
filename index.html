@@ -1,823 +1,762 @@
 <!DOCTYPE html>
-<html lang="pt" data-lang="pt">
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SideQuest — Faz Coisas Fora da Caixa</title>
+<title>SideQuest — Para de Rolar. Começa a Viver.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,900;1,700;1,900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f4f6f2;
+    --bg2: #eef0ec;
+    --surface: #ffffff;
+    --surface2: #f8faf7;
+    --border: #dde3d8;
+    --border-strong: #c4cebf;
+    --green: #1a7a3c;
+    --green-bright: #22c55e;
+    --green-pale: #e8f5ed;
+    --green-mid: #b4d9bf;
+    --silver: #8a9488;
+    --silver-light: #c8d4c2;
+    --ink: #141a12;
+    --ink-mid: #3a4438;
+    --ink-light: #6b7868;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body: 'Outfit', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-body); overflow-x: hidden; }
 
-:root {
-  --black: #080807;
-  --off-white: #f0ece3;
-  --orange: #e8540a;
-  --orange-light: #ff7134;
-  --stone: #141412;
-  --stone-mid: #1e1d1a;
-  --muted: rgba(240,236,227,0.42);
-  --border: rgba(240,236,227,0.1);
-}
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.1rem 4rem;
+    background: rgba(244,246,242,0.85); backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border); transition: background .3s;
+  }
+  nav.scrolled { background: rgba(244,246,242,0.97); }
+  .nav-logo {
+    font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 3px;
+    color: var(--ink); text-decoration: none;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .nav-logo-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green-bright);
+    box-shadow: 0 0 10px rgba(34,197,94,.5);
+    animation: breathe 3s ease-in-out infinite;
+  }
+  @keyframes breathe { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: .6; } }
+  .lang-toggle {
+    display: flex; gap: .2rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 99px; padding: .25rem .3rem;
+  }
+  .lang-btn {
+    background: none; border: none; cursor: pointer;
+    font-family: var(--font-body); font-size: .75rem; font-weight: 600;
+    color: var(--ink-light); padding: .3rem .8rem; border-radius: 99px; transition: all .2s;
+  }
+  .lang-btn.active { background: var(--green); color: #fff; }
 
-html { scroll-behavior: smooth; }
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 9rem 2rem 6rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-blob { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+  .blob-1 { width: 600px; height: 500px; background: radial-gradient(ellipse, rgba(34,197,94,.12) 0%, transparent 70%); top: -100px; left: -150px; }
+  .blob-2 { width: 500px; height: 400px; background: radial-gradient(ellipse, rgba(26,122,60,.08) 0%, transparent 70%); bottom: 0; right: -100px; }
+  .blob-3 { width: 300px; height: 300px; background: radial-gradient(ellipse, rgba(34,197,94,.06) 0%, transparent 70%); top: 40%; left: 60%; }
+  .hero-lines {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image: linear-gradient(rgba(26,122,60,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(26,122,60,.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 860px; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: .6rem;
+    font-family: var(--font-mono); font-size: .7rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--green); border: 1px solid var(--green-mid); background: var(--green-pale);
+    border-radius: 99px; padding: .4rem 1.2rem; margin-bottom: 2.5rem;
+    animation: fadeUp .7s both;
+  }
+  .hero-h1 {
+    font-family: var(--font-display); font-size: clamp(4.5rem, 11vw, 9.5rem);
+    line-height: .93; letter-spacing: 2px; color: var(--ink);
+    margin-bottom: 1.5rem; animation: fadeUp .7s .1s both;
+  }
+  .hero-h1 .green-stroke { -webkit-text-stroke: 2.5px var(--green); color: transparent; display: block; }
+  .hero-h1 .green-fill { color: var(--green); display: block; }
+  .hero-sub {
+    font-size: 1.1rem; font-weight: 400; color: var(--ink-light);
+    line-height: 1.75; max-width: 500px; margin: 0 auto 3rem;
+    animation: fadeUp .7s .2s both;
+  }
+  .hero-sub em { color: var(--ink-mid); font-style: normal; font-weight: 600; }
+  .hero-form { display: flex; gap: .5rem; max-width: 460px; margin: 0 auto; animation: fadeUp .7s .3s both; }
+  .email-input {
+    flex: 1; background: var(--surface); border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-sm); padding: .9rem 1.2rem;
+    color: var(--ink); font-family: var(--font-body); font-size: .9rem;
+    outline: none; transition: border-color .2s, box-shadow .2s;
+  }
+  .email-input::placeholder { color: var(--silver); }
+  .email-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,122,60,.1); }
+  .cta-btn {
+    background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm);
+    padding: .9rem 1.6rem; font-family: var(--font-body); font-size: .85rem; font-weight: 700;
+    letter-spacing: .4px; cursor: pointer; transition: all .2s; white-space: nowrap;
+    position: relative; overflow: hidden;
+  }
+  .cta-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,.15), transparent); }
+  .cta-btn:hover { background: #145f2e; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(26,122,60,.3); }
+  .cta-btn:active { transform: translateY(0); }
+  .hero-micro { margin-top: 1.2rem; font-size: .77rem; color: var(--silver); animation: fadeUp .7s .4s both; }
+  .hero-micro strong { color: var(--green); }
+  .success-msg {
+    display: none; padding: .9rem 1.2rem;
+    background: var(--green-pale); border: 1.5px solid var(--green-mid);
+    border-radius: var(--radius-sm); color: var(--green); font-size: .88rem; font-weight: 600;
+    margin-top: .5rem;
+  }
+  .scroll-cue {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: .5rem;
+    color: var(--silver-light); font-size: .65rem; letter-spacing: 3px; text-transform: uppercase;
+    font-family: var(--font-mono); animation: fadeIn 1s 1.2s both;
+  }
+  .scroll-bar { width: 1px; height: 36px; background: linear-gradient(to bottom, var(--silver-light), transparent); animation: scrollAnim 2s infinite; }
+  @keyframes scrollAnim {
+    0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; }
+    50.001% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; }
+  }
 
-body {
-  font-family: 'Barlow', sans-serif;
-  background: var(--black);
-  color: var(--off-white);
-  overflow-x: hidden;
-  cursor: none;
-}
+  /* SECTIONS */
+  section { padding: 7rem 2rem; position: relative; z-index: 1; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .label {
+    font-family: var(--font-mono); font-size: .68rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--green); margin-bottom: 1.4rem; display: flex; align-items: center; gap: .8rem;
+  }
+  .label::before { content: ''; width: 20px; height: 1.5px; background: var(--green); }
 
-.cursor {
-  width: 9px; height: 9px;
-  background: var(--orange);
-  border-radius: 50%;
-  position: fixed; top: 0; left: 0;
-  pointer-events: none; z-index: 9999;
-  transform: translate(-50%,-50%);
-  transition: width .15s, height .15s;
-}
-.cursor-ring {
-  width: 34px; height: 34px;
-  border: 1px solid rgba(232,84,10,.45);
-  border-radius: 50%;
-  position: fixed; top: 0; left: 0;
-  pointer-events: none; z-index: 9998;
-  transform: translate(-50%,-50%);
-  transition: left .1s ease, top .1s ease;
-}
-body:has(a:hover) .cursor,
-body:has(button:hover) .cursor { width: 16px; height: 16px; }
+  /* PROBLEM */
+  .problem { background: var(--surface); }
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+  .problem-h2 { font-family: var(--font-display); font-size: clamp(2.8rem,5vw,4.5rem); letter-spacing: 2px; line-height: 1; margin-bottom: 2rem; }
+  .problem-h2 .red { color: #c0392b; }
+  .stat-row { display: flex; flex-direction: column; gap: 1rem; }
+  .stat-card {
+    display: flex; align-items: center; gap: 1.2rem;
+    padding: 1.2rem 1.4rem; background: var(--bg2);
+    border: 1px solid var(--border); border-radius: var(--radius); transition: border-color .2s;
+  }
+  .stat-card:hover { border-color: var(--green-mid); }
+  .stat-num { font-family: var(--font-display); font-size: 2.4rem; letter-spacing: 1px; color: var(--green); min-width: 75px; line-height: 1; }
+  .stat-label { font-size: .86rem; color: var(--ink-light); line-height: 1.6; }
+  .pain-list { display: flex; flex-direction: column; gap: .8rem; }
+  .pain-card {
+    padding: 1.3rem 1.5rem; background: var(--surface2);
+    border: 1px solid var(--border); border-left: 3px solid #e8c4c0;
+    border-radius: 0 var(--radius) var(--radius) 0; transition: border-color .2s, transform .2s;
+  }
+  .pain-card:hover { border-left-color: #c0392b; transform: translateX(4px); }
+  .pain-card strong { display: block; font-size: .9rem; color: var(--ink); margin-bottom: .3rem; }
+  .pain-card span { font-size: .84rem; color: var(--ink-light); line-height: 1.6; }
 
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 8000; opacity: .3;
-}
+  /* SOLUTION */
+  .solution { background: var(--bg2); text-align: center; }
+  .solution-h2 { font-family: var(--font-display); font-size: clamp(3rem,6vw,5.5rem); letter-spacing: 2px; line-height: 1; margin-bottom: 1rem; }
+  .solution-h2 .green { color: var(--green); }
+  .solution-sub { font-size: 1rem; color: var(--ink-light); line-height: 1.8; max-width: 560px; margin: 0 auto 3rem; }
+  .distinction { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+  .dist-card { padding: 1.5rem 1.8rem; border-radius: var(--radius); max-width: 260px; text-align: left; }
+  .dist-card.no { background: #fff5f5; border: 1px solid #f5c6c0; }
+  .dist-card.yes { background: var(--green-pale); border: 1px solid var(--green-mid); }
+  .dist-tag { font-family: var(--font-mono); font-size: .7rem; font-weight: 500; letter-spacing: 1px; margin-bottom: .8rem; display: block; }
+  .tag-no { color: #c0392b; } .tag-yes { color: var(--green); }
+  .dist-card ul { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
+  .dist-card li { font-size: .85rem; color: var(--ink-light); }
 
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 22px 48px;
-  background: linear-gradient(to bottom, rgba(8,8,7,.9) 0%, transparent 100%);
-}
-.logo {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: 21px; letter-spacing: 4px;
-  text-transform: uppercase; color: var(--off-white);
-  text-decoration: none; display: flex; align-items: center; gap: 10px;
-}
-.logo-dot {
-  width: 7px; height: 7px; background: var(--orange);
-  border-radius: 50%; animation: breathe 3s ease-in-out infinite;
-}
-@keyframes breathe {
-  0%,100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.5); opacity: .65; }
-}
-.nav-right { display: flex; align-items: center; gap: 20px; }
+  /* HOW */
+  .how { background: var(--surface); }
+  .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; position: relative; }
+  .steps::after {
+    content: ''; position: absolute; top: 1.8rem;
+    left: calc(33.33% - .5rem); right: calc(33.33% - .5rem);
+    height: 1px; background: linear-gradient(90deg, transparent, var(--green-mid), transparent); pointer-events: none;
+  }
+  .step { padding: 2.5rem 1.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; text-align: center; transition: all .3s; }
+  .step:hover { border-color: var(--green-mid); transform: translateY(-5px); box-shadow: 0 16px 48px rgba(26,122,60,.08); }
+  .step-num {
+    width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--green);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.2rem; font-family: var(--font-mono); font-size: .9rem;
+    color: var(--green); background: var(--surface); position: relative; z-index: 1;
+  }
+  .step-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+  .step h3 { font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: .5rem; }
+  .step p { font-size: .83rem; color: var(--ink-light); line-height: 1.7; }
 
-.lang-btn {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 600; font-size: 12px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--muted);
-  background: none; border: 1px solid var(--border);
-  padding: 8px 16px; cursor: none;
-  transition: color .2s, border-color .2s;
-}
-.lang-btn:hover { color: var(--off-white); border-color: rgba(240,236,227,.3); }
+  /* QUEST CARDS */
+  .quests { background: var(--bg2); }
+  .quests-h2 { font-family: var(--font-display); font-size: clamp(2.5rem,5vw,4rem); letter-spacing: 2px; line-height: 1; margin-bottom: .4rem; }
+  .quests-sub { font-size: .9rem; color: var(--ink-light); margin-bottom: 2.5rem; }
+  .quest-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
 
-.nav-cta {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: 12px; letter-spacing: 2.5px;
-  text-transform: uppercase; color: var(--off-white);
-  background: var(--orange); border: none; padding: 10px 24px;
-  cursor: none; text-decoration: none;
-  clip-path: polygon(7px 0%,100% 0%,calc(100% - 7px) 100%,0% 100%);
-  transition: background .2s;
-}
-.nav-cta:hover { background: var(--orange-light); }
+  .quest-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; overflow: hidden; transition: all .3s;
+    cursor: pointer; display: flex; flex-direction: column;
+  }
+  .quest-card:hover { border-color: var(--green-mid); box-shadow: 0 12px 48px rgba(26,122,60,.1); transform: translateY(-4px); }
+  .quest-card-top { padding: 1.3rem 1.4rem .9rem; border-bottom: 1px solid var(--border); }
+  .quest-category {
+    font-family: var(--font-mono); font-size: .62rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--green); margin-bottom: .6rem; display: flex; align-items: center; gap: .5rem;
+  }
+  .category-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green-bright); }
+  .quest-title-card { font-family: var(--font-display); font-size: 1.45rem; letter-spacing: 1px; line-height: 1.1; color: var(--ink); margin-bottom: .5rem; }
+  .quest-meta-list { display: flex; flex-direction: column; gap: .3rem; margin-top: .8rem; }
+  .quest-meta-item { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: var(--ink-light); }
+  .meta-icon { font-size: .85rem; color: var(--green); }
+  .quest-card-bottom { padding: .9rem 1.4rem; margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
 
-.hero {
-  min-height: 100vh;
-  display: grid;
-  grid-template-rows: 1fr auto;
-  padding: 0 48px;
-  position: relative; overflow: hidden;
-}
+  /* Avatar stack */
+  .avatar-group { display: flex; align-items: center; gap: 0; }
+  .avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid var(--surface); margin-left: -8px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .62rem; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .avatar:first-child { margin-left: 0; }
+  .avatar-extra {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--green-pale); border: 2px solid var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .58rem; font-weight: 700; color: var(--green);
+    margin-left: -8px; font-family: var(--font-mono);
+  }
+  .vagas-label { font-size: .72rem; color: var(--ink-light); margin-left: .7rem; font-family: var(--font-mono); }
+  .entrar-btn {
+    font-family: var(--font-body); font-size: .72rem; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; color: var(--green);
+    background: none; border: 1px solid var(--green-mid);
+    padding: .4rem .9rem; border-radius: 99px; cursor: pointer; transition: all .2s;
+  }
+  .entrar-btn:hover { background: var(--green); color: #fff; border-color: var(--green); }
 
-.hero-bg {
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse 55% 50% at 65% 35%, rgba(232,84,10,.1) 0%, transparent 70%),
-    radial-gradient(ellipse 35% 35% at 15% 75%, rgba(232,84,10,.05) 0%, transparent 60%);
-  pointer-events: none;
-}
+  /* MANIFESTO */
+  .manifesto { background: var(--ink); color: var(--bg); text-align: center; position: relative; overflow: hidden; }
+  .manifesto-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 20% 50%, rgba(34,197,94,.07), transparent), radial-gradient(ellipse 50% 50% at 80% 50%, rgba(26,122,60,.05), transparent); }
+  .manifesto-content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+  .manifesto-q { font-family: var(--font-display); font-size: clamp(2.8rem,7vw,5.5rem); letter-spacing: 2px; line-height: 1.02; margin-bottom: 3rem; color: #f4f6f2; }
+  .manifesto-q .green { color: var(--green-bright); }
+  .manifesto-lines { display: flex; flex-direction: column; gap: 1rem; }
+  .manifesto-line { font-size: .95rem; color: rgba(244,246,242,.6); line-height: 1.8; padding: 1rem 1.5rem; border-left: 2px solid rgba(34,197,94,.25); text-align: left; }
 
-.hero-lines {
-  position: absolute; inset: 0; overflow: hidden; opacity: .035; pointer-events: none;
-}
-.hero-lines svg { width: 100%; height: 100%; }
+  /* WAITLIST */
+  .waitlist { background: var(--surface); text-align: center; }
+  .waitlist-box {
+    max-width: 580px; margin: 0 auto; padding: 3.5rem;
+    background: var(--green-pale); border: 1.5px solid var(--green-mid);
+    border-radius: 24px; position: relative; overflow: hidden;
+  }
+  .waitlist-box::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(34,197,94,.15), transparent); border-radius: 50%; }
+  .waitlist-h2 { font-family: var(--font-display); font-size: clamp(2.5rem,5vw,4rem); letter-spacing: 2px; line-height: 1; color: var(--ink); margin-bottom: .6rem; position: relative; }
+  .waitlist-sub { font-size: .9rem; color: var(--ink-light); margin-bottom: 2rem; position: relative; }
+  .traction-pill { display: inline-flex; align-items: center; gap: .6rem; background: var(--surface); border: 1px solid var(--green-mid); border-radius: 99px; padding: .5rem 1.2rem; margin-bottom: 1.8rem; position: relative; }
+  .traction-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-bright); box-shadow: 0 0 8px rgba(34,197,94,.6); animation: breathe 2s infinite; }
+  .traction-text { font-size: .78rem; color: var(--ink-light); font-weight: 500; }
+  .traction-text strong { color: var(--green); }
+  .waitlist-form { display: flex; flex-direction: column; gap: .8rem; position: relative; }
+  .waitlist-form .email-input { text-align: center; background: var(--surface); }
+  .waitlist-form .cta-btn { padding: 1rem; font-size: .95rem; }
 
-.hero-main {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding-bottom: 40px;
-  padding-top: 140px;
-}
+  /* FOOTER */
+  footer { background: var(--ink); color: rgba(244,246,242,.5); padding: 3rem 2rem; border-top: 1px solid rgba(255,255,255,.06); }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+  .footer-logo { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 3px; color: var(--bg); text-decoration: none; }
+  .footer-tagline { font-size: .72rem; margin-top: .2rem; letter-spacing: 1px; color: rgba(244,246,242,.3); }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a { color: rgba(244,246,242,.35); text-decoration: none; font-size: .8rem; transition: color .2s; }
+  .footer-links a:hover { color: var(--green-bright); }
+  .footer-copy { font-size: .75rem; color: rgba(244,246,242,.25); }
 
-.hero-tag {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px; font-weight: 600; letter-spacing: 4px;
-  text-transform: uppercase; color: var(--orange);
-  margin-bottom: 16px;
-  opacity: 0; animation: fadeUp .7s ease .2s forwards;
-}
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .65s ease, transform .65s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .d1 { transition-delay: .1s; } .d2 { transition-delay: .2s; } .d3 { transition-delay: .3s; }
 
-.hero-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: clamp(70px, 12vw, 160px);
-  line-height: .88; text-transform: uppercase; letter-spacing: -1px;
-  max-width: 820px;
-  opacity: 0; animation: fadeUp .8s ease .4s forwards;
-}
-.hero-title em { font-style: italic; color: var(--orange); }
-
-.hero-tagline {
-  font-size: 16px; font-weight: 300; color: var(--muted);
-  max-width: 420px; line-height: 1.7; margin-top: 24px;
-  opacity: 0; animation: fadeUp .8s ease .6s forwards;
-}
-
-.hero-email-block {
-  padding: 40px 0 64px;
-  border-top: 1px solid var(--border);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
-  opacity: 0; animation: fadeUp .8s ease .85s forwards;
-}
-
-.hero-email-label {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px; font-weight: 600; letter-spacing: 3.5px;
-  text-transform: uppercase; color: var(--orange); margin-bottom: 10px;
-}
-.hero-email-headline {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: clamp(28px, 4vw, 46px);
-  line-height: .95; text-transform: uppercase;
-}
-.hero-email-headline em { font-style: italic; color: var(--orange); }
-.hero-email-sub {
-  font-size: 13px; font-weight: 300; color: var(--muted);
-  margin-top: 10px; line-height: 1.6;
-}
-
-.email-form { display: flex; gap: 0; }
-.email-input {
-  flex: 1; min-width: 0;
-  background: rgba(240,236,227,.05);
-  border: 1px solid var(--border); border-right: none;
-  padding: 16px 20px;
-  font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 300;
-  color: var(--off-white); outline: none;
-  transition: border-color .2s;
-}
-.email-input::placeholder { color: var(--muted); }
-.email-input:focus { border-color: rgba(232,84,10,.5); }
-.email-btn {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: 13px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--off-white);
-  background: var(--orange); border: 1px solid var(--orange);
-  padding: 16px 28px; cursor: none; white-space: nowrap;
-  transition: background .2s;
-}
-.email-btn:hover { background: var(--orange-light); }
-.email-note {
-  font-size: 11px; color: var(--muted); margin-top: 10px;
-  font-weight: 300; letter-spacing: .3px;
-}
-.email-stats { display: flex; gap: 28px; margin-top: 20px; }
-.e-stat-n {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: 28px; color: var(--off-white); line-height: 1;
-}
-.e-stat-l {
-  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--muted); margin-top: 2px;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.marquee-wrap {
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  overflow: hidden; padding: 16px 0;
-  background: var(--stone);
-}
-.marquee-track {
-  display: flex; width: max-content;
-  animation: marquee 30s linear infinite;
-}
-.marquee-track:hover { animation-play-state: paused; }
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.marquee-item {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: 13px; letter-spacing: 3px;
-  text-transform: uppercase; color: var(--muted);
-  white-space: nowrap; padding: 0 28px;
-  display: flex; align-items: center; gap: 28px;
-}
-.marquee-item span { color: var(--orange); font-size: 9px; }
-
-.quests-section { padding: 96px 48px; }
-
-.section-tag {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px; font-weight: 600; letter-spacing: 4px;
-  text-transform: uppercase; color: var(--orange); margin-bottom: 10px;
-}
-.section-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: clamp(44px, 6vw, 72px);
-  line-height: .9; text-transform: uppercase; letter-spacing: -.5px;
-}
-
-.quests-header {
-  display: flex; align-items: flex-end; justify-content: space-between;
-  margin-bottom: 48px; gap: 32px; flex-wrap: wrap;
-}
-
-.quests-byline {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: 18px; font-style: italic;
-  color: var(--off-white); letter-spacing: .3px; line-height: 1.3;
-  border-left: 3px solid var(--orange); padding-left: 16px;
-  max-width: 320px;
-}
-
-.quests-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
-}
-
-.quest-card {
-  background: var(--stone);
-  padding: 28px;
-  position: relative;
-  cursor: none;
-  border-top: 2px solid transparent;
-  transition: background .2s, border-color .2s;
-}
-.quest-card:hover { background: var(--stone-mid); border-top-color: var(--orange); }
-
-.quest-type {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 10px; font-weight: 600; letter-spacing: 3px;
-  text-transform: uppercase; color: var(--orange); margin-bottom: 6px;
-}
-.quest-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: 28px; line-height: .95;
-  text-transform: uppercase; letter-spacing: .3px; margin-bottom: 16px;
-}
-.quest-level { display: flex; gap: 3px; margin-bottom: 14px; }
-.ld { width: 5px; height: 5px; border-radius: 50%; background: var(--border); }
-.ld.on { background: var(--orange); }
-.quest-details { display: flex; flex-direction: column; gap: 5px; margin-bottom: 20px; }
-.qd-row {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 12px; font-weight: 300; color: var(--muted);
-}
-.qd-icon { color: var(--orange); font-style: normal; font-size: 10px; width: 12px; }
-.qd-row strong { color: var(--off-white); font-weight: 500; }
-.quest-footer {
-  display: flex; align-items: center; justify-content: space-between;
-  border-top: 1px solid var(--border); padding-top: 16px;
-}
-.quest-avatars { display: flex; }
-.qa {
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 1.5px solid var(--stone);
-  background: var(--stone-mid); color: var(--muted);
-  font-size: 9px; font-weight: 500;
-  display: flex; align-items: center; justify-content: center;
-  margin-left: -7px;
-}
-.qa:first-child { margin-left: 0; }
-.quest-spots { font-size: 11px; color: var(--muted); margin-left: 8px; font-weight: 300; }
-.quest-spots.urgent { color: #ff5533; }
-.join-btn {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: 11px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--orange);
-  background: none; border: 1px solid rgba(232,84,10,.4);
-  padding: 8px 18px; cursor: none;
-  transition: background .2s, color .2s, border-color .2s;
-  clip-path: polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
-}
-.join-btn:hover { background: var(--orange); color: var(--off-white); border-color: var(--orange); }
-
-.how-section { padding: 96px 48px; background: var(--stone); }
-.how-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
-  align-items: start; margin-top: 56px;
-}
-.how-steps { display: flex; flex-direction: column; }
-.how-step {
-  display: flex; gap: 24px;
-  padding: 28px 0; border-bottom: 1px solid var(--border);
-}
-.how-step:last-child { border-bottom: none; }
-.step-num {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: 52px; line-height: 1;
-  color: rgba(240,236,227,.07); min-width: 52px;
-  transition: color .3s;
-}
-.how-step:hover .step-num { color: rgba(232,84,10,.25); }
-.step-body { padding-top: 4px; }
-.step-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: 20px; letter-spacing: .5px;
-  text-transform: uppercase; margin-bottom: 6px;
-}
-.step-desc { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.7; }
-
-.how-right { position: sticky; top: 120px; }
-.how-quote-block { border: 1px solid var(--border); padding: 40px; margin-bottom: 24px; }
-.how-quote {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: 26px; font-style: italic;
-  line-height: 1.25; text-transform: uppercase;
-  color: var(--off-white); margin-bottom: 20px;
-}
-.how-quote em { color: var(--orange); }
-.how-quote-attr { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 300; }
-.how-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-.how-tag {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px; font-weight: 600; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--muted);
-  border: 1px solid var(--border); padding: 7px 14px;
-  transition: color .2s, border-color .2s; cursor: none;
-}
-.how-tag:hover { color: var(--off-white); border-color: rgba(240,236,227,.3); }
-
-.manifesto {
-  padding: 120px 48px;
-  text-align: center; position: relative; overflow: hidden;
-}
-.manifesto::before {
-  content: ''; position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%,-50%);
-  width: 700px; height: 350px;
-  background: radial-gradient(ellipse, rgba(232,84,10,.07) 0%, transparent 70%);
-  pointer-events: none;
-}
-.manifesto-eyebrow {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px; font-weight: 600; letter-spacing: 5px;
-  text-transform: uppercase; color: var(--orange); margin-bottom: 28px;
-}
-.manifesto-text {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: clamp(30px, 4.5vw, 58px);
-  line-height: 1.2; text-transform: uppercase; letter-spacing: .3px;
-  max-width: 800px; margin: 0 auto 36px;
-}
-.manifesto-text em { font-style: italic; color: var(--orange); }
-.manifesto-sub {
-  font-size: 15px; font-weight: 300; color: var(--muted);
-  max-width: 480px; margin: 0 auto; line-height: 1.8;
-}
-
-.signup-section { padding: 96px 48px; background: var(--stone); text-align: center; }
-.signup-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: clamp(48px,7vw,88px);
-  line-height: .9; text-transform: uppercase; letter-spacing: -.5px; margin-bottom: 20px;
-}
-.signup-title em { font-style: italic; color: var(--orange); }
-.signup-sub {
-  font-size: 14px; font-weight: 300; color: var(--muted);
-  line-height: 1.7; max-width: 440px; margin: 0 auto 40px;
-}
-.signup-form2 { display: flex; gap: 0; max-width: 460px; margin: 0 auto; }
-.signup-input2 {
-  flex: 1; min-width: 0;
-  background: rgba(240,236,227,.05); border: 1px solid var(--border); border-right: none;
-  padding: 16px 20px; font-family: 'Barlow', sans-serif; font-size: 14px;
-  font-weight: 300; color: var(--off-white); outline: none; transition: border-color .2s;
-}
-.signup-input2::placeholder { color: var(--muted); }
-.signup-input2:focus { border-color: rgba(232,84,10,.5); }
-.signup-btn2 {
-  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
-  font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase;
-  color: var(--off-white); background: var(--orange); border: 1px solid var(--orange);
-  padding: 16px 28px; cursor: none; white-space: nowrap; transition: background .2s;
-}
-.signup-btn2:hover { background: var(--orange-light); }
-.signup-note2 { font-size: 11px; color: var(--muted); margin-top: 12px; font-weight: 300; }
-
-footer {
-  padding: 36px 48px;
-  border-top: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 16px;
-}
-.footer-logo {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 900; font-size: 18px; letter-spacing: 4px;
-  text-transform: uppercase; color: var(--off-white);
-  display: flex; align-items: center; gap: 8px;
-}
-.footer-links { display: flex; gap: 28px; }
-.footer-link {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px; font-weight: 600; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--muted);
-  text-decoration: none; transition: color .2s;
-}
-.footer-link:hover { color: var(--off-white); }
-.footer-right { font-size: 11px; color: var(--muted); font-weight: 300; }
-
-.reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
-.reveal.visible { opacity: 1; transform: translateY(0); }
-.rd1 { transition-delay: .08s; } .rd2 { transition-delay: .16s; }
-.rd3 { transition-delay: .24s; } .rd4 { transition-delay: .32s; }
-
-.toast {
-  position: fixed; bottom: 36px; left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--orange); color: var(--off-white);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700; font-size: 12px; letter-spacing: 2px;
-  text-transform: uppercase; padding: 14px 28px;
-  z-index: 9999; pointer-events: none; white-space: nowrap;
-  clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
-  transition: transform .35s cubic-bezier(.34,1.56,.64,1);
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
+  /* RESPONSIVE */
+  @media (max-width: 800px) {
+    nav { padding: 1rem 1.5rem; }
+    .problem-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .steps { grid-template-columns: 1fr; } .steps::after { display: none; }
+    .quest-grid { grid-template-columns: 1fr 1fr; }
+    .hero-form { flex-direction: column; }
+    .footer-inner { flex-direction: column; text-align: center; }
+    .footer-links { justify-content: center; }
+    .distinction { flex-direction: column; align-items: center; }
+    .waitlist-box { padding: 2rem 1.4rem; }
+  }
+  @media (max-width: 520px) { .quest-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="ring"></div>
-
-<nav>
-  <a href="#" class="logo"><div class="logo-dot"></div>SideQuest</a>
-  <div class="nav-right">
-    <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
-    <a href="#" class="nav-cta" onclick="focusEmail(event)" data-pt="Quero entrar" data-en="Join the list">Quero entrar</a>
+<nav id="mainNav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-dot"></div>SIDEQUEST
+  </a>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('pt')">🇵🇹 PT</button>
+    <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
   </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-lines">
-    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-      <line x1="0" y1="200" x2="1440" y2="650" stroke="white" stroke-width=".5"/>
-      <line x1="0" y1="600" x2="1440" y2="100" stroke="white" stroke-width=".5"/>
-      <line x1="500" y1="0" x2="800" y2="900" stroke="white" stroke-width=".5"/>
-      <circle cx="720" cy="450" r="350" fill="none" stroke="white" stroke-width=".5"/>
-    </svg>
-  </div>
-
-  <div class="hero-main">
-    <div class="hero-tag" data-pt="Lisboa · Portugal · Em todo o lado" data-en="Lisbon · Portugal · Everywhere">Lisboa · Portugal · Em todo o lado</div>
-    <h1 class="hero-title">Para de<br>esperar.<br><em data-pt="Vai." data-en="Go.">Vai.</em></h1>
-    <p class="hero-tagline" data-pt="Experiências reais com pessoas reais. Junta-te a uma quest ou cria a tua própria missão." data-en="Real experiences with real people. Join a quest or create your own.">Experiências reais com pessoas reais. Junta-te a uma quest ou cria a tua própria missão.</p>
-  </div>
-
-  <div class="hero-email-block">
-    <div>
-      <div class="hero-email-label" data-pt="Estamos a lançar em Lisboa" data-en="Launching in Lisbon">Estamos a lançar em Lisboa</div>
-      <div class="hero-email-headline">Entra na <em data-pt="lista." data-en="list.">lista.</em></div>
-      <p class="hero-email-sub" data-pt="Sem spam. Só quests." data-en="No spam. Just quests.">Sem spam. Só quests.</p>
-      <div class="email-stats">
-        <div class="e-stat">
-          <div class="e-stat-n">312</div>
-          <div class="e-stat-l" data-pt="Membros" data-en="Members">Membros</div>
-        </div>
-        <div class="e-stat">
-          <div class="e-stat-n">24</div>
-          <div class="e-stat-l" data-pt="Quests ativas" data-en="Active quests">Quests ativas</div>
-        </div>
-        <div class="e-stat">
-          <div class="e-stat-n">8</div>
-          <div class="e-stat-l" data-pt="Países" data-en="Countries">Países</div>
-        </div>
-      </div>
+  <div class="hero-blob blob-1"></div>
+  <div class="hero-blob blob-2"></div>
+  <div class="hero-blob blob-3"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow" data-pt="Um movimento para a vida real" data-en="A movement for real life">Um movimento para a vida real</div>
+    <h1 class="hero-h1">
+      <span data-pt="PARA DE" data-en="STOP">PARA DE</span>
+      <span class="green-stroke" data-pt="ASSISTIR" data-en="WATCHING">ASSISTIR</span>
+      <span class="green-fill" data-pt="COMEÇA A VIVER" data-en="START LIVING">COMEÇA A VIVER</span>
+    </h1>
+    <p class="hero-sub">
+      <span data-pt="A vida é demasiado curta para veres os outros a vivê-la. A <em>SideQuest</em> liga pessoas prontas a criar experiências reais e inesquecíveis." data-en="Life is too short to watch others live it. <em>SideQuest</em> connects people ready to create real, unforgettable experiences.">
+        A vida é demasiado curta para veres os outros a vivê-la. A <em>SideQuest</em> liga pessoas prontas a criar experiências reais e inesquecíveis.
+      </span>
+    </p>
+    <div class="hero-form">
+      <input type="email" class="email-input" id="heroEmail" data-ph-pt="O teu email" data-ph-en="Your email" placeholder="O teu email">
+      <button class="cta-btn" onclick="submitEmail('heroEmail','heroSuccess')">
+        <span data-pt="Entrar na Lista" data-en="Join Waitlist">Entrar na Lista</span>
+      </button>
     </div>
-    <div>
-      <div class="email-form">
-        <input type="email" class="email-input" id="heroEmail"
-          placeholder="o teu email"
-          data-pt-placeholder="o teu email"
-          data-en-placeholder="your email">
-        <button class="email-btn" onclick="handleEmail('heroEmail')"
-          data-pt="Quero entrar" data-en="Join now">Quero entrar</button>
-      </div>
-      <p class="email-note" data-pt="Inscreve-te." data-en="Subscribe.">Inscreve-te</p>
+    <div class="success-msg" id="heroSuccess">
+      <span data-pt="🎉 Estás dentro! Entraremos em contacto em breve." data-en="🎉 You're in! We'll be in touch soon.">🎉 Estás dentro! Entraremos em contacto em breve.</span>
     </div>
+    <p class="hero-micro">
+      <span data-pt="Sem spam. Só o sinal quando estivermos live. <strong>1.247 já entraram.</strong>" data-en="No spam, ever. Just the sign when we are live. <strong>1,247 already joined.</strong>">Sem spam. Só o sinal quando estivermos live <strong>1.247 já entraram.</strong></span>
+    </p>
   </div>
+  <div class="scroll-cue"><div class="scroll-bar"></div></div>
 </section>
 
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <div class="marquee-item">Surf Trip Marrocos <span>◆</span> Escalar o Pico <span>◆</span> Mota pelos Pirenéus <span>◆</span> Wild Camping Alentejo <span>◆</span> BASE Jump Suíça <span>◆</span> Exploração Urbana <span>◆</span> Bike Lisboa→Sagres <span>◆</span> Trekking Himalaias <span>◆</span> Skydive Évora <span>◆</span> Canyoning Gerês <span>◆</span> Via Ferrata Dolomitas <span>◆</span></div>
-    <div class="marquee-item" aria-hidden="true">Surf Trip Marrocos <span>◆</span> Escalar o Pico <span>◆</span> Mota pelos Pirenéus <span>◆</span> Wild Camping Alentejo <span>◆</span> BASE Jump Suíça <span>◆</span> Exploração Urbana <span>◆</span> Bike Lisboa→Sagres <span>◆</span> Trekking Himalaias <span>◆</span> Skydive Évora <span>◆</span> Canyoning Gerês <span>◆</span> Via Ferrata Dolomitas <span>◆</span></div>
-  </div>
-</div>
-
-<section class="quests-section" id="quests">
-  <div class="quests-header">
-    <div>
-      <div class="section-tag reveal" data-pt="Missões em curso" data-en="Active missions">Missões em curso</div>
-      <h2 class="section-title reveal rd1">Quests<br><span data-pt="Ativas" data-en="Active">Ativas</span></h2>
-    </div>
-    <div class="quests-byline reveal rd2" data-pt="Criadas por pessoas comuns que decidiram que a rotina pode esperar." data-en="Created by ordinary people who decided routine can wait.">
-      Criadas por pessoas comuns que decidiram que a rotina pode esperar.
-    </div>
-  </div>
-
-  <div class="quests-grid">
-    <div class="quest-card reveal">
-      <div class="quest-type" data-pt="Surf · Marrocos" data-en="Surf · Morocco">Surf · Marrocos</div>
-      <div class="quest-level"><div class="ld on"></div><div class="ld on"></div><div class="ld on"></div><div class="ld"></div><div class="ld"></div></div>
-      <div class="quest-name">Surf Trip<br>Taghazout</div>
-      <div class="quest-details">
-        <div class="qd-row"><i class="qd-icon">▶</i> <strong data-pt="10 dias" data-en="10 days">10 dias</strong></div>
-        <div class="qd-row"><i class="qd-icon">◉</i> <span data-pt="Março 2025" data-en="March 2025">Março 2025</span></div>
-        <div class="qd-row"><i class="qd-icon">◈</i> ~€400</div>
-      </div>
-      <div class="quest-footer">
-        <div style="display:flex;align-items:center;">
-          <div class="quest-avatars"><div class="qa" style="color:#4caf50">JM</div><div class="qa" style="color:#ff7043">RS</div><div class="qa" style="color:#7e57c2">TF</div><div class="qa">+3</div></div>
-          <span class="quest-spots urgent" data-pt="2 vagas" data-en="2 spots">2 vagas</span>
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="container">
+    <div class="problem-grid">
+      <div class="reveal">
+        <div class="label"><span data-pt="O Problema" data-en="The Problem">O Problema</span></div>
+        <h2 class="problem-h2">
+          <span data-pt="Não estás a viver.<br>Estás a <span class='red'>observar.</span>" data-en="You're not living.<br>You're <span class='red'>watching.</span>">Não estás a viver.<br>Estás a <span class="red">observar.</span></span>
+        </h2>
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-num">7h</div>
+            <div class="stat-label" data-pt="Tempo médio diário em ecrãs." data-en="Average daily screen time.">Tempo médio diário em ecrãs.</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">72%</div>
+            <div class="stat-label" data-pt="Das pessoas querem mais aventura — mas não sabem por onde começar." data-en="Of people want more adventure — but don't know where to start.">Das pessoas querem mais aventura — mas não sabem por onde começar.</div>
+          </div>
         </div>
-        <button class="join-btn" onclick="joinQuest(this,'Surf Trip Taghazout')" data-pt="Entrar" data-en="Join">Entrar</button>
       </div>
-    </div>
-
-    <div class="quest-card reveal rd1">
-      <div class="quest-type" data-pt="Alpinismo · França" data-en="Mountaineering · France">Alpinismo · França</div>
-      <div class="quest-level"><div class="ld on"></div><div class="ld on"></div><div class="ld on"></div><div class="ld on"></div><div class="ld"></div></div>
-      <div class="quest-name">Mont Blanc<br><span data-pt="Cimeira" data-en="Summit">Cimeira</span></div>
-      <div class="quest-details">
-        <div class="qd-row"><i class="qd-icon">▶</i> <strong data-pt="8 dias" data-en="8 days">8 dias</strong></div>
-        <div class="qd-row"><i class="qd-icon">◉</i> <span data-pt="Julho 2025" data-en="July 2025">Julho 2025</span></div>
-        <div class="qd-row"><i class="qd-icon">◈</i> ~€600</div>
-      </div>
-      <div class="quest-footer">
-        <div style="display:flex;align-items:center;">
-          <div class="quest-avatars"><div class="qa" style="color:#26c6da">AK</div><div class="qa" style="color:#ec407a">MV</div><div class="qa">+1</div></div>
-          <span class="quest-spots urgent" data-pt="3 vagas" data-en="3 spots">3 vagas</span>
+      <div class="pain-list reveal d2">
+        <div class="pain-card">
+          <strong data-pt="Dás Scroll em vez de fazeres." data-en="You scroll instead of doing.">Dás Scroll em vez de fazeres.</strong>
+          <span data-pt="Cada deslize é uma experiência que outra pessoa teve. Devias ter sido tu." data-en="Every swipe is an experience someone else had. That should've been you.">Cada deslize é uma experiência que outra pessoa teve. Devias ter sido tu.</span>
         </div>
-        <button class="join-btn" onclick="joinQuest(this,'Mont Blanc')" data-pt="Entrar" data-en="Join">Entrar</button>
-      </div>
-    </div>
-
-    <div class="quest-card reveal rd2">
-      <div class="quest-type" data-pt="BASE Jump · Suíça" data-en="BASE Jump · Switzerland">BASE Jump · Suíça</div>
-      <div class="quest-level"><div class="ld on"></div><div class="ld on"></div><div class="ld on"></div><div class="ld on"></div><div class="ld on"></div></div>
-      <div class="quest-name">Lauterbrunnen<br>Valley</div>
-      <div class="quest-details">
-        <div class="qd-row"><i class="qd-icon">▶</i> <strong data-pt="5 dias" data-en="5 days">5 dias</strong></div>
-        <div class="qd-row"><i class="qd-icon">◉</i> <span data-pt="Agosto 2025" data-en="August 2025">Agosto 2025</span></div>
-        <div class="qd-row"><i class="qd-icon">◈</i> ~€800</div>
-      </div>
-      <div class="quest-footer">
-        <div style="display:flex;align-items:center;">
-          <div class="quest-avatars"><div class="qa" style="color:#ef5350">CR</div><div class="qa" style="color:#7c4dff">DS</div><div class="qa">+4</div></div>
-          <span class="quest-spots" data-pt="6 vagas" data-en="6 spots">6 vagas</span>
+        <div class="pain-card">
+          <strong data-pt="Tens ideias. Sozinho é difícil." data-en="You have ideas. Alone is hard.">Tens ideias. Sozinho é difícil.</strong>
+          <span data-pt="Tens 50 ideias e zero companheiros. A aventura morre antes de começar." data-en="50 ideas, zero companions. The quest dies before it starts.">Tens 50 ideias e zero companheiros. A aventura morre antes de começar.</span>
         </div>
-        <button class="join-btn" onclick="joinQuest(this,'Lauterbrunnen BASE Jump')" data-pt="Entrar" data-en="Join">Entrar</button>
-      </div>
-    </div>
-
-    <div class="quest-card reveal rd1">
-      <div class="quest-type" data-pt="Exploração Urbana · Lisboa" data-en="Urbex · Lisbon">Exploração Urbana · Lisboa</div>
-      <div class="quest-level"><div class="ld on"></div><div class="ld on"></div><div class="ld"></div><div class="ld"></div><div class="ld"></div></div>
-      <div class="quest-name"><span data-pt="Exploração Urbana" data-en="Urban Exploration">Exploração<br>Urbana</span></div>
-      <div class="quest-details">
-        <div class="qd-row"><i class="qd-icon">▶</i> <strong data-pt="1 noite" data-en="1 night">1 noite</strong></div>
-        <div class="qd-row"><i class="qd-icon">◉</i> <span data-pt="Mensal" data-en="Monthly">Mensal</span></div>
-        <div class="qd-row"><i class="qd-icon">◈</i> <span data-pt="Grátis" data-en="Free">Grátis</span></div>
-      </div>
-      <div class="quest-footer">
-        <div style="display:flex;align-items:center;">
-          <div class="quest-avatars"><div class="qa" style="color:#66bb6a">PL</div><div class="qa" style="color:#ff7043">NG</div><div class="qa">+6</div></div>
-          <span class="quest-spots" data-pt="8 vagas" data-en="8 spots">8 vagas</span>
+        <div class="pain-card">
+          <strong data-pt="As redes sociais vendem-te FOMO." data-en="Social media sells you FOMO.">As redes sociais vendem-te FOMO.</strong>
+          <span data-pt="Foram desenhadas para te manter a ver. A SideQuest foi desenhada para te fazer mover." data-en="They're designed to keep you watching. SideQuest is designed to make you move.">Foram desenhadas para te manter a ver. A SideQuest foi desenhada para te fazer mover.</span>
         </div>
-        <button class="join-btn" onclick="joinQuest(this,'Exploração Urbana')" data-pt="Entrar" data-en="Join">Entrar</button>
-      </div>
-    </div>
-
-    <div class="quest-card reveal rd2">
-      <div class="quest-type">Trek · Nepal</div>
-      <div class="quest-level"><div class="ld on"></div><div class="ld on"></div><div class="ld on"></div><div class="ld on"></div><div class="ld on"></div></div>
-      <div class="quest-name">Annapurna<br>Circuit</div>
-      <div class="quest-details">
-        <div class="qd-row"><i class="qd-icon">▶</i> <strong data-pt="18 dias" data-en="18 days">18 dias</strong></div>
-        <div class="qd-row"><i class="qd-icon">◉</i> <span data-pt="Outubro 2025" data-en="October 2025">Outubro 2025</span></div>
-        <div class="qd-row"><i class="qd-icon">◈</i> ~€1200</div>
-      </div>
-      <div class="quest-footer">
-        <div style="display:flex;align-items:center;">
-          <div class="quest-avatars"><div class="qa" style="color:#7e57c2">BC</div><div class="qa">+4</div></div>
-          <span class="quest-spots" data-pt="5 vagas" data-en="5 spots">5 vagas</span>
-        </div>
-        <button class="join-btn" onclick="joinQuest(this,'Annapurna Circuit')" data-pt="Entrar" data-en="Join">Entrar</button>
-      </div>
-    </div>
-
-    <div class="quest-card reveal rd3">
-      <div class="quest-type" data-pt="Moto · Pirenéus" data-en="Moto · Pyrenees">Moto · Pirenéus</div>
-      <div class="quest-level"><div class="ld on"></div><div class="ld on"></div><div class="ld on"></div><div class="ld"></div><div class="ld"></div></div>
-      <div class="quest-name">Pyrenees<br>Run</div>
-      <div class="quest-details">
-        <div class="qd-row"><i class="qd-icon">▶</i> <strong data-pt="7 dias" data-en="7 days">7 dias</strong></div>
-        <div class="qd-row"><i class="qd-icon">◉</i> <span data-pt="Setembro 2025" data-en="September 2025">Setembro 2025</span></div>
-        <div class="qd-row"><i class="qd-icon">◈</i> ~€350</div>
-      </div>
-      <div class="quest-footer">
-        <div style="display:flex;align-items:center;">
-          <div class="quest-avatars"><div class="qa" style="color:#ff7043">DG</div><div class="qa" style="color:#26c6da">FP</div><div class="qa">+3</div></div>
-          <span class="quest-spots" data-pt="6 vagas" data-en="6 spots">6 vagas</span>
-        </div>
-        <button class="join-btn" onclick="joinQuest(this,'Pyrenees Moto Run')" data-pt="Entrar" data-en="Join">Entrar</button>
       </div>
     </div>
   </div>
 </section>
 
-<section class="how-section" id="how">
-  <div>
-    <div class="section-tag reveal" data-pt="Como funciona" data-en="How it works">Como funciona</div>
-    <h2 class="section-title reveal rd1" data-pt="Simples Assim." data-en="This Simple.">Simples<br>Assim.</h2>
+<!-- SOLUTION -->
+<section class="solution">
+  <div class="container">
+    <div class="reveal">
+      <div class="label" style="justify-content:center"><span data-pt="A Solução" data-en="The Solution">A Solução</span></div>
+      <h2 class="solution-h2">
+        <span data-pt="O QUE É A <span class='green'>SIDEQUEST?</span>" data-en="WHAT IS <span class='green'>SIDEQUEST?</span>">O QUE É A <span class="green">SIDEQUEST?</span></span>
+      </h2>
+      <p class="solution-sub" data-pt="Uma plataforma onde as pessoas criam e juntam-se a aventuras reais. Não convencionais. Memoráveis. O tipo de experiências sobre as quais contas histórias." data-en="A platform where people create and join real-life quests. Unconventional. Memorable. The kind you actually tell stories about.">
+        Uma plataforma onde as pessoas criam e juntam-se a aventuras reais. Não convencionais. Memoráveis. O tipo de experiências sobre as quais contas histórias.
+      </p>
+    </div>
+    <div class="distinction reveal d1">
+      <div class="dist-card no">
+        <span class="dist-tag tag-no" data-pt="🚫 NÃO É ISTO" data-en="🚫 NOT THIS">🚫 NÃO É ISTO</span>
+        <ul>
+          <li data-pt="Encontros casuais de café" data-en="Casual coffee meetups">Encontros casuais de café</li>
+          <li data-pt="Listas de eventos genéricos" data-en="Generic event listings">Listas de eventos genéricos</li>
+          <li data-pt="Networking pelo networking" data-en="Networking for networking's sake">Networking pelo networking</li>
+          <li data-pt="Mais consumo passivo de conteúdo" data-en="More passive content consumption">Mais consumo passivo de conteúdo</li>
+        </ul>
+      </div>
+      <div class="dist-card yes">
+        <span class="dist-tag tag-yes" data-pt="✅ É ISTO" data-en="✅ THIS">✅ É ISTO</span>
+        <ul>
+          <li data-pt="Experiências dignas de história" data-en="Story-worthy experiences">Experiências dignas de história</li>
+          <li data-pt="Pessoas reais, aventuras reais" data-en="Real people, real adventures">Pessoas reais, aventuras reais</li>
+          <li data-pt="Não convencional por design" data-en="Unconventional by design">Não convencional por design</li>
+          <li data-pt="Feito para agir" data-en="Built for action">Feito para agir</li>
+        </ul>
+      </div>
+    </div>
   </div>
-  <div class="how-grid">
-    <div class="how-steps">
-      <div class="how-step reveal">
+</section>
+
+<!-- HOW -->
+<section class="how">
+  <div class="container">
+    <div class="reveal">
+      <div class="label"><span data-pt="Como Funciona" data-en="How It Works">Como Funciona</span></div>
+      <h2 style="font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);letter-spacing:2px;line-height:1;margin-bottom:.3rem">
+        <span data-pt="TRÊS PASSOS.<br>UMA VIDA VIVIDA." data-en="THREE STEPS.<br>ONE LIFE LIVED.">TRÊS PASSOS.<br>UMA VIDA VIVIDA.</span>
+      </h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal d1">
         <div class="step-num">01</div>
-        <div class="step-body">
-          <div class="step-title" data-pt="Escolhe ou cria uma Quest" data-en="Choose or create a Quest">Escolhe ou cria uma Quest</div>
-          <p class="step-desc" data-pt="Vês uma quest que queiras, ou então, decides criá-la. Defines o quê, quando e com quantas pessoas." data-en="You see a quest that pulls you in, or even, decide to create it. Set the what, when, and how many.">Vês uma quest que queiras, ou então, decides criá-la. Defines o quê, quando e com quantas pessoas.</p>
-        </div>
+        <div class="step-icon">⚡</div>
+        <h3 data-pt="Cria uma SideQuest" data-en="Create a SideQuest">Cria uma SideQuest</h3>
+        <p data-pt="Tens uma ideia que anseias viver? Publica-a. Quanto mais estranha, melhor." data-en="Have a wild idea? Post it. The weirder, the better.">Tens uma ideia que anseias viver? Publica-a. Quanto mais estranha, melhor.</p>
       </div>
-      <div class="how-step reveal rd1">
+      <div class="step reveal d2">
         <div class="step-num">02</div>
-        <div class="step-body">
-          <div class="step-title" data-pt="Junta-te à lista" data-en="Join the list">Junta-te à lista</div>
-          <p class="step-desc" data-pt="Um clique. Entras na lista. Criamos um grupo de WhatsApp com todos os membros que vão na quest." data-en="One click. You're in. We create a WhatsApp group with all the members joining the quest.">Um clique. Entras na lista. Criamos um grupo de WhatsApp com todos os membros que vão na quest.</p>
-        </div>
+        <div class="step-icon">🧭</div>
+        <h3 data-pt="Encontra pessoas como tu" data-en="Find People Like You">Encontra pessoas como tu</h3>
+        <p data-pt="Outros que querem a mesma experiência encontram-te." data-en="Others who want the same find you.">Outros que querem a mesma experiência encontram-te.</p>
       </div>
-      <div class="how-step reveal rd2">
+      <div class="step reveal d3">
         <div class="step-num">03</div>
-        <div class="step-body">
-          <div class="step-title" data-pt="Planeia com a malta" data-en="Plan with the crew">Planeia com a malta</div>
-          <p class="step-desc" data-pt="O grupo trata do resto. Datas, logística, custos — tudo entre os membros. Nós não nos metemos." data-en="The group handles the rest. Dates, logistics, costs — all between the members. We stay out of it.">O grupo trata do resto. Datas, logística, custos — tudo entre os membros. Nós não nos metemos.</p>
-        </div>
-      </div>
-      <div class="how-step reveal rd3">
-        <div class="step-num">04</div>
-        <div class="step-body">
-          <div class="step-title" data-pt="Faz acontecer" data-en="Make it happen">Faz acontecer</div>
-          <p class="step-desc" data-pt="Aparecem. Fazem a quest. Conhecem pessoas que nunca teriam conhecido. E contam a história pelo resto da vida." data-en="You show up. You do the quest. You meet people you'd never have met. And tell the story for the rest of your life.">Aparecem. Fazem a quest. Conhecem pessoas que nunca teriam conhecido. E contam a história pelo resto da vida.</p>
-        </div>
-      </div>
-    </div>
-    <div class="how-right">
-      <div class="how-quote-block reveal rd2">
-        <div class="how-quote" data-pt='"Queria fazer coisas diferentes mas não tinha com quem. A SideQuest mudou isso."' data-en='"I wanted to do different things but had no one to go with. SideQuest changed that."'>"Queria fazer coisas diferentes mas não tinha com quem. A SideQuest mudou isso."</div>
-        <div class="how-quote-attr" data-pt="— Daniel Pinto, Lisboa" data-en="— Daniel Pinto, Lisbon">— Daniel Pinto, Lisboa</div>
-      </div>
-      <div class="how-tags reveal rd3">
-        <div class="how-tag">Surf</div><div class="how-tag">Trekking</div>
-        <div class="how-tag">Alpinismo</div><div class="how-tag">BASE Jump</div>
-        <div class="how-tag">Urbex</div><div class="how-tag">Moto</div>
-        <div class="how-tag">Wild Camping</div><div class="how-tag">Skydive</div>
-        <div class="how-tag">Canyoning</div><div class="how-tag">Via Ferrata</div>
+        <div class="step-icon">🌍</div>
+        <h3 data-pt="Vai Vivê-la" data-en="Go Live It">Vai Vivê-la</h3>
+        <p data-pt="Sem algoritmo. Sem anúncios. Só tu e pessoas prontas a criar uma memória real." data-en="No algorithm. No ads. Just you and people ready to make a real memory.">Sem algoritmo. Sem anúncios. Só tu e pessoas prontas a criar uma memória real.</p>
       </div>
     </div>
   </div>
 </section>
 
+<!-- QUEST CARDS -->
+<section class="quests">
+  <div class="container">
+    <div class="reveal">
+      <div class="label"><span data-pt="Aventuras Ativas" data-en="Active Quests">Aventuras Ativas</span></div>
+      <h2 class="quests-h2" data-pt="É ISTO QUE QUEREMOS DIZER." data-en="THIS IS WHAT WE MEAN.">É ISTO QUE QUEREMOS DIZER.</h2>
+      <p class="quests-sub" data-pt="Exemplos reais do que são SideQuests. " data-en="Real examples of what SideQuests look like. ">Exemplos reais do que são SideQuests. </p>
+    </div>
+    <div class="quest-grid">
+
+      <div class="quest-card reveal d1">
+        <div class="quest-card-top">
+          <div class="quest-category"><div class="category-dot"></div><span data-pt="ALPINISMO · PORTUGAL" data-en="HIKING · PORTUGAL">ALPINISMO · PORTUGAL</span></div>
+          <div class="quest-title-card" data-pt="SETÚBAL →<br>LISBOA DE BICI" data-en="SETÚBAL →<br>LISBON BY BIKE">SETÚBAL →<br>LISBOA DE BIKE</div>
+          <div class="quest-meta-list">
+            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="8 dias" data-en="8 days">8 dias</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◉</span><span>Julho 2025</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€40</span></div>
+          </div>
+        </div>
+        <div class="quest-card-bottom">
+          <div style="display:flex;align-items:center">
+            <div class="avatar-group">
+              <div class="avatar" style="background:#e67e22">AK</div>
+              <div class="avatar" style="background:#2ecc71">MV</div>
+              <div class="avatar-extra">+1</div>
+            </div>
+            <span class="vagas-label" data-pt="3 vagas" data-en="3 spots">3 vagas</span>
+          </div>
+          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
+        </div>
+      </div>
+
+      <div class="quest-card reveal d2">
+        <div class="quest-card-top">
+          <div class="quest-category"><div class="category-dot"></div><span data-pt="URBANO · NOTURNO" data-en="URBAN · NIGHT">URBANO · NOTURNO</span></div>
+          <div class="quest-title-card" data-pt="EXPLORAÇÃO<br>À MEIA-NOITE" data-en="MIDNIGHT<br>EXPLORATION">EXPLORAÇÃO<br>À MEIA-NOITE</div>
+          <div class="quest-meta-list">
+            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="1 noite" data-en="1 night">1 noite</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◉</span><span>Agosto 2025</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€0</span></div>
+          </div>
+        </div>
+        <div class="quest-card-bottom">
+          <div style="display:flex;align-items:center">
+            <div class="avatar-group">
+              <div class="avatar" style="background:#9b59b6">JF</div>
+              <div class="avatar" style="background:#e74c3c">BM</div>
+              <div class="avatar-extra">+2</div>
+            </div>
+            <span class="vagas-label" data-pt="5 vagas" data-en="5 spots">5 vagas</span>
+          </div>
+          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
+        </div>
+      </div>
+
+      <div class="quest-card reveal d3">
+        <div class="quest-card-top">
+          <div class="quest-category"><div class="category-dot"></div><span data-pt="ACAMPAMENTO · URBANO" data-en="CAMPING · URBAN">ACAMPAMENTO · URBANO</span></div>
+          <div class="quest-title-card" data-pt="DORMIR NUM<br>TELHADO" data-en="SLEEP ON<br>A ROOFTOP">DORMIR NUM<br>TELHADO</div>
+          <div class="quest-meta-list">
+            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="1 noite" data-en="1 night">1 noite</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◉</span><span>Setembro 2025</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€20</span></div>
+          </div>
+        </div>
+        <div class="quest-card-bottom">
+          <div style="display:flex;align-items:center">
+            <div class="avatar-group">
+              <div class="avatar" style="background:#1abc9c">CR</div>
+              <div class="avatar" style="background:#f39c12">DM</div>
+              <div class="avatar" style="background:#e74c3c">PV</div>
+              <div class="avatar-extra">+2</div>
+            </div>
+            <span class="vagas-label" data-pt="2 vagas" data-en="2 spots">2 vagas</span>
+          </div>
+          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
+        </div>
+      </div>
+
+      <div class="quest-card reveal d1">
+        <div class="quest-card-top">
+          <div class="quest-category"><div class="category-dot"></div><span data-pt="ADRENALINA · EXTREMO" data-en="ADRENALINE · EXTREME">ADRENALINA · EXTREMO</span></div>
+          <div class="quest-title-card" data-pt="PARAQUEDISMO<br>" data-en="SKYDIVING<br>">PARAQUEDISMO<br></div>
+          <div class="quest-meta-list">
+            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="1 dia" data-en="1 day">1 dia</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◉</span><span>Outubro 2025</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€200</span></div>
+          </div>
+        </div>
+        <div class="quest-card-bottom">
+          <div style="display:flex;align-items:center">
+            <div class="avatar-group">
+              <div class="avatar" style="background:#16a085">RL</div>
+              <div class="avatar" style="background:#8e44ad">KN</div>
+            </div>
+            <span class="vagas-label" data-pt="4 vagas" data-en="4 spots">4 vagas</span>
+          </div>
+          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
+        </div>
+      </div>
+
+      <div class="quest-card reveal d2">
+        <div class="quest-card-top">
+          <div class="quest-category"><div class="category-dot"></div><span data-pt="VIAGEM · ESPONTÂNEO" data-en="TRAVEL · SPONTANEOUS">VIAGEM · ESPONTÂNEO</span></div>
+          <div class="quest-title-card" data-pt="ROAD TRIP<br>SEM DESTINO" data-en="ROAD TRIP<br>NO DESTINATION">ROAD TRIP<br>SEM DESTINO</div>
+          <div class="quest-meta-list">
+            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="Fim de semana" data-en="Weekend">Fim de semana</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◉</span><span data-pt="A definir" data-en="TBD">A definir</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€80</span></div>
+          </div>
+        </div>
+        <div class="quest-card-bottom">
+          <div style="display:flex;align-items:center">
+            <div class="avatar-group">
+              <div class="avatar" style="background:#d35400">AF</div>
+              <div class="avatar" style="background:#27ae60">GS</div>
+              <div class="avatar" style="background:#2980b9">LM</div>
+              <div class="avatar-extra">+3</div>
+            </div>
+            <span class="vagas-label" data-pt="2 vagas" data-en="2 spots">2 vagas</span>
+          </div>
+          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
+        </div>
+      </div>
+
+      <div class="quest-card reveal d3">
+        <div class="quest-card-top">
+          <div class="quest-category"><div class="category-dot"></div><span data-pt="ÁGUA · AMANHECER" data-en="WATER · DAWN">ÁGUA · AMANHECER</span></div>
+          <div class="quest-title-card" data-pt="MERGULHO AO<br>NASCER DO SOL" data-en="SUNRISE SWIM<br>ATLANTIC">MERGULHO AO<br>NASCER DO SOL</div>
+          <div class="quest-meta-list">
+            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="Manhã" data-en="Morning">Manhã</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◉</span><span>Julho 2025</span></div>
+            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€0</span></div>
+          </div>
+        </div>
+        <div class="quest-card-bottom">
+          <div style="display:flex;align-items:center">
+            <div class="avatar-group">
+              <div class="avatar" style="background:#2471a3">IM</div>
+              <div class="avatar" style="background:#148f77">OP</div>
+              <div class="avatar" style="background:#a93226">VR</div>
+              <div class="avatar-extra">+6</div>
+            </div>
+            <span class="vagas-label" data-pt="1 vaga" data-en="1 spot">1 vaga</span>
+          </div>
+          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
 <section class="manifesto">
-  <div class="manifesto-eyebrow reveal" data-pt="O Porquê" data-en="The Why">O Porquê</div>
-  <h2 class="manifesto-text reveal rd1" data-pt="Há demasiada gente a ver a vida. A SideQuest <em>põe-te a vivê-la.</em>" data-en="Too many people watching life go by. SideQuest <em>puts you in it.</em>">
-    Há demasiada gente a ver a vida. A SideQuest <em>põe-te a vivê-la.</em>
-  </h2>
-  <p class="manifesto-sub reveal rd2" data-pt="Não precisas de coragem infinita. Não precisas de amigos aventureiros. Precisas de um lugar onde as pessoas certas encontram a quest certa — e se juntam para a fazer acontecer." data-en="You don't need infinite courage. You don't need adventurous friends. You need a place where the right people find the right quest — and show up.">Não precisas de coragem infinita. Não precisas de amigos aventureiros. Precisas de um lugar onde as pessoas certas encontram a quest certa — e se juntam para a fazer acontecer.</p>
-</section>
-
-<section class="signup-section" id="signup">
-  <div class="section-tag" style="text-align:center;margin-bottom:16px;" data-pt="Estás a um passo" data-en="One step away">Estás a um passo</div>
-  <h2 class="signup-title reveal">Entra na <em data-pt="Lista." data-en="List.">Lista.</em></h2>
-  <p class="signup-sub reveal rd1" data-pt="As primeiras quests arrancam em Lisboa. Sê dos primeiros membros a saber — e a entrar." data-en="The first quests kick off in Lisbon. Be among the first members to know — and to join.">As primeiras quests arrancam em Lisboa. Sê dos primeiros membros a saber — e a entrar.</p>
-  <div class="signup-form2 reveal rd2">
-    <input type="email" class="signup-input2" id="footerEmail" placeholder="o teu email" data-pt-placeholder="o teu email" data-en-placeholder="your email">
-    <button class="signup-btn2" onclick="handleEmail('footerEmail')" data-pt="Quero entrar" data-en="Join now">Quero entrar</button>
+  <div class="manifesto-bg"></div>
+  <div class="container">
+    <div class="manifesto-content reveal">
+      <div class="label" style="justify-content:center;color:rgba(244,246,242,.35)"><span data-pt="A Nossa Filosofia" data-en="Our Philosophy">A Nossa Filosofia</span></div>
+      <div class="manifesto-q">
+        <span data-pt="A VIDA É A<br><span class='green'>VERDADEIRA QUEST.</span>" data-en="LIFE IS THE<br><span class='green'>REAL QUEST.</span>">A VIDA É A<br><span class="green">VERDADEIRA QUEST.</span></span>
+      </div>
+      <div class="manifesto-lines">
+  <div class="manifesto-line"
+       data-pt="As melhores histórias não são planeadas. Começam no momento em que decides dizer sim, mesmo sem saber no que te estás a meter."
+       data-en="The best stories aren’t planned. They begin the moment you say yes, without knowing what you’re getting into.">
+    As melhores histórias não são planeadas. Começam no momento em que decides dizer sim, mesmo sem saber no que te estás a meter.
   </div>
-  <p class="signup-note2 reveal rd3" data-pt="Sem spam. Só quests." data-en="No spam. Just quests.">Sem spam. Só quests.</p>
+
+  <div class="manifesto-line"
+       data-pt="Nem tudo precisa de ser produtivo. Nem tudo precisa de fazer sentido. Algumas coisas só precisam de acontecer."
+       data-en="Not everything needs to be productive. Not everything needs to make sense. Some things just need to happen.">
+    Nem tudo precisa de ser produtivo. Nem tudo precisa de fazer sentido. Algumas coisas só precisam de acontecer.
+  </div>
+
+  <div class="manifesto-line"
+       data-pt="Isto não é para quem quer ver a vida a passar. É para quem prefere perder-se um bocado e ter algo para contar."
+       data-en="This isn’t for people who want to watch life pass by. It’s for those who’d rather get a little lost and have something to tell.">
+    Isto não é para quem quer ver a vida a passar. É para quem prefere perder-se um bocado e ter algo para contar.
+  </div>
+
+</div>
+    </div>
+  </div>
 </section>
 
+<!-- WAITLIST -->
+<section class="waitlist">
+  <div class="container" style="display:flex;justify-content:center">
+    <div class="waitlist-box reveal">
+      <div class="label" style="justify-content:center"><span data-pt="Acesso Antecipado" data-en="Early Access">Acesso Antecipado</span></div>
+      <h2 class="waitlist-h2" data-pt="A TUA QUEST<br>ESPERA." data-en="YOUR QUEST<br>AWAITS.">A TUA QUEST<br>ESPERA.</h2>
+      <p class="waitlist-sub" data-pt="Entra na lista. Sê o primeiro a criar aventuras quando lançarmos." data-en="Join the list. Be first to create quests when we launch.">Entra na lista. Sê o primeiro a criar aventuras quando lançarmos.</p>
+      <div class="traction-pill">
+        <div class="traction-dot"></div>
+        <div class="traction-text"><span data-pt="<strong>1.247 Outliers</strong> já na lista." data-en="<strong>1,247 Outliers</strong> already on the list."><strong>1.247 Outliers</strong> já na lista.</span></div>
+      </div>
+      <div class="waitlist-form">
+        <input type="email" class="email-input" id="waitlistEmail" data-ph-pt="O teu endereço de email" data-ph-en="Your email address" placeholder="O teu endereço de email">
+        <button class="cta-btn" onclick="submitEmail('waitlistEmail','waitlistSuccess')">
+          <span data-pt="🚀 Garantir o Meu Lugar" data-en="🚀 Claim My Spot">🚀 Garantir o Meu Lugar</span>
+        </button>
+        <div class="success-msg" id="waitlistSuccess">
+          <span data-pt="🎉 Estás na quest. Vemo-nos do outro lado." data-en="🎉 You're on the quest. See you on the other side.">🎉 Estás na quest. Vemo-nos do outro lado.</span>
+        </div>
+        <p style="font-size:.73rem;color:var(--ink-light);margin-top:.3rem" data-pt="Sem spam.  Só o sinal quando estivermos live." data-en="No spam.  Just the signal when we're live.">Sem spam. Só o sinal quando estivermos live.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-  <div class="footer-logo"><div class="logo-dot"></div>SideQuest</div>
-  <div class="footer-links">
-    <a href="#quests" class="footer-link" data-pt="Quests" data-en="Quests">Quests</a>
-    <a href="#how" class="footer-link" data-pt="Como funciona" data-en="How it works">Como funciona</a>
-    <a href="#signup" class="footer-link" data-pt="Entrar" data-en="Join">Entrar</a>
+  <div class="footer-inner">
+    <div>
+      <a href="#" class="footer-logo">SIDEQUEST</a>
+      <div class="footer-tagline" data-pt="Feito para a vida real." data-en="Built for real life.">Feito para a vida real.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#" data-pt="Manifesto" data-en="Manifesto">Manifesto</a>
+      <a href="#" data-pt="Privacidade" data-en="Privacy">Privacidade</a>
+      <a href="#" data-pt="Contacto" data-en="Contact">Contacto</a>
+      <a href="#">Instagram</a>
+      <a href="#">Twitter / X</a>
+    </div>
+    <div class="footer-copy"><span data-pt="© 2025 SideQuest." data-en="© 2025 SideQuest.">© 2025 SideQuest.</span></div>
   </div>
-  <div class="footer-right" data-pt="Lisboa · 2025 · Vai lá fora" data-en="Lisbon · 2025 · Get out there">Lisboa · 2025 · Vai lá fora</div>
 </footer>
 
-<div class="toast" id="toast"></div>
-
 <script>
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('ring');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove', e => {
-  mx=e.clientX; my=e.clientY;
-  cursor.style.left=mx+'px'; cursor.style.top=my+'px';
-});
-(function animate(){
-  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
-  ring.style.left=rx+'px'; ring.style.top=ry+'px';
-  requestAnimationFrame(animate);
-})();
+ 
+  // NAV scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 40); });
 
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-},{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 }).observe && reveals.forEach(el =>
+    new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 }).observe(el)
+  );
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3500);
-}
-
-function handleEmail(id) {
-  const input = document.getElementById(id);
-  if(!input.value || !input.value.includes('@')) {
-    showToast(lang==='pt' ? 'Preciso do teu email!' : 'I need your email!');
-    return;
+  // Lang
+  function setLang(l) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+    document.querySelectorAll('[data-pt]').forEach(el => {
+      const t = el.getAttribute('data-' + l);
+      if (t !== null) el.innerHTML = t;
+    });
+    document.querySelectorAll('[data-ph-pt]').forEach(el => {
+      el.placeholder = el.getAttribute('data-ph-' + l) || '';
+    });
   }
-  input.value='';
-  showToast(lang==='pt' ? 'Estás dentro. Vemo-nos na quest.' : "You're in. See you on the quest.");
-}
 
-function joinQuest(btn, name) {
-  btn.textContent = lang==='pt' ? 'Na lista!' : "You're in!";
-  btn.style.background='rgba(232,84,10,.15)';
-  btn.style.color='var(--orange)';
-  btn.style.borderColor='rgba(232,84,10,.6)';
-  btn.disabled=true;
-  showToast((lang==='pt' ? 'Juntaste-te a "' : 'You joined "')+name+'" — WhatsApp a caminho!');
-}
+  // Email submit
+  function submitEmail(inputId, successId) {
+    const input = document.getElementById(inputId);
+    const success = document.getElementById(successId);
+    if (!input.value.trim() || !input.value.includes('@')) {
+      input.style.borderColor = '#e74c3c';
+      input.focus();
+      setTimeout(() => input.style.borderColor = '', 1500);
+      return;
+    }
+    input.style.display = 'none';
+    const btn = input.parentElement.querySelector('.cta-btn');
+    if (btn) btn.style.display = 'none';
+    success.style.display = 'block';
+  }
 
-function focusEmail(e) {
-  e.preventDefault();
-  window.scrollTo({top:0,behavior:'smooth'});
-  setTimeout(()=>document.getElementById('heroEmail').focus(), 500);
-}
-
-let lang = 'pt';
-function toggleLang() {
-  lang = lang==='pt' ? 'en' : 'pt';
-  document.getElementById('langBtn').textContent = lang==='pt' ? 'EN' : 'PT';
-  document.querySelectorAll('[data-pt]').forEach(el => {
-    const val = lang==='pt' ? el.getAttribute('data-pt') : el.getAttribute('data-en');
-    if(!val) return;
-    if(val.includes('<')) el.innerHTML = val;
-    else el.textContent = val;
+  ['heroEmail','waitlistEmail'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') submitEmail(id, id === 'heroEmail' ? 'heroSuccess' : 'waitlistSuccess');
+    });
   });
-  document.querySelectorAll('[data-pt-placeholder]').forEach(el => {
-    el.placeholder = lang==='pt' ? el.getAttribute('data-pt-placeholder') : el.getAttribute('data-en-placeholder');
+
+  // Parallax blobs
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    document.querySelectorAll('.hero-blob').forEach((b, i) => {
+      b.style.transform = `translateY(${y * (.04 + i * .02)}px)`;
+    });
   });
-}
 </script>
 </body>
 </html>
