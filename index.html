@@ -3,760 +3,1143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SideQuest — Para de Rolar. Começa a Viver.</title>
+<title>SideQuest</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <style>
-  :root {
-    --bg: #f4f6f2;
-    --bg2: #eef0ec;
-    --surface: #ffffff;
-    --surface2: #f8faf7;
-    --border: #dde3d8;
-    --border-strong: #c4cebf;
-    --green: #1a7a3c;
-    --green-bright: #22c55e;
-    --green-pale: #e8f5ed;
-    --green-mid: #b4d9bf;
-    --silver: #8a9488;
-    --silver-light: #c8d4c2;
-    --ink: #141a12;
-    --ink-mid: #3a4438;
-    --ink-light: #6b7868;
-    --font-display: 'Bebas Neue', sans-serif;
-    --font-body: 'Outfit', sans-serif;
-    --font-mono: 'DM Mono', monospace;
-    --radius: 16px;
-    --radius-sm: 10px;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--ink); font-family: var(--font-body); overflow-x: hidden; }
+:root {
+  --bg: #0d0f0b;
+  --bg2: #111410;
+  --surface: #161a13;
+  --surface2: #1c211a;
+  --border: #252b21;
+  --border-strong: #2f3829;
+  --green: #1a7a3c;
+  --green-bright: #22c55e;
+  --green-pale: #0f1f14;
+  --green-mid: #1a3322;
+  --silver: #4a5447;
+  --silver-light: #3a4237;
+  --ink: #e8ede4;
+  --ink-mid: #b8c4b2;
+  --ink-light: #7a8875;
+  --red: #e74c3c;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --radius: 14px;
+  --radius-sm: 9px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); overflow-x: hidden; min-height: 100vh; }
+button { cursor: pointer; font-family: var(--font-body); }
+input, textarea, select { font-family: var(--font-body); }
+a { color: inherit; text-decoration: none; }
+::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: var(--bg2); } ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
 
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 1.1rem 4rem;
-    background: rgba(244,246,242,0.85); backdrop-filter: blur(24px);
-    border-bottom: 1px solid var(--border); transition: background .3s;
-  }
-  nav.scrolled { background: rgba(244,246,242,0.97); }
-  .nav-logo {
-    font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 3px;
-    color: var(--ink); text-decoration: none;
-    display: flex; align-items: center; gap: .5rem;
-  }
-  .nav-logo-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--green-bright);
-    box-shadow: 0 0 10px rgba(34,197,94,.5);
-    animation: breathe 3s ease-in-out infinite;
-  }
-  @keyframes breathe { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: .6; } }
-  .lang-toggle {
-    display: flex; gap: .2rem;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 99px; padding: .25rem .3rem;
-  }
-  .lang-btn {
-    background: none; border: none; cursor: pointer;
-    font-family: var(--font-body); font-size: .75rem; font-weight: 600;
-    color: var(--ink-light); padding: .3rem .8rem; border-radius: 99px; transition: all .2s;
-  }
-  .lang-btn.active { background: var(--green); color: #fff; }
+/* ── UTILS ── */
+.hidden { display: none !important; }
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.gap-1 { gap: .5rem; }
+.gap-2 { gap: 1rem; }
+.gap-3 { gap: 1.5rem; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.w-full { width: 100%; }
+.text-green { color: var(--green-bright); }
+.text-dim { color: var(--ink-light); }
+.text-sm { font-size: .82rem; }
+.text-xs { font-size: .72rem; }
+.font-mono { font-family: var(--font-mono); }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    text-align: center; padding: 9rem 2rem 6rem;
-    position: relative; overflow: hidden;
-  }
-  .hero-blob { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
-  .blob-1 { width: 600px; height: 500px; background: radial-gradient(ellipse, rgba(34,197,94,.12) 0%, transparent 70%); top: -100px; left: -150px; }
-  .blob-2 { width: 500px; height: 400px; background: radial-gradient(ellipse, rgba(26,122,60,.08) 0%, transparent 70%); bottom: 0; right: -100px; }
-  .blob-3 { width: 300px; height: 300px; background: radial-gradient(ellipse, rgba(34,197,94,.06) 0%, transparent 70%); top: 40%; left: 60%; }
-  .hero-lines {
-    position: absolute; inset: 0; z-index: 0; pointer-events: none;
-    background-image: linear-gradient(rgba(26,122,60,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(26,122,60,.04) 1px, transparent 1px);
-    background-size: 80px 80px;
-    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
-  }
-  .hero-content { position: relative; z-index: 1; max-width: 860px; }
-  .hero-eyebrow {
-    display: inline-flex; align-items: center; gap: .6rem;
-    font-family: var(--font-mono); font-size: .7rem; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--green); border: 1px solid var(--green-mid); background: var(--green-pale);
-    border-radius: 99px; padding: .4rem 1.2rem; margin-bottom: 2.5rem;
-    animation: fadeUp .7s both;
-  }
-  .hero-h1 {
-    font-family: var(--font-display); font-size: clamp(4.5rem, 11vw, 9.5rem);
-    line-height: .93; letter-spacing: 2px; color: var(--ink);
-    margin-bottom: 1.5rem; animation: fadeUp .7s .1s both;
-  }
-  .hero-h1 .green-stroke { -webkit-text-stroke: 2.5px var(--green); color: transparent; display: block; }
-  .hero-h1 .green-fill { color: var(--green); display: block; }
-  .hero-sub {
-    font-size: 1.1rem; font-weight: 400; color: var(--ink-light);
-    line-height: 1.75; max-width: 500px; margin: 0 auto 3rem;
-    animation: fadeUp .7s .2s both;
-  }
-  .hero-sub em { color: var(--ink-mid); font-style: normal; font-weight: 600; }
-  .hero-form { display: flex; gap: .5rem; max-width: 460px; margin: 0 auto; animation: fadeUp .7s .3s both; }
-  .email-input {
-    flex: 1; background: var(--surface); border: 1.5px solid var(--border-strong);
-    border-radius: var(--radius-sm); padding: .9rem 1.2rem;
-    color: var(--ink); font-family: var(--font-body); font-size: .9rem;
-    outline: none; transition: border-color .2s, box-shadow .2s;
-  }
-  .email-input::placeholder { color: var(--silver); }
-  .email-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,122,60,.1); }
-  .cta-btn {
-    background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm);
-    padding: .9rem 1.6rem; font-family: var(--font-body); font-size: .85rem; font-weight: 700;
-    letter-spacing: .4px; cursor: pointer; transition: all .2s; white-space: nowrap;
-    position: relative; overflow: hidden;
-  }
-  .cta-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,.15), transparent); }
-  .cta-btn:hover { background: #145f2e; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(26,122,60,.3); }
-  .cta-btn:active { transform: translateY(0); }
-  .hero-micro { margin-top: 1.2rem; font-size: .77rem; color: var(--silver); animation: fadeUp .7s .4s both; }
-  .hero-micro strong { color: var(--green); }
-  .success-msg {
-    display: none; padding: .9rem 1.2rem;
-    background: var(--green-pale); border: 1.5px solid var(--green-mid);
-    border-radius: var(--radius-sm); color: var(--green); font-size: .88rem; font-weight: 600;
-    margin-top: .5rem;
-  }
-  .scroll-cue {
-    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
-    display: flex; flex-direction: column; align-items: center; gap: .5rem;
-    color: var(--silver-light); font-size: .65rem; letter-spacing: 3px; text-transform: uppercase;
-    font-family: var(--font-mono); animation: fadeIn 1s 1.2s both;
-  }
-  .scroll-bar { width: 1px; height: 36px; background: linear-gradient(to bottom, var(--silver-light), transparent); animation: scrollAnim 2s infinite; }
-  @keyframes scrollAnim {
-    0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; }
-    50.001% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; }
-  }
+/* ── LAYOUT ── */
+#app { min-height: 100vh; }
+.page { min-height: 100vh; padding-bottom: 5rem; }
 
-  /* SECTIONS */
-  section { padding: 7rem 2rem; position: relative; z-index: 1; }
-  .container { max-width: 1100px; margin: 0 auto; }
-  .label {
-    font-family: var(--font-mono); font-size: .68rem; letter-spacing: 4px; text-transform: uppercase;
-    color: var(--green); margin-bottom: 1.4rem; display: flex; align-items: center; gap: .8rem;
-  }
-  .label::before { content: ''; width: 20px; height: 1.5px; background: var(--green); }
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: .9rem 1.5rem;
+  background: rgba(13,15,11,.92); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 3px; color: var(--ink); display: flex; align-items: center; gap: .5rem; }
+.nav-logo-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-bright); box-shadow: 0 0 8px rgba(34,197,94,.5); animation: breathe 3s ease-in-out infinite; }
+@keyframes breathe { 0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.6} }
+.nav-actions { display: flex; gap: .6rem; align-items: center; }
+.nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; cursor: pointer; border: 2px solid var(--green-mid); }
+.nav-link { font-size: .8rem; font-weight: 600; color: var(--ink-light); padding: .4rem .8rem; border-radius: 99px; transition: all .2s; }
+.nav-link:hover, .nav-link.active { color: var(--green-bright); background: var(--green-pale); }
 
-  /* PROBLEM */
-  .problem { background: var(--surface); }
-  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
-  .problem-h2 { font-family: var(--font-display); font-size: clamp(2.8rem,5vw,4.5rem); letter-spacing: 2px; line-height: 1; margin-bottom: 2rem; }
-  .problem-h2 .red { color: #c0392b; }
-  .stat-row { display: flex; flex-direction: column; gap: 1rem; }
-  .stat-card {
-    display: flex; align-items: center; gap: 1.2rem;
-    padding: 1.2rem 1.4rem; background: var(--bg2);
-    border: 1px solid var(--border); border-radius: var(--radius); transition: border-color .2s;
-  }
-  .stat-card:hover { border-color: var(--green-mid); }
-  .stat-num { font-family: var(--font-display); font-size: 2.4rem; letter-spacing: 1px; color: var(--green); min-width: 75px; line-height: 1; }
-  .stat-label { font-size: .86rem; color: var(--ink-light); line-height: 1.6; }
-  .pain-list { display: flex; flex-direction: column; gap: .8rem; }
-  .pain-card {
-    padding: 1.3rem 1.5rem; background: var(--surface2);
-    border: 1px solid var(--border); border-left: 3px solid #e8c4c0;
-    border-radius: 0 var(--radius) var(--radius) 0; transition: border-color .2s, transform .2s;
-  }
-  .pain-card:hover { border-left-color: #c0392b; transform: translateX(4px); }
-  .pain-card strong { display: block; font-size: .9rem; color: var(--ink); margin-bottom: .3rem; }
-  .pain-card span { font-size: .84rem; color: var(--ink-light); line-height: 1.6; }
+/* ── BOTTOM NAV (mobile) ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(13,15,11,.97); border-top: 1px solid var(--border);
+  display: flex; justify-content: space-around; padding: .6rem .5rem;
+}
+.bnav-item { display: flex; flex-direction: column; align-items: center; gap: .2rem; padding: .3rem .8rem; border-radius: var(--radius-sm); color: var(--ink-light); font-size: .6rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; transition: all .2s; background: none; border: none; }
+.bnav-item svg { width: 20px; height: 20px; }
+.bnav-item.active { color: var(--green-bright); background: var(--green-pale); }
 
-  /* SOLUTION */
-  .solution { background: var(--bg2); text-align: center; }
-  .solution-h2 { font-family: var(--font-display); font-size: clamp(3rem,6vw,5.5rem); letter-spacing: 2px; line-height: 1; margin-bottom: 1rem; }
-  .solution-h2 .green { color: var(--green); }
-  .solution-sub { font-size: 1rem; color: var(--ink-light); line-height: 1.8; max-width: 560px; margin: 0 auto 3rem; }
-  .distinction { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
-  .dist-card { padding: 1.5rem 1.8rem; border-radius: var(--radius); max-width: 260px; text-align: left; }
-  .dist-card.no { background: #fff5f5; border: 1px solid #f5c6c0; }
-  .dist-card.yes { background: var(--green-pale); border: 1px solid var(--green-mid); }
-  .dist-tag { font-family: var(--font-mono); font-size: .7rem; font-weight: 500; letter-spacing: 1px; margin-bottom: .8rem; display: block; }
-  .tag-no { color: #c0392b; } .tag-yes { color: var(--green); }
-  .dist-card ul { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
-  .dist-card li { font-size: .85rem; color: var(--ink-light); }
+/* ── FORMS ── */
+.input {
+  width: 100%; background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: .8rem 1rem; color: var(--ink);
+  font-size: .9rem; outline: none; transition: border-color .2s, box-shadow .2s;
+}
+.input::placeholder { color: var(--silver); }
+.input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,122,60,.15); }
+textarea.input { resize: vertical; min-height: 90px; }
+.label-field { font-size: .78rem; font-weight: 600; color: var(--ink-mid); margin-bottom: .4rem; letter-spacing: .5px; }
+.form-group { display: flex; flex-direction: column; margin-bottom: 1.1rem; }
 
-  /* HOW */
-  .how { background: var(--surface); }
-  .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; position: relative; }
-  .steps::after {
-    content: ''; position: absolute; top: 1.8rem;
-    left: calc(33.33% - .5rem); right: calc(33.33% - .5rem);
-    height: 1px; background: linear-gradient(90deg, transparent, var(--green-mid), transparent); pointer-events: none;
-  }
-  .step { padding: 2.5rem 1.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; text-align: center; transition: all .3s; }
-  .step:hover { border-color: var(--green-mid); transform: translateY(-5px); box-shadow: 0 16px 48px rgba(26,122,60,.08); }
-  .step-num {
-    width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--green);
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 1.2rem; font-family: var(--font-mono); font-size: .9rem;
-    color: var(--green); background: var(--surface); position: relative; z-index: 1;
-  }
-  .step-icon { font-size: 1.8rem; margin-bottom: 1rem; }
-  .step h3 { font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: .5rem; }
-  .step p { font-size: .83rem; color: var(--ink-light); line-height: 1.7; }
+/* ── BUTTONS ── */
+.btn { border: none; border-radius: var(--radius-sm); padding: .75rem 1.4rem; font-size: .85rem; font-weight: 700; transition: all .2s; letter-spacing: .3px; }
+.btn-primary { background: var(--green); color: #fff; }
+.btn-primary:hover { background: #145f2e; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(26,122,60,.3); }
+.btn-secondary { background: var(--surface2); color: var(--ink); border: 1px solid var(--border-strong); }
+.btn-secondary:hover { border-color: var(--green-mid); background: var(--green-pale); }
+.btn-ghost { background: none; color: var(--ink-light); border: 1px solid var(--border); }
+.btn-ghost:hover { color: var(--ink); border-color: var(--border-strong); }
+.btn-danger { background: rgba(231,76,60,.1); color: var(--red); border: 1px solid rgba(231,76,60,.2); }
+.btn-danger:hover { background: rgba(231,76,60,.2); }
+.btn-sm { padding: .4rem .9rem; font-size: .78rem; }
+.btn-full { width: 100%; }
+.btn-icon { display: inline-flex; align-items: center; gap: .5rem; }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
 
-  /* QUEST CARDS */
-  .quests { background: var(--bg2); }
-  .quests-h2 { font-family: var(--font-display); font-size: clamp(2.5rem,5vw,4rem); letter-spacing: 2px; line-height: 1; margin-bottom: .4rem; }
-  .quests-sub { font-size: .9rem; color: var(--ink-light); margin-bottom: 2.5rem; }
-  .quest-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+/* ── CARDS ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem 1.4rem; }
+.card:hover { border-color: var(--border-strong); }
 
-  .quest-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 18px; overflow: hidden; transition: all .3s;
-    cursor: pointer; display: flex; flex-direction: column;
-  }
-  .quest-card:hover { border-color: var(--green-mid); box-shadow: 0 12px 48px rgba(26,122,60,.1); transform: translateY(-4px); }
-  .quest-card-top { padding: 1.3rem 1.4rem .9rem; border-bottom: 1px solid var(--border); }
-  .quest-category {
-    font-family: var(--font-mono); font-size: .62rem; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--green); margin-bottom: .6rem; display: flex; align-items: center; gap: .5rem;
-  }
-  .category-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green-bright); }
-  .quest-title-card { font-family: var(--font-display); font-size: 1.45rem; letter-spacing: 1px; line-height: 1.1; color: var(--ink); margin-bottom: .5rem; }
-  .quest-meta-list { display: flex; flex-direction: column; gap: .3rem; margin-top: .8rem; }
-  .quest-meta-item { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: var(--ink-light); }
-  .meta-icon { font-size: .85rem; color: var(--green); }
-  .quest-card-bottom { padding: .9rem 1.4rem; margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
+/* ── AUTH PAGES ── */
+.auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background: var(--bg); }
+.auth-box { width: 100%; max-width: 420px; }
+.auth-logo { font-family: var(--font-display); font-size: 2.5rem; letter-spacing: 4px; color: var(--ink); margin-bottom: .3rem; display: flex; align-items: center; gap: .6rem; }
+.auth-sub { font-size: .88rem; color: var(--ink-light); margin-bottom: 2.5rem; line-height: 1.6; }
+.auth-box h2 { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 1.8rem; color: var(--ink); }
+.auth-switch { text-align: center; margin-top: 1.5rem; font-size: .84rem; color: var(--ink-light); }
+.auth-switch a { color: var(--green-bright); font-weight: 600; }
+.auth-error { background: rgba(231,76,60,.1); border: 1px solid rgba(231,76,60,.3); color: #f08080; font-size: .82rem; padding: .7rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; }
 
-  /* Avatar stack */
-  .avatar-group { display: flex; align-items: center; gap: 0; }
-  .avatar {
-    width: 28px; height: 28px; border-radius: 50%;
-    border: 2px solid var(--surface); margin-left: -8px; overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-    font-size: .62rem; font-weight: 700; color: #fff; flex-shrink: 0;
-  }
-  .avatar:first-child { margin-left: 0; }
-  .avatar-extra {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: var(--green-pale); border: 2px solid var(--surface);
-    display: flex; align-items: center; justify-content: center;
-    font-size: .58rem; font-weight: 700; color: var(--green);
-    margin-left: -8px; font-family: var(--font-mono);
-  }
-  .vagas-label { font-size: .72rem; color: var(--ink-light); margin-left: .7rem; font-family: var(--font-mono); }
-  .entrar-btn {
-    font-family: var(--font-body); font-size: .72rem; font-weight: 700;
-    letter-spacing: 1px; text-transform: uppercase; color: var(--green);
-    background: none; border: 1px solid var(--green-mid);
-    padding: .4rem .9rem; border-radius: 99px; cursor: pointer; transition: all .2s;
-  }
-  .entrar-btn:hover { background: var(--green); color: #fff; border-color: var(--green); }
+/* ── TAGS ── */
+.tag {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-family: var(--font-mono); font-size: .65rem; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: .3rem .7rem; border-radius: 99px;
+  background: var(--green-pale); color: var(--green-bright); border: 1px solid var(--green-mid);
+}
+.tag-list { display: flex; flex-wrap: wrap; gap: .4rem; }
+.tag-select-btn {
+  font-family: var(--font-mono); font-size: .65rem; letter-spacing: 1px; text-transform: uppercase;
+  padding: .35rem .8rem; border-radius: 99px; background: var(--surface2);
+  border: 1px solid var(--border); color: var(--ink-light); cursor: pointer; transition: all .2s;
+}
+.tag-select-btn.selected { background: var(--green-pale); border-color: var(--green-mid); color: var(--green-bright); }
 
-  /* MANIFESTO */
-  .manifesto { background: var(--ink); color: var(--bg); text-align: center; position: relative; overflow: hidden; }
-  .manifesto-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 20% 50%, rgba(34,197,94,.07), transparent), radial-gradient(ellipse 50% 50% at 80% 50%, rgba(26,122,60,.05), transparent); }
-  .manifesto-content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
-  .manifesto-q { font-family: var(--font-display); font-size: clamp(2.8rem,7vw,5.5rem); letter-spacing: 2px; line-height: 1.02; margin-bottom: 3rem; color: #f4f6f2; }
-  .manifesto-q .green { color: var(--green-bright); }
-  .manifesto-lines { display: flex; flex-direction: column; gap: 1rem; }
-  .manifesto-line { font-size: .95rem; color: rgba(244,246,242,.6); line-height: 1.8; padding: 1rem 1.5rem; border-left: 2px solid rgba(34,197,94,.25); text-align: left; }
+/* ── QUEST CARD ── */
+.quest-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; transition: all .25s; cursor: pointer;
+}
+.quest-card:hover { border-color: var(--green-mid); box-shadow: 0 8px 32px rgba(0,0,0,.4); transform: translateY(-2px); }
+.quest-card-header { padding: 1.1rem 1.3rem .8rem; border-bottom: 1px solid var(--border); }
+.quest-category-label { font-family: var(--font-mono); font-size: .6rem; letter-spacing: 3px; text-transform: uppercase; color: var(--green-bright); margin-bottom: .5rem; display: flex; align-items: center; gap: .4rem; }
+.quest-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green-bright); }
+.quest-title { font-family: var(--font-display); font-size: 1.35rem; letter-spacing: 1px; line-height: 1.1; color: var(--ink); margin-bottom: .5rem; }
+.quest-desc { font-size: .82rem; color: var(--ink-light); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.quest-card-meta { padding: .8rem 1.3rem; display: flex; gap: 1.2rem; flex-wrap: wrap; }
+.quest-meta-item { display: flex; align-items: center; gap: .4rem; font-size: .75rem; color: var(--ink-light); font-family: var(--font-mono); }
+.quest-card-footer { padding: .8rem 1.3rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); }
+.avatar-stack { display: flex; }
+.avatar-sm { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--surface); display: flex; align-items: center; justify-content: center; font-size: .58rem; font-weight: 700; color: #fff; margin-left: -7px; flex-shrink: 0; }
+.avatar-sm:first-child { margin-left: 0; }
+.spots-label { font-size: .72rem; color: var(--ink-light); font-family: var(--font-mono); margin-left: .6rem; }
 
-  /* WAITLIST */
-  .waitlist { background: var(--surface); text-align: center; }
-  .waitlist-box {
-    max-width: 580px; margin: 0 auto; padding: 3.5rem;
-    background: var(--green-pale); border: 1.5px solid var(--green-mid);
-    border-radius: 24px; position: relative; overflow: hidden;
-  }
-  .waitlist-box::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(34,197,94,.15), transparent); border-radius: 50%; }
-  .waitlist-h2 { font-family: var(--font-display); font-size: clamp(2.5rem,5vw,4rem); letter-spacing: 2px; line-height: 1; color: var(--ink); margin-bottom: .6rem; position: relative; }
-  .waitlist-sub { font-size: .9rem; color: var(--ink-light); margin-bottom: 2rem; position: relative; }
-  .traction-pill { display: inline-flex; align-items: center; gap: .6rem; background: var(--surface); border: 1px solid var(--green-mid); border-radius: 99px; padding: .5rem 1.2rem; margin-bottom: 1.8rem; position: relative; }
-  .traction-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-bright); box-shadow: 0 0 8px rgba(34,197,94,.6); animation: breathe 2s infinite; }
-  .traction-text { font-size: .78rem; color: var(--ink-light); font-weight: 500; }
-  .traction-text strong { color: var(--green); }
-  .waitlist-form { display: flex; flex-direction: column; gap: .8rem; position: relative; }
-  .waitlist-form .email-input { text-align: center; background: var(--surface); }
-  .waitlist-form .cta-btn { padding: 1rem; font-size: .95rem; }
+/* ── FEED ── */
+.feed-page { padding-top: 4.5rem; }
+.feed-header { padding: 1.5rem 1.2rem 1rem; }
+.feed-title { font-family: var(--font-display); font-size: 2.2rem; letter-spacing: 2px; line-height: 1; }
+.feed-title .green { color: var(--green-bright); }
+.feed-filters { padding: .5rem 1.2rem 1rem; display: flex; gap: .5rem; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+.feed-filters::-webkit-scrollbar { display: none; }
+.filter-btn { font-family: var(--font-mono); font-size: .65rem; letter-spacing: 2px; text-transform: uppercase; padding: .4rem 1rem; border-radius: 99px; background: var(--surface2); border: 1px solid var(--border); color: var(--ink-light); white-space: nowrap; transition: all .2s; }
+.filter-btn.active { background: var(--green-pale); border-color: var(--green-mid); color: var(--green-bright); }
+.feed-grid { padding: 0 1rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+.feed-empty { text-align: center; padding: 4rem 2rem; color: var(--ink-light); }
+.feed-empty .big { font-family: var(--font-display); font-size: 3rem; letter-spacing: 2px; color: var(--border-strong); }
+.fab {
+  position: fixed; bottom: 5rem; right: 1.2rem; z-index: 100;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--green); border: none; color: #fff;
+  font-size: 1.6rem; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(34,197,94,.3); transition: all .2s;
+}
+.fab:hover { background: #145f2e; transform: scale(1.1); }
 
-  /* FOOTER */
-  footer { background: var(--ink); color: rgba(244,246,242,.5); padding: 3rem 2rem; border-top: 1px solid rgba(255,255,255,.06); }
-  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
-  .footer-logo { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 3px; color: var(--bg); text-decoration: none; }
-  .footer-tagline { font-size: .72rem; margin-top: .2rem; letter-spacing: 1px; color: rgba(244,246,242,.3); }
-  .footer-links { display: flex; gap: 2rem; }
-  .footer-links a { color: rgba(244,246,242,.35); text-decoration: none; font-size: .8rem; transition: color .2s; }
-  .footer-links a:hover { color: var(--green-bright); }
-  .footer-copy { font-size: .75rem; color: rgba(244,246,242,.25); }
+/* ── QUEST DETAIL ── */
+.detail-page { padding-top: 4.5rem; max-width: 680px; margin: 0 auto; padding-left: 1rem; padding-right: 1rem; }
+.detail-back { display: flex; align-items: center; gap: .5rem; color: var(--ink-light); font-size: .82rem; padding: 1rem 0; cursor: pointer; transition: color .2s; }
+.detail-back:hover { color: var(--green-bright); }
+.detail-cat { font-family: var(--font-mono); font-size: .65rem; letter-spacing: 3px; text-transform: uppercase; color: var(--green-bright); margin-bottom: .6rem; }
+.detail-title { font-family: var(--font-display); font-size: clamp(2rem, 6vw, 3rem); letter-spacing: 2px; line-height: 1.05; color: var(--ink); margin-bottom: .8rem; }
+.detail-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin: 1.2rem 0; }
+.detail-meta-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .8rem 1rem; }
+.detail-meta-card .mlabel { font-family: var(--font-mono); font-size: .6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-light); margin-bottom: .2rem; }
+.detail-meta-card .mval { font-size: .88rem; font-weight: 600; color: var(--ink); }
+.detail-desc { font-size: .9rem; color: var(--ink-mid); line-height: 1.8; margin: 1.2rem 0; }
+.members-section { margin: 1.5rem 0; }
+.section-label { font-family: var(--font-mono); font-size: .65rem; letter-spacing: 3px; text-transform: uppercase; color: var(--green); margin-bottom: 1rem; display: flex; align-items: center; gap: .6rem; }
+.section-label::before { content:''; width: 14px; height: 1.5px; background: var(--green); }
+.member-list { display: flex; flex-direction: column; gap: .6rem; }
+.member-item { display: flex; align-items: center; gap: .8rem; padding: .7rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.member-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+.member-name { font-size: .88rem; font-weight: 600; color: var(--ink); }
+.member-role { font-size: .7rem; color: var(--ink-light); font-family: var(--font-mono); }
+.creator-badge { font-family: var(--font-mono); font-size: .58rem; letter-spacing: 1px; text-transform: uppercase; background: var(--green-pale); color: var(--green-bright); border: 1px solid var(--green-mid); padding: .2rem .5rem; border-radius: 99px; margin-left: auto; }
 
-  /* ANIMATIONS */
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .65s ease, transform .65s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-  .d1 { transition-delay: .1s; } .d2 { transition-delay: .2s; } .d3 { transition-delay: .3s; }
+/* ── CHAT ── */
+.chat-section { margin: 1.5rem 0; }
+.chat-box {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; display: flex; flex-direction: column; height: 360px;
+}
+.chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .6rem; }
+.chat-msg { display: flex; gap: .6rem; align-items: flex-start; }
+.chat-msg.own { flex-direction: row-reverse; }
+.chat-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .6rem; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: .1rem; }
+.chat-bubble { max-width: 75%; padding: .6rem .9rem; border-radius: 12px; font-size: .83rem; line-height: 1.5; }
+.chat-msg:not(.own) .chat-bubble { background: var(--surface2); border: 1px solid var(--border); color: var(--ink); border-radius: 2px 12px 12px 12px; }
+.chat-msg.own .chat-bubble { background: var(--green); color: #fff; border-radius: 12px 2px 12px 12px; }
+.chat-name { font-size: .62rem; color: var(--ink-light); font-family: var(--font-mono); margin-bottom: .2rem; }
+.chat-time { font-size: .6rem; color: var(--ink-light); margin-top: .2rem; }
+.chat-input-row { display: flex; gap: .5rem; padding: .8rem 1rem; border-top: 1px solid var(--border); background: var(--surface2); }
+.chat-input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 99px; padding: .55rem 1rem; color: var(--ink); font-size: .83rem; outline: none; }
+.chat-input:focus { border-color: var(--green-mid); }
+.chat-send { background: var(--green); border: none; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+.chat-send:hover { background: #145f2e; }
+.chat-locked { padding: 2rem; text-align: center; color: var(--ink-light); font-size: .83rem; }
 
-  /* RESPONSIVE */
-  @media (max-width: 800px) {
-    nav { padding: 1rem 1.5rem; }
-    .problem-grid { grid-template-columns: 1fr; gap: 3rem; }
-    .steps { grid-template-columns: 1fr; } .steps::after { display: none; }
-    .quest-grid { grid-template-columns: 1fr 1fr; }
-    .hero-form { flex-direction: column; }
-    .footer-inner { flex-direction: column; text-align: center; }
-    .footer-links { justify-content: center; }
-    .distinction { flex-direction: column; align-items: center; }
-    .waitlist-box { padding: 2rem 1.4rem; }
-  }
-  @media (max-width: 520px) { .quest-grid { grid-template-columns: 1fr; } }
+/* ── CREATE QUEST ── */
+.create-page { padding-top: 4.5rem; max-width: 600px; margin: 0 auto; padding-left: 1rem; padding-right: 1rem; }
+.create-header { padding: 1.5rem 0 .5rem; }
+.create-header h1 { font-family: var(--font-display); font-size: 2.2rem; letter-spacing: 2px; }
+
+/* ── PROFILE ── */
+.profile-page { padding-top: 4.5rem; max-width: 680px; margin: 0 auto; padding-left: 1rem; padding-right: 1rem; }
+.profile-header { padding: 1.5rem 0 1rem; display: flex; gap: 1.2rem; align-items: flex-start; }
+.profile-avatar-big { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+.profile-name { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 2px; line-height: 1; }
+.profile-bio { font-size: .84rem; color: var(--ink-light); margin-top: .4rem; line-height: 1.6; }
+.quests-section { margin: 1.5rem 0; }
+
+/* ── EXPLORE ── */
+.explore-page { padding-top: 4.5rem; }
+.search-bar-wrap { padding: 1rem 1.2rem; }
+.search-bar { width: 100%; background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: .8rem 1rem .8rem 2.8rem; color: var(--ink); font-size: .9rem; outline: none; transition: border-color .2s; }
+.search-bar:focus { border-color: var(--green); }
+.search-wrap { position: relative; }
+.search-icon { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); color: var(--silver); }
+
+/* ── LOADING ── */
+.loading-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+.loading-logo { font-family: var(--font-display); font-size: 2.5rem; letter-spacing: 4px; color: var(--ink); animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.modal-box { background: var(--surface); border: 1px solid var(--border-strong); border-radius: 20px; padding: 1.8rem; width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto; }
+.modal-title { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 2px; margin-bottom: 1.5rem; }
+
+/* ── NOTIFICATIONS ── */
+.notif-toast { position: fixed; bottom: 5.5rem; left: 50%; transform: translateX(-50%) translateY(100px); z-index: 999; background: var(--surface2); border: 1px solid var(--green-mid); border-radius: var(--radius-sm); padding: .7rem 1.4rem; font-size: .83rem; color: var(--green-bright); transition: transform .3s; white-space: nowrap; }
+.notif-toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── AVATAR COLORS ── */
+.av-0{background:#e67e22}.av-1{background:#2ecc71}.av-2{background:#9b59b6}.av-3{background:#e74c3c}.av-4{background:#3498db}.av-5{background:#1abc9c}.av-6{background:#f39c12}.av-7{background:#e91e63}.av-8{background:#00bcd4}.av-9{background:#4caf50}
+
+/* ── RESPONSIVE ── */
+@media(min-width:768px){
+  .bottom-nav{display:none}
+  .fab{bottom:1.5rem}
+  .feed-grid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+}
+@media(max-width:767px){
+  .feed-grid{grid-template-columns:1fr}
+  .detail-meta-grid{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
-
-<nav id="mainNav">
-  <a href="#" class="nav-logo">
-    <div class="nav-logo-dot"></div>SIDEQUEST
-  </a>
-  <div class="lang-toggle">
-    <button class="lang-btn active" onclick="setLang('pt')">🇵🇹 PT</button>
-    <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+<div id="app">
+  <div class="loading-screen">
+    <div class="loading-logo">SIDE<span style="color:var(--green-bright)">QUEST</span></div>
   </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-blob blob-1"></div>
-  <div class="hero-blob blob-2"></div>
-  <div class="hero-blob blob-3"></div>
-  <div class="hero-lines"></div>
-  <div class="hero-content">
-    <div class="hero-eyebrow" data-pt="Um movimento para a vida real" data-en="A movement for real life">Um movimento para a vida real</div>
-    <h1 class="hero-h1">
-      <span data-pt="PARA DE" data-en="STOP">PARA DE</span>
-      <span class="green-stroke" data-pt="ASSISTIR" data-en="WATCHING">ASSISTIR</span>
-      <span class="green-fill" data-pt="COMEÇA A VIVER" data-en="START LIVING">COMEÇA A VIVER</span>
-    </h1>
-    <p class="hero-sub">
-      <span data-pt="A vida é demasiado curta para veres os outros a vivê-la. A <em>SideQuest</em> liga pessoas prontas a criar experiências reais e inesquecíveis." data-en="Life is too short to watch others live it. <em>SideQuest</em> connects people ready to create real, unforgettable experiences.">
-        A vida é demasiado curta para veres os outros a vivê-la. A <em>SideQuest</em> liga pessoas prontas a criar experiências reais e inesquecíveis.
-      </span>
-    </p>
-    <div class="hero-form">
-      <input type="email" class="email-input" id="heroEmail" data-ph-pt="O teu email" data-ph-en="Your email" placeholder="O teu email">
-      <button class="cta-btn" onclick="submitEmail('heroEmail','heroSuccess')">
-        <span data-pt="Entrar na Lista" data-en="Join Waitlist">Entrar na Lista</span>
-      </button>
-    </div>
-    <div class="success-msg" id="heroSuccess">
-      <span data-pt="🎉 Estás dentro! Entraremos em contacto em breve." data-en="🎉 You're in! We'll be in touch soon.">🎉 Estás dentro! Entraremos em contacto em breve.</span>
-    </div>
-    <p class="hero-micro">
-      <span data-pt="Sem spam. Só o sinal quando estivermos live. <strong>1.247 já entraram.</strong>" data-en="No spam, ever. Just the sign when we are live. <strong>1,247 already joined.</strong>">Sem spam. Só o sinal quando estivermos live <strong>1.247 já entraram.</strong></span>
-    </p>
-  </div>
-  <div class="scroll-cue"><div class="scroll-bar"></div></div>
-</section>
-
-<!-- PROBLEM -->
-<section class="problem">
-  <div class="container">
-    <div class="problem-grid">
-      <div class="reveal">
-        <div class="label"><span data-pt="O Problema" data-en="The Problem">O Problema</span></div>
-        <h2 class="problem-h2">
-          <span data-pt="Não estás a viver.<br>Estás a <span class='red'>observar.</span>" data-en="You're not living.<br>You're <span class='red'>watching.</span>">Não estás a viver.<br>Estás a <span class="red">observar.</span></span>
-        </h2>
-        <div class="stat-row">
-          <div class="stat-card">
-            <div class="stat-num">7h</div>
-            <div class="stat-label" data-pt="Tempo médio diário em ecrãs." data-en="Average daily screen time.">Tempo médio diário em ecrãs.</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num">72%</div>
-            <div class="stat-label" data-pt="Das pessoas querem mais aventura — mas não sabem por onde começar." data-en="Of people want more adventure — but don't know where to start.">Das pessoas querem mais aventura — mas não sabem por onde começar.</div>
-          </div>
-        </div>
-      </div>
-      <div class="pain-list reveal d2">
-        <div class="pain-card">
-          <strong data-pt="Dás Scroll em vez de fazeres." data-en="You scroll instead of doing.">Dás Scroll em vez de fazeres.</strong>
-          <span data-pt="Cada deslize é uma experiência que outra pessoa teve. Devias ter sido tu." data-en="Every swipe is an experience someone else had. That should've been you.">Cada deslize é uma experiência que outra pessoa teve. Devias ter sido tu.</span>
-        </div>
-        <div class="pain-card">
-          <strong data-pt="Tens ideias. Sozinho é difícil." data-en="You have ideas. Alone is hard.">Tens ideias. Sozinho é difícil.</strong>
-          <span data-pt="Tens 50 ideias e zero companheiros. A aventura morre antes de começar." data-en="50 ideas, zero companions. The quest dies before it starts.">Tens 50 ideias e zero companheiros. A aventura morre antes de começar.</span>
-        </div>
-        <div class="pain-card">
-          <strong data-pt="As redes sociais vendem-te FOMO." data-en="Social media sells you FOMO.">As redes sociais vendem-te FOMO.</strong>
-          <span data-pt="Foram desenhadas para te manter a ver. A SideQuest foi desenhada para te fazer mover." data-en="They're designed to keep you watching. SideQuest is designed to make you move.">Foram desenhadas para te manter a ver. A SideQuest foi desenhada para te fazer mover.</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SOLUTION -->
-<section class="solution">
-  <div class="container">
-    <div class="reveal">
-      <div class="label" style="justify-content:center"><span data-pt="A Solução" data-en="The Solution">A Solução</span></div>
-      <h2 class="solution-h2">
-        <span data-pt="O QUE É A <span class='green'>SIDEQUEST?</span>" data-en="WHAT IS <span class='green'>SIDEQUEST?</span>">O QUE É A <span class="green">SIDEQUEST?</span></span>
-      </h2>
-      <p class="solution-sub" data-pt="Uma plataforma onde as pessoas criam e juntam-se a aventuras reais. Não convencionais. Memoráveis. O tipo de experiências sobre as quais contas histórias." data-en="A platform where people create and join real-life quests. Unconventional. Memorable. The kind you actually tell stories about.">
-        Uma plataforma onde as pessoas criam e juntam-se a aventuras reais. Não convencionais. Memoráveis. O tipo de experiências sobre as quais contas histórias.
-      </p>
-    </div>
-    <div class="distinction reveal d1">
-      <div class="dist-card no">
-        <span class="dist-tag tag-no" data-pt="🚫 NÃO É ISTO" data-en="🚫 NOT THIS">🚫 NÃO É ISTO</span>
-        <ul>
-          <li data-pt="Encontros casuais de café" data-en="Casual coffee meetups">Encontros casuais de café</li>
-          <li data-pt="Listas de eventos genéricos" data-en="Generic event listings">Listas de eventos genéricos</li>
-          <li data-pt="Networking pelo networking" data-en="Networking for networking's sake">Networking pelo networking</li>
-          <li data-pt="Mais consumo passivo de conteúdo" data-en="More passive content consumption">Mais consumo passivo de conteúdo</li>
-        </ul>
-      </div>
-      <div class="dist-card yes">
-        <span class="dist-tag tag-yes" data-pt="✅ É ISTO" data-en="✅ THIS">✅ É ISTO</span>
-        <ul>
-          <li data-pt="Experiências dignas de história" data-en="Story-worthy experiences">Experiências dignas de história</li>
-          <li data-pt="Pessoas reais, aventuras reais" data-en="Real people, real adventures">Pessoas reais, aventuras reais</li>
-          <li data-pt="Não convencional por design" data-en="Unconventional by design">Não convencional por design</li>
-          <li data-pt="Feito para agir" data-en="Built for action">Feito para agir</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HOW -->
-<section class="how">
-  <div class="container">
-    <div class="reveal">
-      <div class="label"><span data-pt="Como Funciona" data-en="How It Works">Como Funciona</span></div>
-      <h2 style="font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);letter-spacing:2px;line-height:1;margin-bottom:.3rem">
-        <span data-pt="TRÊS PASSOS.<br>UMA VIDA VIVIDA." data-en="THREE STEPS.<br>ONE LIFE LIVED.">TRÊS PASSOS.<br>UMA VIDA VIVIDA.</span>
-      </h2>
-    </div>
-    <div class="steps">
-      <div class="step reveal d1">
-        <div class="step-num">01</div>
-        <div class="step-icon">⚡</div>
-        <h3 data-pt="Cria uma SideQuest" data-en="Create a SideQuest">Cria uma SideQuest</h3>
-        <p data-pt="Tens uma ideia que anseias viver? Publica-a. Quanto mais estranha, melhor." data-en="Have a wild idea? Post it. The weirder, the better.">Tens uma ideia que anseias viver? Publica-a. Quanto mais estranha, melhor.</p>
-      </div>
-      <div class="step reveal d2">
-        <div class="step-num">02</div>
-        <div class="step-icon">🧭</div>
-        <h3 data-pt="Encontra pessoas como tu" data-en="Find People Like You">Encontra pessoas como tu</h3>
-        <p data-pt="Outros que querem a mesma experiência encontram-te." data-en="Others who want the same find you.">Outros que querem a mesma experiência encontram-te.</p>
-      </div>
-      <div class="step reveal d3">
-        <div class="step-num">03</div>
-        <div class="step-icon">🌍</div>
-        <h3 data-pt="Vai Vivê-la" data-en="Go Live It">Vai Vivê-la</h3>
-        <p data-pt="Sem algoritmo. Sem anúncios. Só tu e pessoas prontas a criar uma memória real." data-en="No algorithm. No ads. Just you and people ready to make a real memory.">Sem algoritmo. Sem anúncios. Só tu e pessoas prontas a criar uma memória real.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- QUEST CARDS -->
-<section class="quests">
-  <div class="container">
-    <div class="reveal">
-      <div class="label"><span data-pt="Aventuras Ativas" data-en="Active Quests">Aventuras Ativas</span></div>
-      <h2 class="quests-h2" data-pt="É ISTO QUE QUEREMOS DIZER." data-en="THIS IS WHAT WE MEAN.">É ISTO QUE QUEREMOS DIZER.</h2>
-      <p class="quests-sub" data-pt="Exemplos reais do que são SideQuests. " data-en="Real examples of what SideQuests look like. ">Exemplos reais do que são SideQuests. </p>
-    </div>
-    <div class="quest-grid">
-
-      <div class="quest-card reveal d1">
-        <div class="quest-card-top">
-          <div class="quest-category"><div class="category-dot"></div><span data-pt="ALPINISMO · PORTUGAL" data-en="HIKING · PORTUGAL">ALPINISMO · PORTUGAL</span></div>
-          <div class="quest-title-card" data-pt="SETÚBAL →<br>LISBOA DE BICI" data-en="SETÚBAL →<br>LISBON BY BIKE">SETÚBAL →<br>LISBOA DE BIKE</div>
-          <div class="quest-meta-list">
-            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="8 dias" data-en="8 days">8 dias</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◉</span><span>Julho 2025</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€40</span></div>
-          </div>
-        </div>
-        <div class="quest-card-bottom">
-          <div style="display:flex;align-items:center">
-            <div class="avatar-group">
-              <div class="avatar" style="background:#e67e22">AK</div>
-              <div class="avatar" style="background:#2ecc71">MV</div>
-              <div class="avatar-extra">+1</div>
-            </div>
-            <span class="vagas-label" data-pt="3 vagas" data-en="3 spots">3 vagas</span>
-          </div>
-          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
-        </div>
-      </div>
-
-      <div class="quest-card reveal d2">
-        <div class="quest-card-top">
-          <div class="quest-category"><div class="category-dot"></div><span data-pt="URBANO · NOTURNO" data-en="URBAN · NIGHT">URBANO · NOTURNO</span></div>
-          <div class="quest-title-card" data-pt="EXPLORAÇÃO<br>À MEIA-NOITE" data-en="MIDNIGHT<br>EXPLORATION">EXPLORAÇÃO<br>À MEIA-NOITE</div>
-          <div class="quest-meta-list">
-            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="1 noite" data-en="1 night">1 noite</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◉</span><span>Agosto 2025</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€0</span></div>
-          </div>
-        </div>
-        <div class="quest-card-bottom">
-          <div style="display:flex;align-items:center">
-            <div class="avatar-group">
-              <div class="avatar" style="background:#9b59b6">JF</div>
-              <div class="avatar" style="background:#e74c3c">BM</div>
-              <div class="avatar-extra">+2</div>
-            </div>
-            <span class="vagas-label" data-pt="5 vagas" data-en="5 spots">5 vagas</span>
-          </div>
-          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
-        </div>
-      </div>
-
-      <div class="quest-card reveal d3">
-        <div class="quest-card-top">
-          <div class="quest-category"><div class="category-dot"></div><span data-pt="ACAMPAMENTO · URBANO" data-en="CAMPING · URBAN">ACAMPAMENTO · URBANO</span></div>
-          <div class="quest-title-card" data-pt="DORMIR NUM<br>TELHADO" data-en="SLEEP ON<br>A ROOFTOP">DORMIR NUM<br>TELHADO</div>
-          <div class="quest-meta-list">
-            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="1 noite" data-en="1 night">1 noite</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◉</span><span>Setembro 2025</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€20</span></div>
-          </div>
-        </div>
-        <div class="quest-card-bottom">
-          <div style="display:flex;align-items:center">
-            <div class="avatar-group">
-              <div class="avatar" style="background:#1abc9c">CR</div>
-              <div class="avatar" style="background:#f39c12">DM</div>
-              <div class="avatar" style="background:#e74c3c">PV</div>
-              <div class="avatar-extra">+2</div>
-            </div>
-            <span class="vagas-label" data-pt="2 vagas" data-en="2 spots">2 vagas</span>
-          </div>
-          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
-        </div>
-      </div>
-
-      <div class="quest-card reveal d1">
-        <div class="quest-card-top">
-          <div class="quest-category"><div class="category-dot"></div><span data-pt="ADRENALINA · EXTREMO" data-en="ADRENALINE · EXTREME">ADRENALINA · EXTREMO</span></div>
-          <div class="quest-title-card" data-pt="PARAQUEDISMO<br>" data-en="SKYDIVING<br>">PARAQUEDISMO<br></div>
-          <div class="quest-meta-list">
-            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="1 dia" data-en="1 day">1 dia</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◉</span><span>Outubro 2025</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€200</span></div>
-          </div>
-        </div>
-        <div class="quest-card-bottom">
-          <div style="display:flex;align-items:center">
-            <div class="avatar-group">
-              <div class="avatar" style="background:#16a085">RL</div>
-              <div class="avatar" style="background:#8e44ad">KN</div>
-            </div>
-            <span class="vagas-label" data-pt="4 vagas" data-en="4 spots">4 vagas</span>
-          </div>
-          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
-        </div>
-      </div>
-
-      <div class="quest-card reveal d2">
-        <div class="quest-card-top">
-          <div class="quest-category"><div class="category-dot"></div><span data-pt="VIAGEM · ESPONTÂNEO" data-en="TRAVEL · SPONTANEOUS">VIAGEM · ESPONTÂNEO</span></div>
-          <div class="quest-title-card" data-pt="ROAD TRIP<br>SEM DESTINO" data-en="ROAD TRIP<br>NO DESTINATION">ROAD TRIP<br>SEM DESTINO</div>
-          <div class="quest-meta-list">
-            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="Fim de semana" data-en="Weekend">Fim de semana</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◉</span><span data-pt="A definir" data-en="TBD">A definir</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€80</span></div>
-          </div>
-        </div>
-        <div class="quest-card-bottom">
-          <div style="display:flex;align-items:center">
-            <div class="avatar-group">
-              <div class="avatar" style="background:#d35400">AF</div>
-              <div class="avatar" style="background:#27ae60">GS</div>
-              <div class="avatar" style="background:#2980b9">LM</div>
-              <div class="avatar-extra">+3</div>
-            </div>
-            <span class="vagas-label" data-pt="2 vagas" data-en="2 spots">2 vagas</span>
-          </div>
-          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
-        </div>
-      </div>
-
-      <div class="quest-card reveal d3">
-        <div class="quest-card-top">
-          <div class="quest-category"><div class="category-dot"></div><span data-pt="ÁGUA · AMANHECER" data-en="WATER · DAWN">ÁGUA · AMANHECER</span></div>
-          <div class="quest-title-card" data-pt="MERGULHO AO<br>NASCER DO SOL" data-en="SUNRISE SWIM<br>ATLANTIC">MERGULHO AO<br>NASCER DO SOL</div>
-          <div class="quest-meta-list">
-            <div class="quest-meta-item"><span class="meta-icon">▶</span><span data-pt="Manhã" data-en="Morning">Manhã</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◉</span><span>Julho 2025</span></div>
-            <div class="quest-meta-item"><span class="meta-icon">◇</span><span>~€0</span></div>
-          </div>
-        </div>
-        <div class="quest-card-bottom">
-          <div style="display:flex;align-items:center">
-            <div class="avatar-group">
-              <div class="avatar" style="background:#2471a3">IM</div>
-              <div class="avatar" style="background:#148f77">OP</div>
-              <div class="avatar" style="background:#a93226">VR</div>
-              <div class="avatar-extra">+6</div>
-            </div>
-            <span class="vagas-label" data-pt="1 vaga" data-en="1 spot">1 vaga</span>
-          </div>
-          <button class="entrar-btn" data-pt="ENTRAR" data-en="JOIN">ENTRAR</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- MANIFESTO -->
-<section class="manifesto">
-  <div class="manifesto-bg"></div>
-  <div class="container">
-    <div class="manifesto-content reveal">
-      <div class="label" style="justify-content:center;color:rgba(244,246,242,.35)"><span data-pt="A Nossa Filosofia" data-en="Our Philosophy">A Nossa Filosofia</span></div>
-      <div class="manifesto-q">
-        <span data-pt="A VIDA É A<br><span class='green'>VERDADEIRA QUEST.</span>" data-en="LIFE IS THE<br><span class='green'>REAL QUEST.</span>">A VIDA É A<br><span class="green">VERDADEIRA QUEST.</span></span>
-      </div>
-      <div class="manifesto-lines">
-  <div class="manifesto-line"
-       data-pt="As melhores histórias não são planeadas. Começam no momento em que decides dizer sim, mesmo sem saber no que te estás a meter."
-       data-en="The best stories aren’t planned. They begin the moment you say yes, without knowing what you’re getting into.">
-    As melhores histórias não são planeadas. Começam no momento em que decides dizer sim, mesmo sem saber no que te estás a meter.
-  </div>
-
-  <div class="manifesto-line"
-       data-pt="Nem tudo precisa de ser produtivo. Nem tudo precisa de fazer sentido. Algumas coisas só precisam de acontecer."
-       data-en="Not everything needs to be productive. Not everything needs to make sense. Some things just need to happen.">
-    Nem tudo precisa de ser produtivo. Nem tudo precisa de fazer sentido. Algumas coisas só precisam de acontecer.
-  </div>
-
-  <div class="manifesto-line"
-       data-pt="Isto não é para quem quer ver a vida a passar. É para quem prefere perder-se um bocado e ter algo para contar."
-       data-en="This isn’t for people who want to watch life pass by. It’s for those who’d rather get a little lost and have something to tell.">
-    Isto não é para quem quer ver a vida a passar. É para quem prefere perder-se um bocado e ter algo para contar.
-  </div>
-
 </div>
-    </div>
-  </div>
-</section>
 
-<!-- WAITLIST -->
-<section class="waitlist">
-  <div class="container" style="display:flex;justify-content:center">
-    <div class="waitlist-box reveal">
-      <div class="label" style="justify-content:center"><span data-pt="Acesso Antecipado" data-en="Early Access">Acesso Antecipado</span></div>
-      <h2 class="waitlist-h2" data-pt="A TUA QUEST<br>ESPERA." data-en="YOUR QUEST<br>AWAITS.">A TUA QUEST<br>ESPERA.</h2>
-      <p class="waitlist-sub" data-pt="Entra na lista. Sê o primeiro a criar aventuras quando lançarmos." data-en="Join the list. Be first to create quests when we launch.">Entra na lista. Sê o primeiro a criar aventuras quando lançarmos.</p>
-      <div class="traction-pill">
-        <div class="traction-dot"></div>
-        <div class="traction-text"><span data-pt="<strong>1.247 Outliers</strong> já na lista." data-en="<strong>1,247 Outliers</strong> already on the list."><strong>1.247 Outliers</strong> já na lista.</span></div>
-      </div>
-      <div class="waitlist-form">
-        <input type="email" class="email-input" id="waitlistEmail" data-ph-pt="O teu endereço de email" data-ph-en="Your email address" placeholder="O teu endereço de email">
-        <button class="cta-btn" onclick="submitEmail('waitlistEmail','waitlistSuccess')">
-          <span data-pt="🚀 Garantir o Meu Lugar" data-en="🚀 Claim My Spot">🚀 Garantir o Meu Lugar</span>
-        </button>
-        <div class="success-msg" id="waitlistSuccess">
-          <span data-pt="🎉 Estás na quest. Vemo-nos do outro lado." data-en="🎉 You're on the quest. See you on the other side.">🎉 Estás na quest. Vemo-nos do outro lado.</span>
-        </div>
-        <p style="font-size:.73rem;color:var(--ink-light);margin-top:.3rem" data-pt="Sem spam.  Só o sinal quando estivermos live." data-en="No spam.  Just the signal when we're live.">Sem spam. Só o sinal quando estivermos live.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div>
-      <a href="#" class="footer-logo">SIDEQUEST</a>
-      <div class="footer-tagline" data-pt="Feito para a vida real." data-en="Built for real life.">Feito para a vida real.</div>
-    </div>
-    <div class="footer-links">
-      <a href="#" data-pt="Manifesto" data-en="Manifesto">Manifesto</a>
-      <a href="#" data-pt="Privacidade" data-en="Privacy">Privacidade</a>
-      <a href="#" data-pt="Contacto" data-en="Contact">Contacto</a>
-      <a href="#">Instagram</a>
-      <a href="#">Twitter / X</a>
-    </div>
-    <div class="footer-copy"><span data-pt="© 2025 SideQuest." data-en="© 2025 SideQuest.">© 2025 SideQuest.</span></div>
-  </div>
-</footer>
+<div class="notif-toast" id="toast"></div>
 
 <script>
- 
-  // NAV scroll
-  const nav = document.getElementById('mainNav');
-  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 40); });
+// ────────────────────────────────────────────────────────────
+// FIREBASE CONFIG — Replace with your own Firebase project config!
+// Get this from: Firebase Console → Project Settings → Your Apps
+// ────────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyDu5q84MerI1X6XBasaPQmTR3mmfHqeRcA",
+  authDomain: "sidequest-8d699.firebaseapp.com",
+  projectId: "sidequest-8d699",
+  storageBucket: "sidequest-8d699.firebasestorage.app",
+  messagingSenderId: "540051485733",
+  appId: "1:540051485733:web:667b1671ffd81303877bcc",
+  measurementId: "G-XQ52X0W40S"
+};
 
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 }).observe && reveals.forEach(el =>
-    new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1 }).observe(el)
-  );
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const rtdb = firebase.database();
 
-  // Lang
-  function setLang(l) {
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
-    document.querySelectorAll('[data-pt]').forEach(el => {
-      const t = el.getAttribute('data-' + l);
-      if (t !== null) el.innerHTML = t;
-    });
-    document.querySelectorAll('[data-ph-pt]').forEach(el => {
-      el.placeholder = el.getAttribute('data-ph-' + l) || '';
-    });
+// ────────────────────────────────────────────────────────────
+// STATE
+// ────────────────────────────────────────────────────────────
+let state = {
+  user: null,
+  profile: null,
+  currentPage: 'feed',
+  quests: [],
+  activeQuest: null,
+  chatUnsub: null,
+  questsUnsub: null,
+  filterTag: 'all',
+  searchQuery: ''
+};
+
+// ────────────────────────────────────────────────────────────
+// HELPERS
+// ────────────────────────────────────────────────────────────
+const TAGS = ['Aventura','Urbano','Natureza','Desporto','Viagem','Social','Noturno','Água','Extremo','Cultural'];
+const COLORS = ['#e67e22','#2ecc71','#9b59b6','#e74c3c','#3498db','#1abc9c','#f39c12','#e91e63','#00bcd4','#4caf50'];
+
+function getAvatarColor(str='') {
+  let h = 0; for(let c of str) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
+  return COLORS[h % COLORS.length];
+}
+function getInitials(name='') {
+  return name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || '?';
+}
+function formatDate(ts) {
+  if(!ts) return 'A definir';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('pt-PT',{day:'2-digit',month:'short',year:'numeric'});
+}
+function formatTime(ts) {
+  if(!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+}
+function timeAgo(ts) {
+  if(!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  const diff = (Date.now() - d.getTime()) / 1000;
+  if(diff < 60) return 'agora';
+  if(diff < 3600) return `${Math.floor(diff/60)}m`;
+  if(diff < 86400) return `${Math.floor(diff/3600)}h`;
+  return `${Math.floor(diff/86400)}d`;
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+function el(id) { return document.getElementById(id); }
+function esc(str='') { return str.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ────────────────────────────────────────────────────────────
+// RENDER ENGINE
+// ────────────────────────────────────────────────────────────
+function render() {
+  const app = document.getElementById('app');
+  if(!state.user) {
+    renderAuth(app);
+    return;
   }
+  app.innerHTML = `
+    ${renderNav()}
+    <div id="page-container"></div>
+    ${renderBottomNav()}
+    <button class="fab" id="fab-btn" title="Criar Quest">＋</button>
+  `;
+  document.getElementById('fab-btn').onclick = ()=>navigate('create');
+  renderPage();
+}
 
-  // Email submit
-  function submitEmail(inputId, successId) {
-    const input = document.getElementById(inputId);
-    const success = document.getElementById(successId);
-    if (!input.value.trim() || !input.value.includes('@')) {
-      input.style.borderColor = '#e74c3c';
-      input.focus();
-      setTimeout(() => input.style.borderColor = '', 1500);
-      return;
+function renderNav() {
+  const p = state.profile || {};
+  const init = getInitials(p.name || state.user.email);
+  const col = getAvatarColor(state.user.uid);
+  return `<nav>
+    <div class="nav-logo" style="cursor:pointer" onclick="navigate('feed')">
+      <div class="nav-logo-dot"></div>SIDEQUEST
+    </div>
+    <div class="nav-actions">
+      <span class="nav-link ${state.currentPage==='feed'?'active':''}" onclick="navigate('feed')">Feed</span>
+      <span class="nav-link ${state.currentPage==='explore'?'active':''}" onclick="navigate('explore')">Explorar</span>
+      <div class="nav-avatar" style="background:${col}" onclick="navigate('profile')">${init}</div>
+    </div>
+  </nav>`;
+}
+
+function renderBottomNav() {
+  const p = state.currentPage;
+  return `<nav class="bottom-nav">
+    <button class="bnav-item ${p==='feed'?'active':''}" onclick="navigate('feed')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Feed
+    </button>
+    <button class="bnav-item ${p==='explore'?'active':''}" onclick="navigate('explore')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Explorar
+    </button>
+    <button class="bnav-item ${p==='create'?'active':''}" onclick="navigate('create')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Criar
+    </button>
+    <button class="bnav-item ${p==='profile'?'active':''}" onclick="navigate('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Perfil
+    </button>
+  </nav>`;
+}
+
+function renderPage() {
+  const pc = document.getElementById('page-container');
+  if(!pc) return;
+  switch(state.currentPage) {
+    case 'feed':    pc.innerHTML = renderFeedPage(); bindFeed(); break;
+    case 'explore': pc.innerHTML = renderExplorePage(); bindExplore(); break;
+    case 'create':  pc.innerHTML = renderCreatePage(); bindCreate(); break;
+    case 'profile': pc.innerHTML = renderProfilePage(); break;
+    case 'quest':   pc.innerHTML = renderQuestDetail(); bindQuestDetail(); break;
+  }
+  // sync bottom nav + top nav active states after innerHTML
+  document.querySelectorAll('.bnav-item').forEach(b=>{
+    b.classList.remove('active');
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes(state.currentPage)) b.classList.add('active');
+  });
+  document.querySelectorAll('.nav-link').forEach(b=>{
+    b.classList.remove('active');
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes(state.currentPage)) b.classList.add('active');
+  });
+}
+
+// ────────────────────────────────────────────────────────────
+// NAVIGATION
+// ────────────────────────────────────────────────────────────
+function navigate(page, data=null) {
+  if(state.chatUnsub) { state.chatUnsub(); state.chatUnsub=null; }
+  state.currentPage = page;
+  if(data) state.activeQuest = data;
+  if(state.user) {
+    // re-render nav active states
+    const navLinks = document.querySelectorAll('.nav-link,.bnav-item');
+    navLinks.forEach(b=>{ b.classList.remove('active'); if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes(page)) b.classList.add('active'); });
+    const pc = document.getElementById('page-container');
+    if(pc) {
+      switch(page) {
+        case 'feed':    pc.innerHTML=renderFeedPage(); bindFeed(); break;
+        case 'explore': pc.innerHTML=renderExplorePage(); bindExplore(); break;
+        case 'create':  pc.innerHTML=renderCreatePage(); bindCreate(); break;
+        case 'profile': pc.innerHTML=renderProfilePage(); break;
+        case 'quest':   pc.innerHTML=renderQuestDetail(); bindQuestDetail(); break;
+      }
     }
-    input.style.display = 'none';
-    const btn = input.parentElement.querySelector('.cta-btn');
-    if (btn) btn.style.display = 'none';
-    success.style.display = 'block';
+    window.scrollTo(0,0);
   }
+}
 
-  ['heroEmail','waitlistEmail'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('keydown', e => {
-      if (e.key === 'Enter') submitEmail(id, id === 'heroEmail' ? 'heroSuccess' : 'waitlistSuccess');
+// ────────────────────────────────────────────────────────────
+// FEED PAGE
+// ────────────────────────────────────────────────────────────
+function renderFeedPage() {
+  const filtered = getFilteredQuests();
+  return `<div class="feed-page page">
+    <div class="feed-header">
+      <div class="label-field font-mono text-xs" style="color:var(--green-bright);letter-spacing:3px;margin-bottom:.4rem">QUESTS ATIVAS</div>
+      <h1 class="feed-title">EXPLORA O<br><span class="green">MUNDO REAL.</span></h1>
+    </div>
+    <div class="feed-filters">
+      <button class="filter-btn ${state.filterTag==='all'?'active':''}" onclick="setFilter('all')">TUDO</button>
+      ${TAGS.map(t=>`<button class="filter-btn ${state.filterTag===t?'active':''}" onclick="setFilter('${t}')">${t.toUpperCase()}</button>`).join('')}
+    </div>
+    <div class="feed-grid" id="feed-grid">
+      ${filtered.length ? filtered.map(q=>renderQuestCard(q)).join('') : `<div class="feed-empty" style="grid-column:1/-1"><div class="big">NADA</div><p style="margin-top:1rem">Nenhuma quest encontrada.<br>Sê o primeiro a criar uma!</p></div>`}
+    </div>
+  </div>`;
+}
+
+function bindFeed() {
+  document.querySelectorAll('.quest-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      const id = card.dataset.id;
+      const quest = state.quests.find(q=>q.id===id);
+      if(quest) navigate('quest', quest);
     });
   });
+}
 
-  // Parallax blobs
-  window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    document.querySelectorAll('.hero-blob').forEach((b, i) => {
-      b.style.transform = `translateY(${y * (.04 + i * .02)}px)`;
+function setFilter(tag) {
+  state.filterTag = tag;
+  const pc = document.getElementById('page-container');
+  if(pc) { pc.innerHTML=renderFeedPage(); bindFeed(); }
+}
+
+function getFilteredQuests() {
+  let q = [...state.quests];
+  if(state.filterTag !== 'all') q = q.filter(x=>(x.tags||[]).includes(state.filterTag));
+  if(state.searchQuery) {
+    const s = state.searchQuery.toLowerCase();
+    q = q.filter(x=>(x.title||'').toLowerCase().includes(s)||(x.description||'').toLowerCase().includes(s)||(x.location||'').toLowerCase().includes(s));
+  }
+  return q;
+}
+
+// ────────────────────────────────────────────────────────────
+// QUEST CARD RENDER
+// ────────────────────────────────────────────────────────────
+function renderQuestCard(q) {
+  const members = q.members || [];
+  const max = q.maxPeople || 10;
+  const spots = max - members.length;
+  const tags = (q.tags||[]).slice(0,2);
+  const isMember = members.includes(state.user?.uid);
+  return `<div class="quest-card" data-id="${q.id}">
+    <div class="quest-card-header">
+      <div class="quest-category-label">
+        <div class="quest-dot"></div>
+        ${tags.map(t=>`<span>${esc(t.toUpperCase())}</span>`).join(' · ')}
+      </div>
+      <div class="quest-title">${esc(q.title)}</div>
+      <div class="quest-desc">${esc(q.description||'')}</div>
+    </div>
+    <div class="quest-card-meta">
+      ${q.date ? `<div class="quest-meta-item"><span>📅</span> ${formatDate(q.date)}</div>` : ''}
+      ${q.location ? `<div class="quest-meta-item"><span>📍</span> ${esc(q.location)}</div>` : ''}
+      <div class="quest-meta-item"><span>👥</span> ${members.length}/${max}</div>
+      ${spots <= 2 && spots > 0 ? `<div class="quest-meta-item" style="color:var(--green-bright)"><span>⚡</span> ${spots} vaga${spots>1?'s':''}</div>` : ''}
+      ${spots === 0 ? `<div class="quest-meta-item" style="color:var(--red)"><span>🔴</span> Lotado</div>` : ''}
+    </div>
+    <div class="quest-card-footer">
+      <div style="display:flex;align-items:center">
+        <div class="avatar-stack">${renderAvatarStack(members.slice(0,3))}</div>
+        <span class="spots-label">${spots > 0 ? spots+' vagas' : 'lotado'}</span>
+      </div>
+      ${isMember ? `<span style="font-family:var(--font-mono);font-size:.6rem;color:var(--green-bright);letter-spacing:1px">✓ MEMBRO</span>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderAvatarStack(uids) {
+  return uids.map(uid=>{
+    const col = getAvatarColor(uid);
+    const init = getInitials(uid.slice(0,4));
+    return `<div class="avatar-sm" style="background:${col}">${init}</div>`;
+  }).join('');
+}
+
+// ────────────────────────────────────────────────────────────
+// EXPLORE PAGE
+// ────────────────────────────────────────────────────────────
+function renderExplorePage() {
+  const filtered = getFilteredQuests();
+  return `<div class="explore-page page">
+    <div class="feed-header">
+      <h1 class="feed-title" style="font-size:1.8rem">EXPLORAR<br><span class="green">TODAS AS QUESTS</span></h1>
+    </div>
+    <div class="search-bar-wrap">
+      <div class="search-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-bar" id="search-input" placeholder="Buscar quests, locais..." value="${esc(state.searchQuery)}">
+      </div>
+    </div>
+    <div class="feed-filters">
+      <button class="filter-btn ${state.filterTag==='all'?'active':''}" onclick="setFilter('all')">TUDO</button>
+      ${TAGS.map(t=>`<button class="filter-btn ${state.filterTag===t?'active':''}" onclick="setFilter('${t}')">${t.toUpperCase()}</button>`).join('')}
+    </div>
+    <div class="feed-grid" id="feed-grid" style="padding:0 1rem">
+      ${filtered.length ? filtered.map(q=>renderQuestCard(q)).join('') : `<div class="feed-empty" style="grid-column:1/-1"><div class="big">NADA</div><p style="margin-top:1rem">Nenhum resultado.</p></div>`}
+    </div>
+  </div>`;
+}
+
+function bindExplore() {
+  bindFeed();
+  const si = document.getElementById('search-input');
+  if(si) si.addEventListener('input', e=>{
+    state.searchQuery = e.target.value;
+    const fg = document.getElementById('feed-grid');
+    if(fg) {
+      const filtered = getFilteredQuests();
+      fg.innerHTML = filtered.length ? filtered.map(q=>renderQuestCard(q)).join('') : `<div class="feed-empty" style="grid-column:1/-1"><div class="big">NADA</div><p>Sem resultados.</p></div>`;
+      document.querySelectorAll('.quest-card').forEach(card=>{
+        card.addEventListener('click',()=>{
+          const quest=state.quests.find(q=>q.id===card.dataset.id);
+          if(quest) navigate('quest',quest);
+        });
+      });
+    }
+  });
+}
+
+// ────────────────────────────────────────────────────────────
+// CREATE QUEST PAGE
+// ────────────────────────────────────────────────────────────
+function renderCreatePage() {
+  return `<div class="create-page page">
+    <div class="create-header">
+      <div class="label-field font-mono text-xs" style="color:var(--green-bright);letter-spacing:3px;margin-bottom:.4rem">NOVA QUEST</div>
+      <h1>CRIA A TUA<br><span style="color:var(--green-bright)">AVENTURA.</span></h1>
+    </div>
+    <div id="create-error" class="auth-error hidden"></div>
+    <div class="form-group">
+      <label class="label-field">Nome da Quest *</label>
+      <input class="input" id="q-title" placeholder="Ex: Mergulho ao nascer do sol..." maxlength="80">
+    </div>
+    <div class="form-group">
+      <label class="label-field">Descrição *</label>
+      <textarea class="input" id="q-desc" placeholder="Descreve a experiência. O que vão fazer? O que precisam de levar?"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="label-field">Tags (seleciona até 3)</label>
+      <div class="tag-list" id="tag-selector">
+        ${TAGS.map(t=>`<button class="tag-select-btn" data-tag="${t}">${t}</button>`).join('')}
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="label-field">Localização</label>
+      <input class="input" id="q-location" placeholder="Ex: Praia de Carcavelos, Lisboa...">
+    </div>
+    <div class="form-group">
+      <label class="label-field">Data e Hora (opcional)</label>
+      <input class="input" id="q-date" type="datetime-local">
+    </div>
+    <div class="form-group">
+      <label class="label-field">Máximo de participantes *</label>
+      <input class="input" id="q-max" type="number" min="2" max="50" value="8" placeholder="8">
+    </div>
+    <button class="btn btn-primary btn-full btn-icon" id="create-btn" style="margin-bottom:2rem">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Publicar Quest
+    </button>
+  </div>`;
+}
+
+let selectedTags = [];
+function bindCreate() {
+  selectedTags = [];
+  document.querySelectorAll('.tag-select-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const t = btn.dataset.tag;
+      if(selectedTags.includes(t)) {
+        selectedTags = selectedTags.filter(x=>x!==t);
+        btn.classList.remove('selected');
+      } else if(selectedTags.length < 3) {
+        selectedTags.push(t);
+        btn.classList.add('selected');
+      }
     });
   });
+  document.getElementById('create-btn')?.addEventListener('click', submitCreateQuest);
+}
+
+async function submitCreateQuest() {
+  const btn = document.getElementById('create-btn');
+  const errEl = document.getElementById('create-error');
+  const title = document.getElementById('q-title')?.value.trim();
+  const desc = document.getElementById('q-desc')?.value.trim();
+  const loc = document.getElementById('q-location')?.value.trim();
+  const dateVal = document.getElementById('q-date')?.value;
+  const maxP = parseInt(document.getElementById('q-max')?.value)||8;
+
+  if(!title||!desc) { errEl.textContent='Título e descrição são obrigatórios.'; errEl.classList.remove('hidden'); return; }
+  if(selectedTags.length===0) { errEl.textContent='Seleciona pelo menos uma tag.'; errEl.classList.remove('hidden'); return; }
+
+  btn.disabled=true; btn.textContent='A publicar...';
+  try {
+    const questData = {
+      title, description: desc, tags: selectedTags,
+      location: loc||null, date: dateVal ? firebase.firestore.Timestamp.fromDate(new Date(dateVal)) : null,
+      maxPeople: maxP, members: [state.user.uid],
+      createdBy: state.user.uid, createdByName: state.profile?.name || state.user.email,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    await db.collection('quests').add(questData);
+    showToast('⚡ Quest publicada!');
+    navigate('feed');
+  } catch(e) {
+    errEl.textContent='Erro: '+e.message; errEl.classList.remove('hidden');
+    btn.disabled=false; btn.textContent='Publicar Quest';
+  }
+}
+
+// ────────────────────────────────────────────────────────────
+// QUEST DETAIL PAGE
+// ────────────────────────────────────────────────────────────
+function renderQuestDetail() {
+  const q = state.activeQuest;
+  if(!q) return '<div class="detail-page page"><p>Quest não encontrada.</p></div>';
+  const members = q.members||[];
+  const isCreator = q.createdBy === state.user?.uid;
+  const isMember = members.includes(state.user?.uid);
+  const spots = (q.maxPeople||10) - members.length;
+
+  return `<div class="detail-page page">
+    <div class="detail-back" onclick="navigate('feed')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      Voltar ao feed
+    </div>
+    <div class="tag-list" style="margin-bottom:.8rem">
+      ${(q.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}
+    </div>
+    <div class="detail-title">${esc(q.title)}</div>
+    <div style="font-size:.8rem;color:var(--ink-light);margin-bottom:.8rem">por <strong style="color:var(--ink)">${esc(q.createdByName||'Anónimo')}</strong></div>
+    <div class="detail-meta-grid">
+      ${q.date?`<div class="detail-meta-card"><div class="mlabel">DATA</div><div class="mval">${formatDate(q.date)}</div></div>`:''}
+      ${q.date?`<div class="detail-meta-card"><div class="mlabel">HORA</div><div class="mval">${formatTime(q.date)||'A definir'}</div></div>`:''}
+      ${q.location?`<div class="detail-meta-card"><div class="mlabel">LOCAL</div><div class="mval">${esc(q.location)}</div></div>`:''}
+      <div class="detail-meta-card"><div class="mlabel">PARTICIPANTES</div><div class="mval">${members.length}/${q.maxPeople||10}</div></div>
+    </div>
+    <p class="detail-desc">${esc(q.description||'')}</p>
+    <div style="display:flex;gap:.7rem;flex-wrap:wrap;margin:1.2rem 0">
+      ${!isMember && spots>0 ? `<button class="btn btn-primary btn-icon" id="join-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>Entrar na Quest</button>` : ''}
+      ${isMember && !isCreator ? `<button class="btn btn-danger btn-sm" id="leave-btn">Sair da Quest</button>` : ''}
+      ${spots===0&&!isMember ? `<div class="btn btn-secondary" style="cursor:default">🔴 Quest Lotada</div>` : ''}
+      ${isCreator ? `<button class="btn btn-danger btn-sm" id="delete-btn">Eliminar Quest</button>` : ''}
+    </div>
+    <div class="members-section">
+      <div class="section-label">Membros (${members.length})</div>
+      <div class="member-list" id="member-list">
+        ${members.map(uid=>renderMemberItem(uid, q.createdBy)).join('')}
+      </div>
+    </div>
+    <div class="chat-section">
+      <div class="section-label">Chat da Quest</div>
+      ${isMember ? `
+        <div class="chat-box">
+          <div class="chat-messages" id="chat-messages">
+            <div style="text-align:center;color:var(--ink-light);font-size:.78rem;padding:1rem">A carregar mensagens...</div>
+          </div>
+          <div class="chat-input-row">
+            <input class="chat-input" id="chat-input" placeholder="Escreve uma mensagem..." maxlength="500">
+            <button class="chat-send" id="chat-send">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+      ` : `<div class="chat-locked card">🔒 Entra na quest para aceder ao chat do grupo.</div>`}
+    </div>
+  </div>`;
+}
+
+function renderMemberItem(uid, creatorUid) {
+  const col = getAvatarColor(uid);
+  const init = getInitials(uid.slice(0,4));
+  const isCreator = uid === creatorUid;
+  return `<div class="member-item">
+    <div class="member-avatar" style="background:${col}">${init}</div>
+    <div>
+      <div class="member-name">${uid === state.user?.uid ? 'Tu' : 'Membro'}</div>
+      <div class="member-role font-mono text-xs">${uid.slice(0,8)}...</div>
+    </div>
+    ${isCreator?'<span class="creator-badge">CRIADOR</span>':''}
+  </div>`;
+}
+
+function bindQuestDetail() {
+  const q = state.activeQuest;
+  if(!q) return;
+
+  document.getElementById('join-btn')?.addEventListener('click', ()=>joinQuest(q.id));
+  document.getElementById('leave-btn')?.addEventListener('click', ()=>leaveQuest(q.id));
+  document.getElementById('delete-btn')?.addEventListener('click', ()=>deleteQuest(q.id));
+
+  const isMember = (q.members||[]).includes(state.user?.uid);
+  if(isMember) initChat(q.id);
+}
+
+async function joinQuest(questId) {
+  try {
+    await db.collection('quests').doc(questId).update({
+      members: firebase.firestore.FieldValue.arrayUnion(state.user.uid)
+    });
+    // refresh
+    const updated = state.quests.find(q=>q.id===questId);
+    if(updated) {
+      updated.members = [...(updated.members||[]), state.user.uid];
+      state.activeQuest = updated;
+    }
+    navigate('quest', state.activeQuest);
+    showToast('⚡ Entraste na quest!');
+  } catch(e) { showToast('Erro: '+e.message); }
+}
+
+async function leaveQuest(questId) {
+  if(!confirm('Tens a certeza que queres sair desta quest?')) return;
+  try {
+    await db.collection('quests').doc(questId).update({
+      members: firebase.firestore.FieldValue.arrayRemove(state.user.uid)
+    });
+    const updated = state.quests.find(q=>q.id===questId);
+    if(updated) {
+      updated.members = (updated.members||[]).filter(u=>u!==state.user.uid);
+      state.activeQuest = updated;
+    }
+    navigate('quest', state.activeQuest);
+    showToast('Saíste da quest.');
+  } catch(e) { showToast('Erro: '+e.message); }
+}
+
+async function deleteQuest(questId) {
+  if(!confirm('Eliminar esta quest definitivamente?')) return;
+  try {
+    await db.collection('quests').doc(questId).delete();
+    // delete chat
+    const chatRef = rtdb.ref(`chats/${questId}`);
+    await chatRef.remove();
+    showToast('Quest eliminada.');
+    navigate('feed');
+  } catch(e) { showToast('Erro: '+e.message); }
+}
+
+// ────────────────────────────────────────────────────────────
+// CHAT
+// ────────────────────────────────────────────────────────────
+function initChat(questId) {
+  const chatRef = rtdb.ref(`chats/${questId}/messages`);
+  const unsub = chatRef.limitToLast(50).on('value', snap=>{
+    const msgs = [];
+    snap.forEach(child=>msgs.push({id:child.key, ...child.val()}));
+    renderChatMessages(msgs);
+  });
+  state.chatUnsub = ()=>chatRef.off('value', unsub);
+
+  document.getElementById('chat-send')?.addEventListener('click', sendChatMsg);
+  document.getElementById('chat-input')?.addEventListener('keydown', e=>{ if(e.key==='Enter') sendChatMsg(); });
+}
+
+function renderChatMessages(msgs) {
+  const box = document.getElementById('chat-messages');
+  if(!box) return;
+  if(!msgs.length) { box.innerHTML='<div style="text-align:center;color:var(--ink-light);font-size:.78rem;padding:1rem">Nenhuma mensagem ainda. Sê o primeiro! 👋</div>'; return; }
+  box.innerHTML = msgs.map(m=>{
+    const own = m.uid === state.user?.uid;
+    const col = getAvatarColor(m.uid||'');
+    const init = getInitials((m.name||'?'));
+    const t = m.ts ? new Date(m.ts) : new Date();
+    const timeStr = t.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+    return `<div class="chat-msg ${own?'own':''}">
+      <div class="chat-avatar" style="background:${col}">${init}</div>
+      <div>
+        ${!own?`<div class="chat-name">${esc(m.name||'Anónimo')}</div>`:''}
+        <div class="chat-bubble">${esc(m.text||'')}</div>
+        <div class="chat-time">${timeStr}</div>
+      </div>
+    </div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendChatMsg() {
+  const input = document.getElementById('chat-input');
+  if(!input||!input.value.trim()) return;
+  const text = input.value.trim();
+  input.value = '';
+  const questId = state.activeQuest?.id;
+  if(!questId) return;
+  await rtdb.ref(`chats/${questId}/messages`).push({
+    uid: state.user.uid,
+    name: state.profile?.name || state.user.email?.split('@')[0] || 'Anónimo',
+    text, ts: Date.now()
+  });
+}
+
+// ────────────────────────────────────────────────────────────
+// PROFILE PAGE
+// ────────────────────────────────────────────────────────────
+function renderProfilePage() {
+  const p = state.profile || {};
+  const col = getAvatarColor(state.user?.uid||'');
+  const init = getInitials(p.name || state.user?.email||'');
+  const myQuests = state.quests.filter(q=>q.createdBy===state.user?.uid);
+  const joinedQuests = state.quests.filter(q=>(q.members||[]).includes(state.user?.uid)&&q.createdBy!==state.user?.uid);
+
+  return `<div class="profile-page page">
+    <div class="profile-header">
+      <div class="profile-avatar-big" style="background:${col}">${init}</div>
+      <div style="flex:1">
+        <div class="profile-name">${esc(p.name||'Sem nome')}</div>
+        <div style="font-size:.78rem;color:var(--ink-light);font-family:var(--font-mono)">${esc(state.user?.email||'')}</div>
+        ${p.bio?`<div class="profile-bio">${esc(p.bio)}</div>`:''}
+        ${p.interests?.length?`<div class="tag-list" style="margin-top:.6rem">${p.interests.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`:''}
+      </div>
+    </div>
+    <div style="display:flex;gap:.7rem;margin-bottom:1.5rem;flex-wrap:wrap">
+      <button class="btn btn-secondary btn-sm btn-icon" id="edit-profile-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Editar Perfil
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Sair</button>
+    </div>
+    <div class="quests-section">
+      <div class="section-label">As Minhas Quests (${myQuests.length})</div>
+      ${myQuests.length ? `<div style="display:flex;flex-direction:column;gap:.7rem">${myQuests.map(q=>renderQuestCard(q)).join('')}</div>` : `<div class="card" style="color:var(--ink-light);font-size:.85rem">Ainda não criaste nenhuma quest.</div>`}
+    </div>
+    <div class="quests-section" style="margin-top:2rem">
+      <div class="section-label">Quests a que me Juntei (${joinedQuests.length})</div>
+      ${joinedQuests.length ? `<div style="display:flex;flex-direction:column;gap:.7rem">${joinedQuests.map(q=>renderQuestCard(q)).join('')}</div>` : `<div class="card" style="color:var(--ink-light);font-size:.85rem">Ainda não entraste em nenhuma quest.</div>`}
+    </div>
+    ${renderEditProfileModal()}
+  </div>`;
+}
+
+function renderEditProfileModal() {
+  const p = state.profile||{};
+  return `<div class="modal-overlay hidden" id="edit-modal">
+    <div class="modal-box">
+      <div class="modal-title">EDITAR PERFIL</div>
+      <div id="edit-error" class="auth-error hidden"></div>
+      <div class="form-group">
+        <label class="label-field">Nome</label>
+        <input class="input" id="edit-name" value="${esc(p.name||'')}" placeholder="O teu nome">
+      </div>
+      <div class="form-group">
+        <label class="label-field">Bio</label>
+        <textarea class="input" id="edit-bio" placeholder="Fala sobre ti...">${esc(p.bio||'')}</textarea>
+      </div>
+      <div class="form-group">
+        <label class="label-field">Género (opcional)</label>
+        <select class="input" id="edit-gender">
+          <option value="">Prefiro não dizer</option>
+          <option value="m" ${p.gender==='m'?'selected':''}>Masculino</option>
+          <option value="f" ${p.gender==='f'?'selected':''}>Feminino</option>
+          <option value="nb" ${p.gender==='nb'?'selected':''}>Não-binário</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="label-field">Interesses</label>
+        <div class="tag-list" id="edit-tags">
+          ${TAGS.map(t=>`<button class="tag-select-btn ${(p.interests||[]).includes(t)?'selected':''}" data-tag="${t}" onclick="toggleInterest(this,'${t}')">${t}</button>`).join('')}
+        </div>
+      </div>
+      <div style="display:flex;gap:.7rem">
+        <button class="btn btn-primary" id="save-profile-btn" onclick="saveProfile()">Guardar</button>
+        <button class="btn btn-ghost" onclick="closeEditModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+let editInterests = [];
+function toggleInterest(btn, tag) {
+  if(editInterests.includes(tag)) {
+    editInterests = editInterests.filter(t=>t!==tag);
+    btn.classList.remove('selected');
+  } else {
+    editInterests.push(tag);
+    btn.classList.add('selected');
+  }
+}
+
+function openEditModal() {
+  editInterests = [...(state.profile?.interests||[])];
+  document.getElementById('edit-modal')?.classList.remove('hidden');
+}
+function closeEditModal() {
+  document.getElementById('edit-modal')?.classList.add('hidden');
+}
+
+async function saveProfile() {
+  const name = document.getElementById('edit-name')?.value.trim();
+  const bio = document.getElementById('edit-bio')?.value.trim();
+  const gender = document.getElementById('edit-gender')?.value;
+  const errEl = document.getElementById('edit-error');
+  if(!name) { errEl.textContent='Nome é obrigatório.'; errEl.classList.remove('hidden'); return; }
+  try {
+    const data = { name, bio: bio||'', gender: gender||null, interests: editInterests };
+    await db.collection('users').doc(state.user.uid).set(data, {merge:true});
+    state.profile = {...state.profile, ...data};
+    closeEditModal();
+    navigate('profile');
+    showToast('Perfil guardado!');
+  } catch(e) { errEl.textContent='Erro: '+e.message; errEl.classList.remove('hidden'); }
+}
+
+// Add edit profile button binding after rendering
+const _renderPage = renderPage;
+function renderPage() {
+  const pc = document.getElementById('page-container');
+  if(!pc) return;
+  switch(state.currentPage) {
+    case 'feed':    pc.innerHTML=renderFeedPage(); bindFeed(); break;
+    case 'explore': pc.innerHTML=renderExplorePage(); bindExplore(); break;
+    case 'create':  pc.innerHTML=renderCreatePage(); bindCreate(); break;
+    case 'profile': 
+      pc.innerHTML=renderProfilePage(); 
+      document.querySelectorAll('.quest-card').forEach(card=>{
+        card.addEventListener('click',()=>{
+          const quest=state.quests.find(q=>q.id===card.dataset.id);
+          if(quest) navigate('quest',quest);
+        });
+      });
+      document.getElementById('edit-profile-btn')?.addEventListener('click', openEditModal);
+      break;
+    case 'quest':   pc.innerHTML=renderQuestDetail(); bindQuestDetail(); break;
+  }
+}
+
+// ────────────────────────────────────────────────────────────
+// AUTH PAGES
+// ────────────────────────────────────────────────────────────
+function renderAuth(app) {
+  const isLogin = !window._showRegister;
+  app.innerHTML = `<div class="auth-page">
+    <div class="auth-box">
+      <div class="auth-logo"><div class="nav-logo-dot"></div>SIDEQUEST</div>
+      <div class="auth-sub">Experiências reais. Memórias reais. Sem algoritmo.</div>
+      ${isLogin ? renderLoginForm() : renderRegisterForm()}
+    </div>
+  </div>`;
+  bindAuthForms(isLogin);
+}
+
+function renderLoginForm() {
+  return `<h2>ENTRAR</h2>
+  <div id="auth-error" class="auth-error hidden"></div>
+  <div class="form-group"><label class="label-field">Email</label><input class="input" id="auth-email" type="email" placeholder="email@exemplo.com" autocomplete="email"></div>
+  <div class="form-group"><label class="label-field">Password</label><input class="input" id="auth-pass" type="password" placeholder="A tua password" autocomplete="current-password"></div>
+  <button class="btn btn-primary btn-full" id="auth-btn">Entrar</button>
+  <div class="auth-switch">Não tens conta? <a href="#" onclick="window._showRegister=true;renderAuth(document.getElementById('app'))">Regista-te</a></div>`;
+}
+
+function renderRegisterForm() {
+  return `<h2>CRIAR CONTA</h2>
+  <div id="auth-error" class="auth-error hidden"></div>
+  <div class="form-group"><label class="label-field">Nome *</label><input class="input" id="auth-name" placeholder="O teu nome"></div>
+  <div class="form-group"><label class="label-field">Email *</label><input class="input" id="auth-email" type="email" placeholder="email@exemplo.com" autocomplete="email"></div>
+  <div class="form-group"><label class="label-field">Password *</label><input class="input" id="auth-pass" type="password" placeholder="Min. 6 caracteres" autocomplete="new-password"></div>
+  <div class="form-group"><label class="label-field">Interesses (opcional)</label>
+    <div class="tag-list" id="reg-tags">${TAGS.map(t=>`<button class="tag-select-btn" data-tag="${t}" type="button">${t}</button>`).join('')}</div>
+  </div>
+  <button class="btn btn-primary btn-full" id="auth-btn" style="margin-top:.5rem">Criar Conta</button>
+  <div class="auth-switch">Já tens conta? <a href="#" onclick="window._showRegister=false;renderAuth(document.getElementById('app'))">Entrar</a></div>`;
+}
+
+let regInterests = [];
+function bindAuthForms(isLogin) {
+  regInterests = [];
+  document.querySelectorAll('#reg-tags .tag-select-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const t=btn.dataset.tag;
+      if(regInterests.includes(t)){regInterests=regInterests.filter(x=>x!==t);btn.classList.remove('selected');}
+      else{regInterests.push(t);btn.classList.add('selected');}
+    });
+  });
+  document.getElementById('auth-btn')?.addEventListener('click', isLogin?doLogin:doRegister);
+  ['auth-email','auth-pass'].forEach(id=>{
+    document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter'){isLogin?doLogin():doRegister();}});
+  });
+}
+
+async function doLogin() {
+  const email = document.getElementById('auth-email')?.value.trim();
+  const pass = document.getElementById('auth-pass')?.value;
+  const errEl = document.getElementById('auth-error');
+  if(!email||!pass){errEl.textContent='Preenche todos os campos.';errEl.classList.remove('hidden');return;}
+  const btn=document.getElementById('auth-btn');
+  btn.disabled=true;btn.textContent='A entrar...';
+  try {
+    await auth.signInWithEmailAndPassword(email,pass);
+  } catch(e) {
+    const msgs={'auth/user-not-found':'Email não encontrado.','auth/wrong-password':'Password incorreta.','auth/invalid-email':'Email inválido.'};
+    errEl.textContent=msgs[e.code]||e.message;errEl.classList.remove('hidden');
+    btn.disabled=false;btn.textContent='Entrar';
+  }
+}
+
+async function doRegister() {
+  const name=document.getElementById('auth-name')?.value.trim();
+  const email=document.getElementById('auth-email')?.value.trim();
+  const pass=document.getElementById('auth-pass')?.value;
+  const errEl=document.getElementById('auth-error');
+  if(!name||!email||!pass){errEl.textContent='Preenche todos os campos.';errEl.classList.remove('hidden');return;}
+  if(pass.length<6){errEl.textContent='Password com mínimo 6 caracteres.';errEl.classList.remove('hidden');return;}
+  const btn=document.getElementById('auth-btn');
+  btn.disabled=true;btn.textContent='A criar conta...';
+  try {
+    const cred=await auth.createUserWithEmailAndPassword(email,pass);
+    await db.collection('users').doc(cred.user.uid).set({name,email,interests:regInterests,bio:'',gender:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    window._showRegister=false;
+  } catch(e) {
+    const msgs={'auth/email-already-in-use':'Email já em uso.','auth/invalid-email':'Email inválido.','auth/weak-password':'Password muito fraca.'};
+    errEl.textContent=msgs[e.code]||e.message;errEl.classList.remove('hidden');
+    btn.disabled=false;btn.textContent='Criar Conta';
+  }
+}
+
+async function logout() {
+  if(state.chatUnsub){state.chatUnsub();state.chatUnsub=null;}
+  if(state.questsUnsub){state.questsUnsub();state.questsUnsub=null;}
+  await auth.signOut();
+}
+
+// ────────────────────────────────────────────────────────────
+// DATA LOADING
+// ────────────────────────────────────────────────────────────
+function loadQuests() {
+  if(state.questsUnsub) state.questsUnsub();
+  state.questsUnsub = db.collection('quests').orderBy('createdAt','desc').limit(100).onSnapshot(snap=>{
+    state.quests = snap.docs.map(doc=>({id:doc.id,...doc.data()}));
+    // Re-render if on feed/explore
+    if(['feed','explore'].includes(state.currentPage)) {
+      const pc=document.getElementById('page-container');
+      if(pc){
+        if(state.currentPage==='feed'){pc.innerHTML=renderFeedPage();bindFeed();}
+        else{pc.innerHTML=renderExplorePage();bindExplore();}
+      }
+    }
+  });
+}
+
+async function loadProfile(uid) {
+  const doc = await db.collection('users').doc(uid).get();
+  if(doc.exists) state.profile = doc.data();
+  else state.profile = {name:'',bio:'',interests:[]};
+}
+
+// ────────────────────────────────────────────────────────────
+// AUTH LISTENER — ENTRY POINT
+// ────────────────────────────────────────────────────────────
+auth.onAuthStateChanged(async user=>{
+  state.user = user;
+  if(user) {
+    await loadProfile(user.uid);
+    loadQuests();
+    state.currentPage = 'feed';
+    render();
+  } else {
+    if(state.questsUnsub){state.questsUnsub();state.questsUnsub=null;}
+    state.quests=[];state.profile=null;state.activeQuest=null;
+    render();
+  }
+});
 </script>
 </body>
 </html>
