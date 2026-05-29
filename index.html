@@ -1128,17 +1128,15 @@ async function loadProfile(uid) {
 // AUTH LISTENER — ENTRY POINT
 // ────────────────────────────────────────────────────────────
 auth.onAuthStateChanged(async user=>{
-  state.user = user;
-  if(user) {
-    await loadProfile(user.uid);
-    loadQuests();
-    state.currentPage = 'feed';
-    render();
-  } else {
-    if(state.questsUnsub){state.questsUnsub();state.questsUnsub=null;}
-    state.quests=[];state.profile=null;state.activeQuest=null;
-    render();
-  }
+  state.user = {
+  uid: "debug-user",
+  email: "debug@sitequest.com"
+};
+
+loadProfile("debug-user");
+loadQuests();
+state.currentPage = "feed";
+render();
 });
 </script>
 </body>
