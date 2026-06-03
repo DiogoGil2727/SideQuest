@@ -1587,15 +1587,17 @@ function loadQuests() {
 // AUTH LISTENER — ENTRY POINT
 // ════════════════════════════════════════════
 auth.onAuthStateChanged(async user=>{
-  state.user = {
-  uid: "debug-user",
-  email: "debug@sitequest.com"
-};
-
-loadProfile("debug-user");
-loadQuests();
-state.currentPage = "feed";
-render();
+  state.user = user;
+  if(user) {
+    await loadProfile(user.uid);
+    loadQuests();
+    state.currentPage = 'feed';
+    render();
+  } else {
+    if(state.questsUnsub){ state.questsUnsub(); state.questsUnsub = null; }
+    state.quests = []; state.profile = null; state.activeQuest = null;
+    render();
+  }
 });
 </script>
 </body>
