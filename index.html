@@ -50,6 +50,9 @@ img{max-width:100%;display:block;}
 .top-nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:.85rem 1.6rem;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:background .3s;}
 .nav-logo{font-family:var(--font-display);font-size:1.4rem;letter-spacing:3px;color:var(--ink);display:flex;align-items:center;gap:.5rem;cursor:pointer;}
 .nav-logo-dot{width:7px;height:7px;border-radius:50%;background:var(--green-bright);box-shadow:0 0 8px rgba(34,197,94,.5);animation:breathe 3s ease-in-out infinite;}
+.nav-logo-socials{display:flex;gap:.35rem;margin-left:.4rem;align-items:center;}
+.nav-social-btn{display:flex;align-items:center;justify-content:center;width:24px;height:24px;color:var(--ink-light);transition:all .2s;cursor:pointer;font-size:.9rem;}
+.nav-social-btn:hover{color:var(--green-bright);}
 @keyframes breathe{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.4);opacity:.6;}}
 .nav-actions{display:flex;gap:.4rem;align-items:center;}
 .nav-avatar{width:34px;height:34px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;cursor:pointer;border:2px solid var(--green-mid);flex-shrink:0;overflow:hidden;}
@@ -73,7 +76,7 @@ img{max-width:100%;display:block;}
 .input{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.8rem 1rem;color:var(--ink);font-size:.9rem;outline:none;transition:border-color .2s,box-shadow .2s;}
 .input::placeholder{color:var(--silver);}
 .input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,122,60,.15);}
-textarea.input{resize:vertical;min-height:90px;}
+textarea.input{resize:vertical;min-height:90px;max-height:200px;}
 .label-field{font-size:.78rem;font-weight:600;color:var(--ink-mid);margin-bottom:.4rem;letter-spacing:.5px;}
 .form-group{display:flex;flex-direction:column;margin-bottom:1.1rem;}
 .img-upload-area{border:2px dashed var(--border-strong);border-radius:var(--radius);padding:2rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2);position:relative;}
@@ -87,6 +90,7 @@ input[type="file"]{display:none;}
 .btn{border:none;border-radius:var(--radius-sm);padding:.75rem 1.4rem;font-size:.85rem;font-weight:700;transition:all .2s;letter-spacing:.3px;}
 .btn-primary{background:var(--green);color:#fff;}
 .btn-primary:hover{background:#145f2e;transform:translateY(-1px);box-shadow:0 6px 24px rgba(26,122,60,.3);}
+.btn-primary:disabled{background:var(--silver-light);color:var(--ink-light);cursor:not-allowed;transform:none;box-shadow:none;}
 .btn-secondary{background:var(--surface2);color:var(--ink);border:1px solid var(--border-strong);}
 .btn-secondary:hover{border-color:var(--green-mid);background:var(--green-pale);}
 .btn-ghost{background:none;color:var(--ink-light);border:1px solid var(--border);}
@@ -142,7 +146,8 @@ input[type="file"]{display:none;}
 .quest-meta-item{display:flex;align-items:center;gap:.35rem;font-size:.73rem;color:var(--ink-light);font-family:var(--font-mono);}
 .quest-card-footer{padding:.75rem 1.2rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);margin-top:auto;}
 .avatar-stack{display:flex;}
-.avatar-sm{width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:#fff;margin-left:-6px;flex-shrink:0;overflow:hidden;}
+.avatar-sm{width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:#fff;margin-left:-6px;flex-shrink:0;overflow:hidden;cursor:pointer;transition:transform .2s;}
+.avatar-sm:hover{transform:scale(1.1);}
 .avatar-sm:first-child{margin-left:0;}
 .avatar-sm img{width:100%;height:100%;object-fit:cover;}
 .spots-label{font-size:.7rem;color:var(--ink-light);font-family:var(--font-mono);margin-left:.55rem;}
@@ -193,7 +198,8 @@ input[type="file"]{display:none;}
 .section-label{font-family:var(--font-mono);font-size:.63rem;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;}
 .section-label::before{content:'';width:14px;height:1.5px;background:var(--green);}
 .member-list{display:flex;flex-direction:column;gap:.55rem;}
-.member-item{display:flex;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);}
+.member-item{display:flex;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;}
+.member-item:hover{border-color:var(--green-mid);background:var(--green-pale);}
 .member-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;}
 .member-avatar img{width:100%;height:100%;object-fit:cover;}
 .creator-badge{font-family:var(--font-mono);font-size:.56rem;letter-spacing:1px;text-transform:uppercase;background:var(--green-pale);color:var(--green-bright);border:1px solid var(--green-mid);padding:.18rem .5rem;border-radius:99px;margin-left:auto;}
@@ -233,7 +239,7 @@ input[type="file"]{display:none;}
 .profile-avatar-big{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;border:3px solid var(--bg);}
 .profile-avatar-big img{width:100%;height:100%;object-fit:cover;}
 .profile-name{font-family:var(--font-display);font-size:1.8rem;letter-spacing:2px;line-height:1;}
-.profile-bio{font-size:.84rem;color:var(--ink-light);margin-top:.4rem;line-height:1.6;}
+.profile-bio{font-size:.84rem;color:var(--ink-light);margin-top:.4rem;line-height:1.6;word-wrap:break-word;overflow-wrap:break-word;max-width:100%;}
 /* XP section in profile */
 .profile-xp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem 1.4rem;margin:1rem 0;}
 .profile-xp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;}
@@ -328,6 +334,9 @@ input[type="file"]{display:none;}
 .search-wrap{position:relative;}
 .search-icon{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--silver);}
 
+/* ══ PUBLIC PROFILE ══ */
+.public-profile-page{padding-top:4.5rem;max-width:600px;margin:0 auto;padding-left:1rem;padding-right:1rem;}
+
 /* ══ RESPONSIVE ══ */
 @media(min-width:768px){
   .bottom-nav{display:none;}
@@ -341,11 +350,10 @@ input[type="file"]{display:none;}
   .detail-meta-grid{grid-template-columns:1fr 1fr;}
   .values-grid{grid-template-columns:1fr;}
   .historico-grid{grid-template-columns:1fr;}
-  .nav-link.desktop-only{display:none;}
 }
 
 /* ══ LIGHT MODE READABILITY BOOST ══ */
-[data-theme="light"] body { font-weight: 450; }
+[data-theme="light"] body { font-weight: 550; }
 [data-theme="light"] .quest-desc,
 [data-theme="light"] .quest-meta-item,
 [data-theme="light"] .spots-label,
@@ -359,35 +367,38 @@ input[type="file"]{display:none;}
 [data-theme="light"] .historico-desc,
 [data-theme="light"] .profile-bio,
 [data-theme="light"] .auth-sub,
-[data-theme="light"] .detail-desc { color: #2a342a; font-weight: 500; }
-[data-theme="light"] .label-field { color: #1a2a1a; font-weight: 700; }
-[data-theme="light"] .nav-link { color: #3a4a38; font-weight: 700; }
-[data-theme="light"] .section-label { color: #1a5a2a; font-weight: 700; }
-[data-theme="light"] .quest-title { color: #0d1a0d; }
-[data-theme="light"] .feed-hero-title { text-shadow: 0 2px 20px rgba(0,0,0,.6); }
-[data-theme="light"] .quest-category-label { font-weight: 700; }
-[data-theme="light"] .cal-quest-title { color: #0d1a0d; font-weight: 800; }
-[data-theme="light"] .msg-thread-title { color: #0d1a0d; font-weight: 800; }
-[data-theme="light"] .bnav-item.active { color: #145f2e; font-weight: 800; }
-[data-theme="light"] .filter-btn.active { color: #145f2e; font-weight: 800; }
-[data-theme="light"] .tag { color: #145f2e; font-weight: 700; }
-[data-theme="light"] .input { color: #0d1a0d; font-weight: 500; }
-[data-theme="light"] .input::placeholder { color: #6b7868; }
+[data-theme="light"] .detail-desc { color: #1a2a1a; font-weight: 700; }
+[data-theme="light"] .label-field { color: #0a1a0a; font-weight: 800; }
+[data-theme="light"] .nav-link { color: #1a3a18; font-weight: 800; }
+[data-theme="light"] .section-label { color: #0a4a1a; font-weight: 800; }
+[data-theme="light"] .quest-title { color: #0a0a0a; font-weight: 900; }
+[data-theme="light"] .feed-hero-title { text-shadow: 0 2px 20px rgba(0,0,0,.6); font-weight: 900; }
+[data-theme="light"] .quest-category-label { font-weight: 800; }
+[data-theme="light"] .cal-quest-title { color: #0a0a0a; font-weight: 900; }
+[data-theme="light"] .msg-thread-title { color: #0a0a0a; font-weight: 900; }
+[data-theme="light"] .bnav-item.active { color: #0a4a1a; font-weight: 900; }
+[data-theme="light"] .filter-btn.active { color: #0a4a1a; font-weight: 900; }
+[data-theme="light"] .tag { color: #0a4a1a; font-weight: 800; }
+[data-theme="light"] .input { color: #0a0a0a; font-weight: 600; }
+[data-theme="light"] .input::placeholder { color: #5b6855; }
+[data-theme="light"] .team-name { font-weight: 900; }
+[data-theme="light"] .profile-name { font-weight: 900; }
+[data-theme="light"] .feed-section-label { font-weight: 900; color: #0a4a1a; }
+[data-theme="light"] .filter-btn { font-weight: 700; }
+[data-theme="light"] .filter-btn.active { font-weight: 900; }
 
 /* MOBILE & TABLET FULL RESPONSIVE ══ */
-/* ── touch targets everywhere ── */
 button, .btn, .bnav-item, .nav-link { min-height: 36px; }
-/* ── nav compact on small screens ── */
 @media(max-width:480px) {
   .top-nav { padding: .7rem 1rem; }
   .nav-logo { font-size: 1.15rem; letter-spacing: 2px; }
+  .nav-logo-socials { gap: .25rem; }
+  .nav-social-btn { font-size: .75rem; width: 20px; height: 20px; }
   .nav-actions { gap: .25rem; }
   .theme-toggle, .nav-msg-btn { width: 30px; height: 30px; font-size: .8rem; }
   .nav-avatar { width: 30px; height: 30px; font-size: .68rem; }
 }
-/* ── hero: on very small screens stack differently ── */
 @media(max-width:520px) {
-  /* 2+2 layout on very small phones */
   .hero-collage { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
   .feed-hero { height: clamp(240px, 70vw, 340px); }
   .feed-hero-title { font-size: clamp(2rem, 9vw, 3rem); }
@@ -396,16 +407,13 @@ button, .btn, .bnav-item, .nav-link { min-height: 36px; }
   .feed-hero-cta { padding: .6rem 1rem; font-size: .78rem; }
 }
 @media(min-width:521px) and (max-width:767px) {
-  /* phones landscape / small tablets: 4-in-a-row is fine */
   .feed-hero-title { font-size: clamp(2.2rem, 7vw, 3.2rem); }
 }
-/* ── tablet (768-1024) ── */
 @media(min-width:768px) and (max-width:1024px) {
   .feed-grid { grid-template-columns: repeat(2, 1fr); }
   .profile-page, .create-page, .detail-page, .messages-page, .static-page { padding-left: 1.5rem; padding-right: 1.5rem; }
   .hero-collage { grid-template-columns: 1fr 1fr 1fr 1fr; }
 }
-/* ── make all page containers touch-friendly ── */
 @media(max-width:767px) {
   .profile-page, .create-page, .detail-page, .messages-page, .static-page { padding-left: .9rem; padding-right: .9rem; }
   .feed-grid { padding: 0 .75rem 1rem; }
@@ -440,10 +448,8 @@ button, .btn, .bnav-item, .nav-link { min-height: 36px; }
   .notif-toast { font-size: .76rem; padding: .55rem 1rem; max-width: 90vw; white-space: normal; text-align: center; }
   .fab { width: 46px; height: 46px; font-size: 1.4rem; right: .9rem; bottom: 4.8rem; }
 }
-/* ── prevent horizontal scroll on all sizes ── */
 .page { overflow-x: hidden; }
 .feed-filters { -webkit-overflow-scrolling: touch; }
-
 </style>
 </head>
 <body>
@@ -489,8 +495,8 @@ function toggleTheme() { applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
 // XP / LEVEL SYSTEM
 // ════════════════════════════════════════════
 const XP_PER_QUEST = 120;
+const XP_CREATE_QUEST = 30;
 const LEVELS = [
-  // {level, title, xpRequired, frame, bannerUnlocked, perks}
   {level:1,  title:"Iniciante",      xp:0,     frame:"none",    banner:false, perks:["Acesso ao feed","Criar quests","Chat de grupo"]},
   {level:2,  title:"Explorador",     xp:200,   frame:"none",    banner:false, perks:["Tag personalizada no perfil"]},
   {level:3,  title:"Aventureiro",    xp:400,   frame:"bronze",  banner:true,  perks:["Moldura Bronze no avatar","Banner do perfil desbloqueado"]},
@@ -504,13 +510,10 @@ const LEVELS = [
   {level:50, title:"Imortal",        xp:30000, frame:"legend",  banner:true,  perks:["Estatuto máximo. Tu és a SideQuest."]},
 ];
 
-// Build full level table (fill gaps between defined checkpoints)
 const FULL_LEVELS = [];
 for(let i=1; i<=50; i++) {
-  // Find matching or previous checkpoint
   let checkpoint = LEVELS[0];
   for(const lv of LEVELS) { if(lv.level <= i) checkpoint = lv; else break; }
-  // XP required: interpolate linearly between checkpoints
   let xpForLevel = 0;
   for(let j=0; j<LEVELS.length; j++) {
     if(LEVELS[j].level === i) { xpForLevel = LEVELS[j].xp; break; }
@@ -545,7 +548,7 @@ function getLevelData(xp) {
 let state = {
   user: null, profile: null, currentPage: 'feed',
   quests: [], activeQuest: null, chatUnsub: null, questsUnsub: null,
-  filterTag: 'all', searchQuery: ''
+  filterTag: 'all', searchQuery: '', viewingUserId: null, otherUserProfile: null
 };
 
 // ════════════════════════════════════════════
@@ -563,7 +566,6 @@ const HISTORICO_STATIC = [
   {title:'Exploração Urbana Noturna',date:'2 Abr 2025',location:'Lisboa',participants:7,desc:'Uma noite de exploração pelos recantos esquecidos de Lisboa.',emoji:'🏙️',tags:['Urbano','Noturno']},
 ];
 
-// Hero images from uploaded photos (base64)
 const HERO_IMGS = [
   "./imagem1.jpg",
   "./imagem2.jpg",
@@ -618,6 +620,13 @@ async function compressImage(file,maxW=900,quality=0.78) {
   });
 }
 
+// Obter data mínima (hoje)
+function getTodayString() {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  return now.toISOString().slice(0, 16);
+}
+
 // ════════════════════════════════════════════
 // RENDER ENGINE
 // ════════════════════════════════════════════
@@ -642,11 +651,18 @@ function renderNav() {
   const themeIcon=currentTheme==='dark'?'☀️':'🌙';
   const myQuests=state.quests.filter(q=>(q.members||[]).includes(state.user.uid));
   return `<nav class="top-nav">
-    <div class="nav-logo" onclick="navigate('feed')"><div class="nav-logo-dot"></div>SIDEQUEST</div>
+    <div class="nav-logo" onclick="navigate('feed')">
+      <div class="nav-logo-dot"></div>
+      SIDEQUEST
+      <div class="nav-logo-socials">
+        <a href="https://instagram.com/sidequest" target="_blank" class="nav-social-btn" title="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        <a href="https://tiktok.com/@sidequest" target="_blank" class="nav-social-btn" title="TikTok"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.86 2.86 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-.54-.05z"/></svg></a>
+      </div>
+    </div>
     <div class="nav-actions">
-      <button class="nav-link desktop-only ${state.currentPage==='quemsomos'?'active':''}" onclick="navigate('quemsomos')">Quem Somos</button>
-      <button class="nav-link desktop-only ${state.currentPage==='comofunciona'?'active':''}" onclick="navigate('comofunciona')">Como Funciona</button>
-      <button class="nav-link desktop-only ${state.currentPage==='historico'?'active':''}" onclick="navigate('historico')">Histórico</button>
+      <button class="nav-link ${state.currentPage==='quemsomos'?'active':''}" onclick="navigate('quemsomos')">Quem Somos</button>
+      <button class="nav-link ${state.currentPage==='comofunciona'?'active':''}" onclick="navigate('comofunciona')">Como Funciona</button>
+      <button class="nav-link ${state.currentPage==='historico'?'active':''}" onclick="navigate('historico')">Histórico</button>
       <button class="nav-msg-btn" onclick="navigate('messages')" title="Mensagens">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         ${myQuests.length>0?`<span class="nav-msg-badge">${myQuests.length}</span>`:''}
@@ -690,13 +706,17 @@ function renderPage() {
     case 'comofunciona': pc.innerHTML=renderComoFunciona();   bindFaq();         break;
     case 'historico':    pc.innerHTML=renderHistorico();                         break;
     case 'messages':     pc.innerHTML=renderMessagesPage();   bindMessages();    break;
+    case 'public-profile': pc.innerHTML=renderPublicProfile(); bindPublicProfile(); break;
   }
 }
 
 function navigate(page,data=null) {
   if(state.chatUnsub){state.chatUnsub();state.chatUnsub=null;}
   state.currentPage=page;
-  if(data) state.activeQuest=data;
+  if(data) {
+    if(data.uid) state.viewingUserId = data.uid;
+    else state.activeQuest=data;
+  }
   if(state.user) {
     const app=document.getElementById('app');
     app.innerHTML=`${renderNav()}<div id="page-container"></div>${renderBottomNav()}<button class="fab" id="fab-btn">＋</button>`;
@@ -768,7 +788,8 @@ function getFilteredQuests() {
 // QUEST CARD
 // ════════════════════════════════════════════
 function renderQuestCard(q) {
-  const members=q.members||[]; const max=q.maxPeople||10; const spots=max-members.length;
+  const members=q.members||[]; const max=q.maxPeople||10; 
+  const spots = Math.max(0, max - members.length);
   const tags=(q.tags||[]).slice(0,2); const isMember=members.includes(state.user?.uid);
   const imgHtml=q.imageBase64?`<img class="quest-card-img" src="${q.imageBase64}" alt="${esc(q.title)}" loading="lazy">`:`<div class="quest-card-img-placeholder">${TAG_EMOJI[tags[0]]||'⚡'}</div>`;
   return `<div class="quest-card" data-id="${q.id}">
@@ -798,7 +819,7 @@ function renderQuestCard(q) {
 function renderAvatarStack(uids) {
   return uids.map(uid=>{
     const col=getAvatarColor(uid); const init=getInitials(uid.slice(0,4));
-    return `<div class="avatar-sm" style="background:${col}">${init}</div>`;
+    return `<div class="avatar-sm" style="background:${col}" title="Participante">${init}</div>`;
   }).join('');
 }
 
@@ -859,8 +880,8 @@ function renderCreatePage() {
       <div class="tag-list" id="tag-selector">${TAGS.map(t=>`<button class="tag-select-btn" data-tag="${t}">${TAG_EMOJI[t]||''} ${t}</button>`).join('')}</div>
     </div>
     <div class="form-group"><label class="label-field">Localização</label><input class="input" id="q-location" placeholder="Ex: Praia de Carcavelos..."></div>
-    <div class="form-group"><label class="label-field">Data e Hora</label><input class="input" id="q-date" type="datetime-local"></div>
-    <div class="form-group"><label class="label-field">Máximo de participantes *</label><input class="input" id="q-max" type="number" min="2" max="50" value="8"></div>
+    <div class="form-group"><label class="label-field">Data e Hora *</label><input class="input" id="q-date" type="datetime-local" min="${getTodayString()}" required></div>
+    <div class="form-group"><label class="label-field">Máximo de participantes * (mín. 2)</label><input class="input" id="q-max" type="number" min="2" max="50" value="8" onchange="if(this.value<2) this.value=2; if(this.value>50) this.value=50;"></div>
     <button class="btn btn-primary btn-full btn-icon" id="create-btn" style="margin-bottom:2rem">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
       Publicar Quest
@@ -898,8 +919,12 @@ async function submitCreateQuest() {
   const maxP=parseInt(document.getElementById('q-max')?.value)||8;
   if(!title||!desc){errEl.textContent='Título e descrição são obrigatórios.';errEl.classList.remove('hidden');return;}
   if(selectedTags.length===0){errEl.textContent='Seleciona pelo menos uma tag.';errEl.classList.remove('hidden');return;}
+  if(!dateVal){errEl.textContent='Data e hora são obrigatórias.';errEl.classList.remove('hidden');return;}
+  if(maxP<2){errEl.textContent='Mínimo 2 participantes.';errEl.classList.remove('hidden');return;}
   btn.disabled=true; btn.textContent='A publicar...';
   try {
+    const currentXp = state.profile?.xp || 0;
+    const newXp = currentXp + XP_CREATE_QUEST;
     await db.collection('quests').add({
       title,description:desc,tags:selectedTags,location:loc||null,
       date:dateVal?firebase.firestore.Timestamp.fromDate(new Date(dateVal)):null,
@@ -908,7 +933,10 @@ async function submitCreateQuest() {
       imageBase64:createImageB64||null,
       createdAt:firebase.firestore.FieldValue.serverTimestamp()
     });
-    showToast('⚡ Quest publicada!');
+    // Add XP for creating quest
+    await db.collection('users').doc(state.user.uid).set({xp:newXp},{merge:true});
+    state.profile={...state.profile,xp:newXp};
+    showToast('⚡ Quest publicada! +'+XP_CREATE_QUEST+' XP');
     navigate('feed');
   } catch(e) { errEl.textContent='Erro: '+e.message; errEl.classList.remove('hidden'); btn.disabled=false; btn.textContent='Publicar Quest'; }
 }
@@ -916,10 +944,12 @@ async function submitCreateQuest() {
 // ════════════════════════════════════════════
 // QUEST DETAIL
 // ════════════════════════════════════════════
+let joinBtnDisabled = false;
 function renderQuestDetail() {
   const q=state.activeQuest; if(!q) return '<div class="detail-page page"><p>Quest não encontrada.</p></div>';
   const members=q.members||[]; const isCreator=q.createdBy===state.user?.uid;
-  const isMember=members.includes(state.user?.uid); const spots=(q.maxPeople||10)-members.length;
+  const isMember=members.includes(state.user?.uid); 
+  const spots = Math.max(0, (q.maxPeople||10) - members.length);
   const imgHtml=q.imageBase64?`<img class="detail-cover" src="${q.imageBase64}" alt="${esc(q.title)}">`:`<div class="detail-cover-placeholder">${TAG_EMOJI[(q.tags||[])[0]]||'⚡'}</div>`;
   return `<div class="detail-page page">
     <button class="detail-back" onclick="navigate('feed')">← Voltar ao feed</button>
@@ -957,36 +987,70 @@ function renderQuestDetail() {
     </div>
   </div>`;
 }
+// Cache de nomes de users para membros
+let userNamesCache = {};
+async function getUserName(uid) {
+  if(userNamesCache[uid]) return userNamesCache[uid];
+  try {
+    const doc = await db.collection('users').doc(uid).get();
+    const name = doc.exists ? doc.data().name : 'Anónimo';
+    userNamesCache[uid] = name;
+    return name;
+  } catch(e) { return 'Anónimo'; }
+}
+
 function renderMemberItem(uid,creatorUid) {
-  const col=getAvatarColor(uid); const init=getInitials(uid.slice(0,4));
-  return `<div class="member-item">
+  const col=getAvatarColor(uid); 
+  const init=getInitials(uid.slice(0,4));
+  const isCurrentUser = uid===state.user?.uid;
+  return `<div class="member-item" onclick="viewUserProfile('${uid}')">
     <div class="member-avatar" style="background:${col}">${init}</div>
-    <div><div class="member-name">${uid===state.user?.uid?'Tu':'Membro'}</div><div style="font-size:.7rem;color:var(--ink-light);font-family:var(--font-mono)">${uid.slice(0,8)}...</div></div>
+    <div><div class="member-name" id="member-name-${uid}">${isCurrentUser?'Tu':'A carregar...'}</div><div style="font-size:.7rem;color:var(--ink-light);font-family:var(--font-mono)">${uid.slice(0,8)}...</div></div>
     ${uid===creatorUid?'<span class="creator-badge">CRIADOR</span>':''}
   </div>`;
 }
+
+// Function para carregar nomes de membros
+async function loadMemberNames(memberIds) {
+  for(const uid of memberIds) {
+    if(uid !== state.user?.uid) {
+      const name = await getUserName(uid);
+      const el = document.getElementById(`member-name-${uid}`);
+      if(el) el.textContent = name;
+    }
+  }
+}
 function bindQuestDetail() {
   const q=state.activeQuest; if(!q) return;
+  joinBtnDisabled=false;
   document.getElementById('join-btn')?.addEventListener('click',()=>joinQuest(q.id));
   document.getElementById('leave-btn')?.addEventListener('click',()=>leaveQuest(q.id));
   document.getElementById('delete-btn')?.addEventListener('click',()=>deleteQuest(q.id));
   if((q.members||[]).includes(state.user?.uid)) initChat(q.id);
+  // Carregar nomes de membros
+  loadMemberNames(q.members||[]);
 }
 async function joinQuest(questId) {
+  if(joinBtnDisabled) return;
+  joinBtnDisabled=true;
   try {
     await db.collection('quests').doc(questId).update({members:firebase.firestore.FieldValue.arrayUnion(state.user.uid)});
     const u=state.quests.find(q=>q.id===questId);
     if(u){u.members=[...(u.members||[]),state.user.uid];state.activeQuest=u;}
-    navigate('quest',state.activeQuest); showToast('⚡ Entraste na quest!');
-  } catch(e){showToast('Erro: '+e.message);}
+    // Rerender a quest detail para atualizar membros
+    const pc=document.getElementById('page-container');
+    if(pc) { pc.innerHTML=renderQuestDetail(); bindQuestDetail(); }
+    showToast('⚡ Entraste na quest!');
+    joinBtnDisabled=false;
+  } catch(e){showToast('Erro: '+e.message);joinBtnDisabled=false;}
 }
 async function leaveQuest(questId) {
   if(!confirm('Sair desta quest?')) return;
   try {
     await db.collection('quests').doc(questId).update({members:firebase.firestore.FieldValue.arrayRemove(state.user.uid)});
-    const u=state.quests.find(q=>q.id===questId);
-    if(u){u.members=(u.members||[]).filter(x=>x!==state.user.uid);state.activeQuest=u;}
-    navigate('quest',state.activeQuest); showToast('Saíste da quest.');
+    state.activeQuest=null;
+    navigate('feed');
+    showToast('Saíste da quest.');
   } catch(e){showToast('Erro: '+e.message);}
 }
 async function deleteQuest(questId) {
@@ -1063,11 +1127,7 @@ function renderMessagesPage() {
     </div>`}
   </div>`;
 }
-function bindMessages() {
-  document.querySelectorAll('.msg-thread').forEach((el,i)=>{
-    // onclick is inline, nothing extra needed
-  });
-}
+function bindMessages() {}
 
 // ════════════════════════════════════════════
 // PROFILE PAGE (expanded with XP, calendar, banner)
@@ -1086,14 +1146,12 @@ function renderProfilePage() {
   const lv = lvData.current;
   const frameClass = `frame-${lv.frame}`;
   
-  // upcoming quests with a date
   const now=Date.now();
   const upcomingQuests=state.quests.filter(q=>(q.members||[]).includes(state.user?.uid)&&q.date).map(q=>{
     const d=q.date.toDate?q.date.toDate():new Date(q.date);
     return {...q,_ts:d.getTime()};
   }).filter(q=>q._ts>=now).sort((a,b)=>a._ts-b._ts);
 
-  // Banner: unlocked at level 3
   const bannerUnlocked = lv.bannerUnlocked;
   const bannerHtml = bannerUnlocked
     ? (p.bannerURL?`<img src="${esc(p.bannerURL)}" alt="banner">`:`<div class="profile-banner-default">🌍</div>`)
@@ -1209,7 +1267,7 @@ function renderXpInfoModal() {
         <div style="font-family:var(--font-mono);font-size:.62rem;letter-spacing:2px;color:var(--xp);margin-bottom:.5rem">COMO GANHAR XP</div>
         <div style="font-size:.83rem;color:var(--ink-mid);display:flex;flex-direction:column;gap:.4rem">
           <div>⚡ <strong>Quest concluída</strong> — +${XP_PER_QUEST} XP</div>
-          <div>🧭 <strong>Criar uma quest</strong> — +30 XP (quando marcada como realizada)</div>
+          <div>🧭 <strong>Criar uma quest</strong> — +${XP_CREATE_QUEST} XP (ao publicar)</div>
           <div>📸 <strong>Publicar foto da quest</strong> — +20 XP extra</div>
         </div>
       </div>
@@ -1240,11 +1298,9 @@ function closeXpInfo() { document.getElementById('xp-info-modal')?.classList.add
 // ════════════════════════════════════════════
 // PROMO CODES
 // ════════════════════════════════════════════
-// Format: code -> { xpBonus, description, oneTimePerUser }
 const PROMO_CODES = {
   'OP2026': { xpBonus: 1200, description: '+10 níveis instantâneos (código admin)', oneTimePerUser: true },
 };
-// Track used codes per user in localStorage
 function getUsedCodes() {
   try { return JSON.parse(localStorage.getItem('sq-used-codes-' + (state.user?.uid||'')) || '[]'); }
   catch(e) { return []; }
@@ -1278,7 +1334,6 @@ async function applyPromoCode() {
   if(promo.oneTimePerUser && used.includes(code)) {
     msgEl.style.color='var(--red)'; msgEl.textContent='Este código já foi usado.'; return;
   }
-  // Apply XP
   const currentXp = state.profile?.xp || 0;
   const newXp = currentXp + promo.xpBonus;
   try {
@@ -1291,7 +1346,6 @@ async function applyPromoCode() {
     showToast(`🎉 Código aplicado! +${promo.xpBonus} XP → Nível ${lvAfter}`);
     msgEl.style.color='var(--green-bright)';
     msgEl.textContent = `✓ ${promo.description} · +${promo.xpBonus} XP · Nível ${lvBefore} → ${lvAfter}`;
-    // Re-render profile to show new level/frame
     setTimeout(()=>navigate('profile'), 1200);
   } catch(e) { msgEl.style.color='var(--red)'; msgEl.textContent='Erro: ' + e.message; }
 }
@@ -1305,7 +1359,6 @@ function bindProfile() {
   });
   document.getElementById('edit-profile-btn')?.addEventListener('click',openEditModal);
   
-  // Profile photo upload
   document.getElementById('profile-photo-input')?.addEventListener('change',async e=>{
     const file=e.target.files[0]; if(!file) return;
     if(file.size>5*1024*1024){showToast('Foto demasiado grande');return;}
@@ -1319,7 +1372,6 @@ function bindProfile() {
     showToast('Foto atualizada! ✓');
   });
 
-  // Banner upload
   const bannerEl=document.getElementById('profile-banner');
   const bannerInput=document.getElementById('banner-img-input');
   if(bannerEl&&bannerInput) {
@@ -1344,14 +1396,12 @@ function renderEditProfileModal() {
       <div class="modal-title">EDITAR PERFIL</div>
       <div id="edit-error" class="auth-error hidden"></div>
       <div class="form-group"><label class="label-field">Nome</label><input class="input" id="edit-name" value="${esc(p.name||'')}" placeholder="O teu nome"></div>
-      <div class="form-group"><label class="label-field">Bio</label><textarea class="input" id="edit-bio" placeholder="Fala sobre ti...">${esc(p.bio||'')}</textarea></div>
+      <div class="form-group"><label class="label-field">Bio (máx. 50 palavras)</label><textarea class="input" id="edit-bio" placeholder="Fala sobre ti..." onkeyup="updateBioWordCount()">${esc(p.bio||'')}</textarea><div style="font-size:.7rem;color:var(--ink-light);margin-top:.3rem">Palavras: <span id="bio-word-count">0</span>/50</div></div>
       <div class="form-group">
         <label class="label-field">Género (opcional)</label>
         <select class="input" id="edit-gender">
-          <option value="">Prefiro não dizer</option>
           <option value="m" ${p.gender==='m'?'selected':''}>Masculino</option>
           <option value="f" ${p.gender==='f'?'selected':''}>Feminino</option>
-          <option value="nb" ${p.gender==='nb'?'selected':''}>Não-binário</option>
         </select>
       </div>
       <div class="form-group">
@@ -1369,9 +1419,29 @@ function toggleInterest(btn,tag) {
   if(editInterests.includes(tag)){editInterests=editInterests.filter(t=>t!==tag);btn.classList.remove('selected');}
   else{editInterests.push(tag);btn.classList.add('selected');}
 }
+function updateBioWordCount() {
+  const bio = document.getElementById('edit-bio')?.value || '';
+  const words = bio.trim().split(/\s+/).filter(w => w.length > 0).length;
+  const countEl = document.getElementById('bio-word-count');
+  if(countEl) countEl.textContent = words;
+  if(words > 50) {
+    // Trunca para 50 palavras
+    const wordsArray = bio.trim().split(/\s+/).slice(0, 50);
+    document.getElementById('edit-bio').value = wordsArray.join(' ');
+    if(countEl) countEl.textContent = '50';
+  }
+}
+
+// Initial count on modal open
 function openEditModal() {
   editInterests=[...(state.profile?.interests||[])];
   document.getElementById('edit-modal')?.classList.remove('hidden');
+  setTimeout(() => {
+    const bio = document.getElementById('edit-bio')?.value || '';
+    const words = bio.trim().split(/\s+/).filter(w => w.length > 0).length;
+    const countEl = document.getElementById('bio-word-count');
+    if(countEl) countEl.textContent = words;
+  }, 50);
 }
 function closeEditModal() { document.getElementById('edit-modal')?.classList.add('hidden'); }
 async function saveProfile() {
@@ -1380,10 +1450,88 @@ async function saveProfile() {
   const gender=document.getElementById('edit-gender')?.value;
   const errEl=document.getElementById('edit-error');
   if(!name){errEl.textContent='Nome é obrigatório.';errEl.classList.remove('hidden');return;}
+  
+  // Validar limite de palavras na bio
+  const bioWords = bio.split(/\s+/).filter(w => w.length > 0).length;
+  if(bioWords > 50){errEl.textContent='Bio pode ter no máximo 50 palavras.';errEl.classList.remove('hidden');return;}
+  
   const data={name,bio:bio||'',gender:gender||null,interests:editInterests};
   await db.collection('users').doc(state.user.uid).set(data,{merge:true});
   state.profile={...state.profile,...data};
   closeEditModal(); navigate('profile'); showToast('Perfil guardado! ✓');
+}
+
+// ════════════════════════════════════════════
+// PUBLIC PROFILE
+// ════════════════════════════════════════════
+async function viewUserProfile(uid) {
+  if(uid === state.user?.uid) { navigate('profile'); return; }
+  try {
+    const doc = await db.collection('users').doc(uid).get();
+    state.otherUserProfile = doc.exists ? doc.data() : null;
+    navigate('public-profile', {uid});
+  } catch(e) {
+    showToast('Erro ao carregar perfil');
+  }
+}
+function renderPublicProfile() {
+  const uid = state.viewingUserId;
+  const p = state.otherUserProfile||{};
+  if(!p.name) return '<div class="public-profile-page page"><p>Perfil não encontrado.</p></div>';
+  
+  const col = getAvatarColor(uid||'');
+  const init = getInitials(p.name||'');
+  const avatarInner = p.photoURL?`<img src="${esc(p.photoURL)}" alt="av" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:1.5rem;font-weight:700">${init}</span>`;
+  const xp = p.xp||0;
+  const lvData = getLevelData(xp);
+  const lv = lvData.current;
+  const frameClass = `frame-${lv.frame}`;
+  
+  const userQuests = state.quests.filter(q => q.createdBy === uid);
+
+  return `<div class="public-profile-page page">
+    <button class="detail-back" onclick="navigate('feed')">← Voltar</button>
+    
+    <div class="profile-avatar-row" style="margin-top:1.5rem">
+      <div style="position:relative;flex-shrink:0">
+        <div class="profile-avatar-big ${frameClass}" style="background:${col}">
+          ${avatarInner}
+        </div>
+      </div>
+      <div style="flex:1;padding-bottom:.3rem">
+        <div class="profile-name">${esc(p.name||'')}</div>
+        <div class="level-badge" style="margin-top:.35rem">⭐ Nível ${lv.level} · ${lv.title}</div>
+      </div>
+    </div>
+
+    <div style="padding:0 .2rem;margin-bottom:1.5rem">
+      ${p.bio?`<div class="profile-bio">${esc(p.bio)}</div>`:''}
+      ${p.interests?.length?`<div class="tag-list" style="margin-top:.6rem">${p.interests.map(t=>`<span class="tag">${TAG_EMOJI[t]||''} ${t}</span>`).join('')}</div>`:''}
+    </div>
+
+    <!-- XP Card -->
+    <div class="profile-xp-card">
+      <div style="margin-bottom:1rem">
+        <span style="font-family:var(--font-display);font-size:1.1rem;letter-spacing:1px;color:var(--xp)">${xp} XP</span>
+        <span style="font-size:.75rem;color:var(--ink-light);margin-left:.4rem">·  Nível ${lv.level}</span>
+      </div>
+      <div class="xp-bar-wrap"><div class="xp-bar-fill" style="width:${lvData.pct}%"></div></div>
+    </div>
+
+    <!-- Quests -->
+    <div class="quests-section">
+      <div class="section-label">Quests de ${esc(p.name)} (${userQuests.length})</div>
+      ${userQuests.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:.8rem">${userQuests.map(q=>renderQuestCard(q)).join('')}</div>`:`<div class="card" style="color:var(--ink-light);font-size:.85rem">Este utilizador ainda não criou nenhuma quest.</div>`}
+    </div>
+  </div>`;
+}
+function bindPublicProfile() {
+  document.querySelectorAll('.quest-card').forEach(card=>{
+    card.addEventListener('click',()=>{
+      const quest=state.quests.find(q=>q.id===card.dataset.id);
+      if(quest) navigate('quest',quest);
+    });
+  });
 }
 
 // ════════════════════════════════════════════
