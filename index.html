@@ -148,6 +148,16 @@ input[type="file"]{display:none;}
 .avatar-stack{display:flex;}
 .avatar-sm{width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:#fff;margin-left:-6px;flex-shrink:0;overflow:hidden;cursor:pointer;transition:transform .2s;}
 .avatar-sm:hover{transform:scale(1.1);}
+
+/* ══ EXPIRED QUEST BADGE ══ */
+.expired-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(231,76,60,.1);color:var(--red);padding:.3rem .8rem;border-radius:99px;font-size:.7rem;font-weight:600;margin-bottom:.6rem;}
+
+/* ══ PARTICIPANT CHECKBOX ══ */
+.participant-item{display:flex;align-items:center;gap:.8rem;padding:.8rem;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:.6rem;border:1px solid var(--border);}
+.participant-item input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:var(--green-bright);}
+.participant-info{flex:1;}
+.participant-name{font-weight:600;color:var(--ink);}
+.participant-email{font-size:.78rem;color:var(--ink-light);}
 .avatar-sm:first-child{margin-left:0;}
 .avatar-sm img{width:100%;height:100%;object-fit:cover;}
 .spots-label{font-size:.7rem;color:var(--ink-light);font-family:var(--font-mono);margin-left:.55rem;}
@@ -548,7 +558,8 @@ function getLevelData(xp) {
 let state = {
   user: null, profile: null, currentPage: 'feed',
   quests: [], activeQuest: null, chatUnsub: null, questsUnsub: null,
-  filterTag: 'all', searchQuery: '', viewingUserId: null, otherUserProfile: null
+  filterTag: 'all', searchQuery: '', viewingUserId: null, otherUserProfile: null,
+  expiredQuestModal: null, selectedParticipants: {}
 };
 
 // ════════════════════════════════════════════
@@ -562,9 +573,7 @@ const TEAM = [
   {name:'Gonçalo Andrade', role:'Co-Fundador', bio:'A melhor aventura começa com um sim impulsivo.', color:'#9b59b6'}
 ];
 const HISTORICO_STATIC = [
-  {title:'Mergulho ao Nascer do Sol',date:'15 Mar 2025',location:'Sesimbra',participants:9,desc:'9 pessoas, 6h da manhã, água fria e um amanhecer que ninguém esquece.',emoji:'🌅',tags:['Água','Aventura']},
-  {title:'Exploração Urbana Noturna',date:'2 Abr 2025',location:'Lisboa',participants:7,desc:'Uma noite de exploração pelos recantos esquecidos de Lisboa.',emoji:'🏙️',tags:['Urbano','Noturno']},
-];
+]
 
 const HERO_IMGS = [
   "./imagem1.jpg",
@@ -641,6 +650,7 @@ function render() {
   `;
   document.getElementById('fab-btn').onclick=()=>navigate('create');
   renderPage();
+  checkExpiredQuests();
 }
 
 function renderNav() {
@@ -776,6 +786,8 @@ function setFilter(tag) { state.filterTag=tag; navigate('feed'); }
 
 function getFilteredQuests() {
   let q=[...state.quests];
+  // Filter out expired and completed quests
+  q=q.filter(x=>!x.expired && !x.completed);
   if(state.filterTag!=='all') q=q.filter(x=>(x.tags||[]).includes(state.filterTag));
   if(state.searchQuery) {
     const s=state.searchQuery.toLowerCase();
@@ -816,10 +828,31 @@ function renderQuestCard(q) {
   </div>`;
 }
 
+// Cache de dados de utilizadores para evitar múltiplas queries
+let userCache = {};
+
+async function getUserData(uid) {
+  if (userCache[uid]) return userCache[uid];
+  try {
+    const doc = await db.collection('users').doc(uid).get();
+    const data = doc.exists ? doc.data() : {name: 'Utilizador', photoURL: null};
+    userCache[uid] = data;
+    return data;
+  } catch(e) {
+    console.error('Erro ao carregar utilizador:', uid, e);
+    return {name: 'Utilizador', photoURL: null};
+  }
+}
+
 function renderAvatarStack(uids) {
   return uids.map(uid=>{
     const col=getAvatarColor(uid); const init=getInitials(uid.slice(0,4));
-    return `<div class="avatar-sm" style="background:${col}" title="Participante">${init}</div>`;
+    // Se temos cache, mostra foto; senão mostra inical
+    const userData = userCache[uid];
+    const content = userData?.photoURL 
+      ? `<img src="${esc(userData.photoURL)}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`
+      : init;
+    return `<div class="avatar-sm" style="background:${!userData?.photoURL ? col : 'transparent'}" title="${userData?.name || 'Participante'}">${content}</div>`;
   }).join('');
 }
 
@@ -1003,9 +1036,19 @@ function renderMemberItem(uid,creatorUid) {
   const col=getAvatarColor(uid); 
   const init=getInitials(uid.slice(0,4));
   const isCurrentUser = uid===state.user?.uid;
+  
+  // Usar userCache para obter dados
+  const userData = userCache[uid];
+  const name = isCurrentUser ? 'Tu' : (userData?.name || 'A carregar...');
+  const photoURL = userData?.photoURL;
+  
+  const photoHtml = photoURL 
+    ? `<img src="${esc(photoURL)}" alt="avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover">`
+    : `<div class="member-avatar" style="background:${col}">${init}</div>`;
+  
   return `<div class="member-item" onclick="viewUserProfile('${uid}')">
-    <div class="member-avatar" style="background:${col}">${init}</div>
-    <div><div class="member-name" id="member-name-${uid}">${isCurrentUser?'Tu':'A carregar...'}</div><div style="font-size:.7rem;color:var(--ink-light);font-family:var(--font-mono)">${uid.slice(0,8)}...</div></div>
+    ${photoHtml}
+    <div><div class="member-name" id="member-name-${uid}">${name}</div><div style="font-size:.7rem;color:var(--ink-light);font-family:var(--font-mono)">${userData?.email || uid.slice(0,8)}</div></div>
     ${uid===creatorUid?'<span class="creator-badge">CRIADOR</span>':''}
   </div>`;
 }
@@ -1604,15 +1647,44 @@ function toggleFaq(i) {
 // HISTÓRICO
 // ════════════════════════════════════════════
 function renderHistorico() {
+  // Get ALL completed quests from state (não apenas do utilizador logado)
+  const allCompletedQuests = state.quests.filter(q => q.completed && q.expired);
+  
+  // Combine with static historical quests
+  const allHistoricalQuests = [
+    ...HISTORICO_STATIC,
+    ...allCompletedQuests.map(q => ({
+      title: q.title,
+      date: q.completedAt ? new Date(q.completedAt.toDate ? q.completedAt.toDate() : q.completedAt).toLocaleDateString('pt-PT') : 'Data desconhecida',
+      location: q.location || 'Localização desconhecida',
+      participants: (q.members || []).length,
+      desc: q.description || 'Sem descrição',
+      emoji: TAG_EMOJI[(q.tags || [])[0]] || '⚡',
+      tags: q.tags || [],
+      imageBase64: q.imageBase64 || null  // Adicionar imagem
+    }))
+  ];
+  
   return `<div class="static-page page">
     <div class="static-hero">
       <div class="static-eyebrow">Memórias</div>
       <h1 class="static-title">QUESTS<br><span class="green">CONCLUÍDAS.</span></h1>
-      <p class="static-sub">Prova de que isto funciona — e de que podia ter sido tu.</p>
+      <p class="static-sub">Prova de que isto funciona. E de que podia ter sido tu.</p>
     </div>
     <div class="section-label">Arquivo</div>
     <div class="historico-grid">
-      ${HISTORICO_STATIC.map(h=>`<div class="historico-card"><div class="historico-img-placeholder">${h.emoji}</div><div class="historico-body"><div class="historico-date">📅 ${h.date} · 📍 ${esc(h.location)}</div><div class="historico-title">${esc(h.title)}</div><div class="historico-desc">${esc(h.desc)}</div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:.7rem"><div class="tag-list">${(h.tags||[]).map(t=>`<span class="tag">${TAG_EMOJI[t]||''} ${t}</span>`).join('')}</div><span style="font-family:var(--font-mono);font-size:.62rem;color:var(--ink-light)">👥 ${h.participants}</span></div></div></div>`).join('')}
+      ${allHistoricalQuests.map(h=>`<div class="historico-card">
+        <div class="historico-img-placeholder" style="${h.imageBase64 ? `background:transparent;overflow:hidden;padding:0;margin:0` : ''}">${h.imageBase64 ? `<img src="${h.imageBase64}" alt="${esc(h.title)}" style="width:100%;height:120px;object-fit:cover">` : h.emoji}</div>
+        <div class="historico-body">
+          <div class="historico-date">📅 ${h.date} · 📍 ${esc(h.location)}</div>
+          <div class="historico-title">${esc(h.title)}</div>
+          <div class="historico-desc">${esc(h.desc)}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.7rem">
+            <div class="tag-list">${(h.tags||[]).map(t=>`<span class="tag">${TAG_EMOJI[t]||''} ${t}</span>`).join('')}</div>
+            <span style="font-family:var(--font-mono);font-size:.62rem;color:var(--ink-light)">👥 ${h.participants}</span>
+          </div>
+        </div>
+      </div>`).join('')}
     </div>
     <div style="margin-top:2.5rem;padding:2rem;background:var(--green-pale);border:1.5px solid var(--green-mid);border-radius:var(--radius);text-align:center">
       <div style="font-family:var(--font-display);font-size:1.5rem;letter-spacing:2px;margin-bottom:.5rem">A PRÓXIMA PODE SER A TUA.</div>
@@ -1720,15 +1792,182 @@ async function logout() {
 async function loadProfile(uid) {
   try {
     const doc=await db.collection('users').doc(uid).get();
-    state.profile=doc.exists?doc.data():{name:'',bio:'',interests:[],xp:0};
-  } catch(e) { state.profile={name:'',bio:'',interests:[],xp:0}; }
+    state.profile=doc.exists?doc.data():{name:'',bio:'',interests:[],xp:0,completedQuests:[]};
+    if(!state.profile.completedQuests) state.profile.completedQuests=[];
+  } catch(e) { state.profile={name:'',bio:'',interests:[],xp:0,completedQuests:[]}; }
 }
 function loadQuests() {
   if(state.questsUnsub) state.questsUnsub();
-  state.questsUnsub=db.collection('quests').orderBy('createdAt','desc').limit(100).onSnapshot(snap=>{
+  state.questsUnsub=db.collection('quests').orderBy('createdAt','desc').limit(100).onSnapshot(async snap=>{
     state.quests=snap.docs.map(doc=>{return {id:doc.id,...doc.data()}});
+    
+    // Pre-load user data for all participants
+    const allUserIds = new Set();
+    state.quests.forEach(q => {
+      (q.members || []).forEach(uid => allUserIds.add(uid));
+    });
+    
+    for (const uid of allUserIds) {
+      if (!userCache[uid]) {
+        await getUserData(uid);
+      }
+    }
+    
     if(['feed','explore'].includes(state.currentPage)) navigate(state.currentPage);
   });
+}
+
+// ════════════════════════════════════════════
+// EXPIRED QUESTS - CHECK & MODAL
+// ════════════════════════════════════════════
+async function checkExpiredQuests() {
+  if(!state.user) return;
+  
+  const now = new Date();
+  const creatorQuests = state.quests.filter(q => q.createdBy === state.user.uid && !q.completed);
+  
+  for(const quest of creatorQuests) {
+    const questTime = new Date(quest.date?.toDate?.() || new Date(quest.date));
+    if(questTime <= now && !quest.expired) {
+      // Mark quest as expired
+      await db.collection('quests').doc(quest.id).update({ expired: true });
+      // Show modal
+      showExpiredQuestModal(quest);
+      break;
+    }
+  }
+}
+
+function showExpiredQuestModal(quest) {
+  const participants = quest.members || [];
+  
+  const modalHTML = `
+    <div class="modal-overlay" id="expired-modal">
+      <div class="modal-box">
+        <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+          <span style="font-family:var(--font-display);font-size:1.6rem;letter-spacing:2px;color:var(--ink)">A Quest "${quest.title}" realizou-se?</span>
+          <button class="modal-close" onclick="closeExpiredModal()" style="border:none;background:none;color:var(--ink-light);font-size:1.5rem;cursor:pointer;padding:0">✕</button>
+        </div>
+        
+        <p style="color:var(--ink-light);margin-bottom:1.5rem">
+          Data: <strong>${quest.date ? new Date(quest.date?.toDate?.() || new Date(quest.date)).toLocaleDateString('pt-PT') : 'N/A'}</strong>
+        </p>
+        
+        <h3 style="font-weight:600;margin-bottom:1rem;color:var(--ink)">Participantes Inscritos</h3>
+        <div id="participants-list" style="max-height:400px;overflow-y:auto;margin-bottom:1.5rem">
+          ${participants.length > 0 
+            ? `<p style="color:var(--ink-light);font-size:.9rem;margin-bottom:.8rem">Seleciona quem esteve realmente presente (por padrão, todos estão selecionados):</p>`
+            : '<p style="color:var(--ink-light)">Ninguém se inscreveu nesta quest.</p>'}
+          ${participants.map(uid => renderParticipantCheckbox(quest.id, uid)).join('')}
+        </div>
+        
+        <div style="display:flex;gap:.8rem;margin-top:2rem;justify-content:flex-end">
+          <button class="btn btn-secondary" onclick="closeExpiredModal()">Não, ainda não</button>
+          <button class="btn btn-primary" onclick="confirmQuestCompletion('${quest.id}')">Sim, realizou-se ✓</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+  state.expiredQuestModal = quest.id;
+  
+  // Initialize all checkboxes as checked
+  state.selectedParticipants[quest.id] = [...participants];
+  
+  // Load participant data asynchronously
+  participants.forEach(async uid => {
+    const userData = await getUserData(uid);
+    const nameEl = document.getElementById(`participant-name-${uid}`);
+    const emailEl = document.getElementById(`participant-email-${uid}`);
+    if (nameEl) nameEl.textContent = userData.name || 'Utilizador';
+    if (emailEl) emailEl.textContent = userData.email || '';
+  });
+  
+  // Bind checkbox events
+  document.querySelectorAll(`[data-quest="${quest.id}"]`).forEach(checkbox => {
+    checkbox.checked = true;
+    checkbox.addEventListener('change', (e) => {
+      const uid = e.target.dataset.uid;
+      if(e.target.checked) {
+        if(!state.selectedParticipants[quest.id].includes(uid)) {
+          state.selectedParticipants[quest.id].push(uid);
+        }
+      } else {
+        state.selectedParticipants[quest.id] = state.selectedParticipants[quest.id].filter(u => u !== uid);
+      }
+    });
+  });
+}
+
+function renderParticipantCheckbox(questId, uid) {
+  const userData = userCache[uid];
+  const name = userData?.name || 'Carregando...';
+  const email = userData?.email || '';
+  const photoURL = userData?.photoURL;
+  
+  const photoHtml = photoURL 
+    ? `<img src="${esc(photoURL)}" alt="avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover">`
+    : `<div style="width:36px;height:36px;border-radius:50%;background:${getAvatarColor(uid)};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem">${getInitials(uid.slice(0,4))}</div>`;
+  
+  return `
+    <div class="participant-item">
+      <input type="checkbox" data-quest="${questId}" data-uid="${uid}" checked>
+      <div style="width:36px;height:36px;flex-shrink:0">
+        ${photoHtml}
+      </div>
+      <div class="participant-info">
+        <div class="participant-name" id="participant-name-${uid}">${esc(name)}</div>
+        <div class="participant-email" id="participant-email-${uid}">${esc(email)}</div>
+      </div>
+    </div>
+  `;
+}
+
+async function confirmQuestCompletion(questId) {
+  const quest = state.quests.find(q => q.id === questId);
+  const selectedParticipants = state.selectedParticipants[questId] || [];
+  
+  try {
+    // Update quest as completed
+    await db.collection('quests').doc(questId).update({
+      completed: true,
+      completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      presentMembers: selectedParticipants
+    });
+    
+    // Update creator profile - add to completedQuests
+    const creatorRef = db.collection('users').doc(state.user.uid);
+    await creatorRef.update({
+      completedQuests: firebase.firestore.FieldValue.arrayUnion(questId),
+      xp: firebase.firestore.FieldValue.increment(XP_PER_QUEST)
+    });
+    
+    // Update each participant's profile
+    for(const uid of selectedParticipants) {
+      const participantRef = db.collection('users').doc(uid);
+      await participantRef.update({
+        completedQuests: firebase.firestore.FieldValue.arrayUnion(questId),
+        xp: firebase.firestore.FieldValue.increment(XP_PER_QUEST)
+      });
+    }
+    
+    closeExpiredModal();
+    showToast('✓ Quest marcada como realizada!');
+    
+    // Reload data
+    await loadProfile(state.user.uid);
+    loadQuests();
+  } catch(e) {
+    console.error('Erro ao confirmar quest:', e);
+    showToast('Erro ao atualizar quest');
+  }
+}
+
+function closeExpiredModal() {
+  const modal = document.getElementById('expired-modal');
+  if(modal) modal.remove();
+  state.expiredQuestModal = null;
 }
 
 // ════════════════════════════════════════════
@@ -1741,6 +1980,8 @@ auth.onAuthStateChanged(async user=>{
     loadQuests();
     state.currentPage = 'feed';
     render();
+    // Check for expired quests every 10 seconds
+    setInterval(checkExpiredQuests, 10000);
   } else {
     if(state.questsUnsub){ state.questsUnsub(); state.questsUnsub = null; }
     state.quests = []; state.profile = null; state.activeQuest = null;
