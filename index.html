@@ -23,7 +23,11 @@
   --modal-overlay:rgba(0,0,0,.78);--shadow-card:rgba(0,0,0,.4);
   --font-display:'Bebas Neue',sans-serif;--font-body:'Outfit',sans-serif;--font-mono:'DM Mono',monospace;
   --radius:14px;--radius-sm:9px;
+  --beta:#6366f1;--beta-pale:#3730a3;--beta-mid:#4f46e5;
 }
+/* ══ BETA BADGE ══ */
+.beta-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--beta-pale);border:1px solid var(--beta-mid);border-radius:99px;padding:.3rem .8rem;font-family:var(--font-mono);font-size:.65rem;letter-spacing:1px;color:var(--beta);font-weight:700;text-transform:uppercase;}
+
 [data-theme="light"]{
   --bg:#f4f6f2;--bg2:#eef0ec;--surface:#ffffff;--surface2:#f8faf7;
   --border:#dde3d8;--border-strong:#c4cebf;
@@ -33,6 +37,7 @@
   --xp:#d97706;--xp-pale:#fef9c3;--xp-mid:#fde68a;
   --nav-bg:rgba(244,246,242,.93);--bnav-bg:rgba(244,246,242,.97);
   --modal-overlay:rgba(0,0,0,.5);--shadow-card:rgba(0,0,0,.1);
+  --beta:#6366f1;--beta-pale:#ede9fe;--beta-mid:#818cf8;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -57,7 +62,7 @@ img{max-width:100%;display:block;}
 .nav-actions{display:flex;gap:.4rem;align-items:center;}
 .nav-avatar{width:34px;height:34px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;cursor:pointer;border:2px solid var(--green-mid);flex-shrink:0;overflow:hidden;}
 .nav-avatar img{width:100%;height:100%;object-fit:cover;}
-.nav-link{font-size:.78rem;font-weight:600;color:var(--ink-light);padding:.38rem .75rem;border-radius:99px;transition:all .2s;cursor:pointer;white-space:nowrap;border:none;background:none;}
+.nav-link{font-size:.78rem;font-weight:600;color:var(--ink-light);padding:.38rem .75rem;border-radius:99px;transition:all .2s;cursor:pointer;white-space:nowrap;border:none;background:none;display:inline-flex;align-items:center;}
 .nav-link:hover,.nav-link.active{color:var(--green-bright);background:var(--green-pale);}
 .theme-toggle{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--ink-light);font-size:.95rem;transition:all .2s;flex-shrink:0;}
 .theme-toggle:hover{border-color:var(--green-mid);color:var(--green-bright);background:var(--green-pale);}
@@ -191,6 +196,19 @@ input[type="file"]{display:none;}
 .feed-empty .big{font-family:var(--font-display);font-size:3rem;letter-spacing:2px;color:var(--border-strong);}
 .fab{position:fixed;bottom:5rem;right:1.2rem;z-index:100;width:52px;height:52px;border-radius:50%;background:var(--green);border:none;color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(34,197,94,.3);transition:all .2s;}
 .fab:hover{background:#145f2e;transform:scale(1.1);}
+
+/* ══ GALLERY - MASONRY LAYOUT (CORREÇÃO 2) ══ */
+.gallery-page{padding-top:4.5rem;}
+.gallery-grid{column-count:3;column-gap:1rem;padding:1rem;}
+@media(max-width:1024px){.gallery-grid{column-count:2;}}
+@media(max-width:640px){.gallery-grid{column-count:1;}}
+.gallery-item{break-inside:avoid;margin-bottom:1rem;position:relative;border-radius:var(--radius);overflow:hidden;cursor:pointer;border:2px solid var(--border);transition:all .2s;}
+.gallery-item:hover{border-color:var(--green-mid);box-shadow:0 6px 24px var(--shadow-card);}
+.gallery-item-img{width:100%;height:auto;display:block;}
+.gallery-item-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);opacity:0;transition:opacity .2s;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.9rem;font-weight:600;gap:1rem;}
+.gallery-item:hover .gallery-item-overlay{opacity:1;}
+.gallery-delete-btn{background:rgba(231,76,60,.8);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .2s;}
+.gallery-delete-btn:hover{background:var(--red);transform:scale(1.1);}
 
 /* ══ QUEST DETAIL ══ */
 .detail-page{padding-top:4.5rem;max-width:700px;margin:0 auto;padding-left:1rem;padding-right:1rem;}
@@ -354,12 +372,18 @@ input[type="file"]{display:none;}
   .feed-grid{grid-template-columns:repeat(auto-fill,minmax(310px,1fr));}
   .values-grid{grid-template-columns:repeat(3,1fr);}
   .profile-page{padding-top:5rem;}
+  .nav-link-galeria-desktop{display:inline-flex;}
+  .nav-avatar-desktop{display:flex;}
 }
 @media(max-width:767px){
   .feed-grid{grid-template-columns:1fr;}
   .detail-meta-grid{grid-template-columns:1fr 1fr;}
   .values-grid{grid-template-columns:1fr;}
   .historico-grid{grid-template-columns:1fr;}
+  .theme-toggle { display:none; }
+  .nav-msg-btn { display:none; }
+  .nav-link-galeria-desktop { display:none !important; }
+  .nav-avatar-desktop { display:none !important; }
 }
 
 /* ══ LIGHT MODE READABILITY BOOST ══ */
@@ -405,7 +429,7 @@ button, .btn, .bnav-item, .nav-link { min-height: 36px; }
   .nav-logo-socials { gap: .25rem; }
   .nav-social-btn { font-size: .75rem; width: 20px; height: 20px; }
   .nav-actions { gap: .25rem; }
-  .theme-toggle, .nav-msg-btn { width: 30px; height: 30px; font-size: .8rem; }
+  .theme-toggle, .nav-msg-btn { width: 30px; height: 30px; font-size: .8rem; display: none; }
   .nav-avatar { width: 30px; height: 30px; font-size: .68rem; }
 }
 @media(max-width:520px) {
@@ -559,7 +583,8 @@ let state = {
   user: null, profile: null, currentPage: 'feed',
   quests: [], activeQuest: null, chatUnsub: null, questsUnsub: null,
   filterTag: 'all', searchQuery: '', viewingUserId: null, otherUserProfile: null,
-  expiredQuestModal: null, selectedParticipants: {}
+  expiredQuestModal: null, selectedParticipants: {}, galleryPhotos: [],
+  showGalleryUpload: false
 };
 
 // ════════════════════════════════════════════
@@ -572,8 +597,7 @@ const TEAM = [
   {name:'Diogo Gil', role:'Co-Fundador', bio:'Se não vale uma história, não vale a pena.', color:'#1abc9c'},
   {name:'Gonçalo Andrade', role:'Co-Fundador', bio:'A melhor aventura começa com um sim impulsivo.', color:'#9b59b6'}
 ];
-const HISTORICO_STATIC = [
-]
+const HISTORICO_STATIC = []
 
 const HERO_IMGS = [
   "./imagem1.jpg",
@@ -629,7 +653,6 @@ async function compressImage(file,maxW=900,quality=0.78) {
   });
 }
 
-// Obter data mínima (hoje)
 function getTodayString() {
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -672,13 +695,14 @@ function renderNav() {
     <div class="nav-actions">
       <button class="nav-link ${state.currentPage==='quemsomos'?'active':''}" onclick="navigate('quemsomos')">Quem Somos</button>
       <button class="nav-link ${state.currentPage==='comofunciona'?'active':''}" onclick="navigate('comofunciona')">Como Funciona</button>
+      <button class="nav-link nav-link-galeria-desktop ${state.currentPage==='galeria'?'active':''}" onclick="navigate('galeria')">Galeria</button>
       <button class="nav-link ${state.currentPage==='historico'?'active':''}" onclick="navigate('historico')">Histórico</button>
       <button class="nav-msg-btn" onclick="navigate('messages')" title="Mensagens">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         ${myQuests.length>0?`<span class="nav-msg-badge">${myQuests.length}</span>`:''}
       </button>
-      <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn"><span id="theme-icon">${themeIcon}</span></button>
-      <div class="nav-avatar" style="background:${col}" onclick="navigate('profile')">${avatarHtml}</div>
+      <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn" style="display:flex"><span id="theme-icon">${themeIcon}</span></button>
+      <div class="nav-avatar nav-avatar-desktop" style="background:${col}" onclick="navigate('profile')">${avatarHtml}</div>
     </div>
   </nav>`;
 }
@@ -697,6 +721,9 @@ function renderBottomNav() {
     </button>
     <button class="bnav-item ${p==='create'?'active':''}" onclick="navigate('create')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Criar
+    </button>
+    <button class="bnav-item ${p==='galeria'?'active':''}" onclick="navigate('galeria')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>Galeria
     </button>
     <button class="bnav-item ${p==='profile'?'active':''}" onclick="navigate('profile')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Perfil
@@ -717,6 +744,7 @@ function renderPage() {
     case 'historico':    pc.innerHTML=renderHistorico();                         break;
     case 'messages':     pc.innerHTML=renderMessagesPage();   bindMessages();    break;
     case 'public-profile': pc.innerHTML=renderPublicProfile(); bindPublicProfile(); break;
+    case 'galeria':      pc.innerHTML=renderGaleriaPage();    bindGaleria();     break;
   }
 }
 
@@ -786,7 +814,6 @@ function setFilter(tag) { state.filterTag=tag; navigate('feed'); }
 
 function getFilteredQuests() {
   let q=[...state.quests];
-  // Filter out expired and completed quests
   q=q.filter(x=>!x.expired && !x.completed);
   if(state.filterTag!=='all') q=q.filter(x=>(x.tags||[]).includes(state.filterTag));
   if(state.searchQuery) {
@@ -828,7 +855,6 @@ function renderQuestCard(q) {
   </div>`;
 }
 
-// Cache de dados de utilizadores para evitar múltiplas queries
 let userCache = {};
 
 async function getUserData(uid) {
@@ -839,7 +865,6 @@ async function getUserData(uid) {
     userCache[uid] = data;
     return data;
   } catch(e) {
-    console.error('Erro ao carregar utilizador:', uid, e);
     return {name: 'Utilizador', photoURL: null};
   }
 }
@@ -847,7 +872,6 @@ async function getUserData(uid) {
 function renderAvatarStack(uids) {
   return uids.map(uid=>{
     const col=getAvatarColor(uid); const init=getInitials(uid.slice(0,4));
-    // Se temos cache, mostra foto; senão mostra inical
     const userData = userCache[uid];
     const content = userData?.photoURL 
       ? `<img src="${esc(userData.photoURL)}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`
@@ -966,7 +990,6 @@ async function submitCreateQuest() {
       imageBase64:createImageB64||null,
       createdAt:firebase.firestore.FieldValue.serverTimestamp()
     });
-    // Add XP for creating quest
     await db.collection('users').doc(state.user.uid).set({xp:newXp},{merge:true});
     state.profile={...state.profile,xp:newXp};
     showToast('⚡ Quest publicada! +'+XP_CREATE_QUEST+' XP');
@@ -1020,7 +1043,7 @@ function renderQuestDetail() {
     </div>
   </div>`;
 }
-// Cache de nomes de users para membros
+
 let userNamesCache = {};
 async function getUserName(uid) {
   if(userNamesCache[uid]) return userNamesCache[uid];
@@ -1037,7 +1060,6 @@ function renderMemberItem(uid,creatorUid) {
   const init=getInitials(uid.slice(0,4));
   const isCurrentUser = uid===state.user?.uid;
   
-  // Usar userCache para obter dados
   const userData = userCache[uid];
   const name = isCurrentUser ? 'Tu' : (userData?.name || 'A carregar...');
   const photoURL = userData?.photoURL;
@@ -1053,7 +1075,6 @@ function renderMemberItem(uid,creatorUid) {
   </div>`;
 }
 
-// Function para carregar nomes de membros
 async function loadMemberNames(memberIds) {
   for(const uid of memberIds) {
     if(uid !== state.user?.uid) {
@@ -1070,7 +1091,6 @@ function bindQuestDetail() {
   document.getElementById('leave-btn')?.addEventListener('click',()=>leaveQuest(q.id));
   document.getElementById('delete-btn')?.addEventListener('click',()=>deleteQuest(q.id));
   if((q.members||[]).includes(state.user?.uid)) initChat(q.id);
-  // Carregar nomes de membros
   loadMemberNames(q.members||[]);
 }
 async function joinQuest(questId) {
@@ -1080,7 +1100,6 @@ async function joinQuest(questId) {
     await db.collection('quests').doc(questId).update({members:firebase.firestore.FieldValue.arrayUnion(state.user.uid)});
     const u=state.quests.find(q=>q.id===questId);
     if(u){u.members=[...(u.members||[]),state.user.uid];state.activeQuest=u;}
-    // Rerender a quest detail para atualizar membros
     const pc=document.getElementById('page-container');
     if(pc) { pc.innerHTML=renderQuestDetail(); bindQuestDetail(); }
     showToast('⚡ Entraste na quest!');
@@ -1223,6 +1242,7 @@ function renderProfilePage() {
       <div style="flex:1;padding-bottom:.3rem">
         <div class="profile-name">${esc(p.name||'Sem nome')}</div>
         <div class="level-badge" style="margin-top:.35rem">⭐ Nível ${lv.level} · ${lv.title}</div>
+        ${p.isBetaTester?`<span class="beta-badge" style="margin-top:.4rem;display:inline-block">🚀 FIRST EXPLORER</span>`:''}
       </div>
     </div>
 
@@ -1343,6 +1363,7 @@ function closeXpInfo() { document.getElementById('xp-info-modal')?.classList.add
 // ════════════════════════════════════════════
 const PROMO_CODES = {
   'OP2026': { xpBonus: 1200, description: '+10 níveis instantâneos (código admin)', oneTimePerUser: true },
+  'BETA2026': { betaTester: true, description: 'Acesso Beta - Badge First Explorer', oneTimePerUser: true },
 };
 function getUsedCodes() {
   try { return JSON.parse(localStorage.getItem('sq-used-codes-' + (state.user?.uid||'')) || '[]'); }
@@ -1377,18 +1398,27 @@ async function applyPromoCode() {
   if(promo.oneTimePerUser && used.includes(code)) {
     msgEl.style.color='var(--red)'; msgEl.textContent='Este código já foi usado.'; return;
   }
-  const currentXp = state.profile?.xp || 0;
-  const newXp = currentXp + promo.xpBonus;
+  
   try {
-    await db.collection('users').doc(state.user.uid).set({ xp: newXp }, { merge: true });
-    state.profile = { ...state.profile, xp: newXp };
+    let updateData = {};
+    if(promo.xpBonus) {
+      const currentXp = state.profile?.xp || 0;
+      const newXp = currentXp + promo.xpBonus;
+      updateData.xp = newXp;
+      state.profile = { ...state.profile, xp: newXp };
+    }
+    if(promo.betaTester) {
+      updateData.isBetaTester = true;
+      state.profile = { ...state.profile, isBetaTester: true };
+    }
+    
+    await db.collection('users').doc(state.user.uid).set(updateData, { merge: true });
     if(promo.oneTimePerUser) markCodeUsed(code);
     input.value = '';
-    const lvBefore = getLevelData(currentXp).current.level;
-    const lvAfter = getLevelData(newXp).current.level;
-    showToast(`🎉 Código aplicado! +${promo.xpBonus} XP → Nível ${lvAfter}`);
+    
+    showToast(`🎉 Código aplicado! ${promo.description}`);
     msgEl.style.color='var(--green-bright)';
-    msgEl.textContent = `✓ ${promo.description} · +${promo.xpBonus} XP · Nível ${lvBefore} → ${lvAfter}`;
+    msgEl.textContent = `✓ ${promo.description}`;
     setTimeout(()=>navigate('profile'), 1200);
   } catch(e) { msgEl.style.color='var(--red)'; msgEl.textContent='Erro: ' + e.message; }
 }
@@ -1468,14 +1498,12 @@ function updateBioWordCount() {
   const countEl = document.getElementById('bio-word-count');
   if(countEl) countEl.textContent = words;
   if(words > 50) {
-    // Trunca para 50 palavras
     const wordsArray = bio.trim().split(/\s+/).slice(0, 50);
     document.getElementById('edit-bio').value = wordsArray.join(' ');
     if(countEl) countEl.textContent = '50';
   }
 }
 
-// Initial count on modal open
 function openEditModal() {
   editInterests=[...(state.profile?.interests||[])];
   document.getElementById('edit-modal')?.classList.remove('hidden');
@@ -1494,7 +1522,6 @@ async function saveProfile() {
   const errEl=document.getElementById('edit-error');
   if(!name){errEl.textContent='Nome é obrigatório.';errEl.classList.remove('hidden');return;}
   
-  // Validar limite de palavras na bio
   const bioWords = bio.split(/\s+/).filter(w => w.length > 0).length;
   if(bioWords > 50){errEl.textContent='Bio pode ter no máximo 50 palavras.';errEl.classList.remove('hidden');return;}
   
@@ -1532,7 +1559,6 @@ function renderPublicProfile() {
   
   const userQuests = state.quests.filter(q => q.createdBy === uid);
   
-  // ✅ NOVO: Renderização do banner com verificação de desbloqueio
   const bannerUnlocked = lv.bannerUnlocked;
   const bannerHtml = bannerUnlocked
     ? (p.bannerURL?`<img src="${esc(p.bannerURL)}" alt="banner">`:`<div class="profile-banner-default">🌍</div>`)
@@ -1543,7 +1569,6 @@ function renderPublicProfile() {
   return `<div class="public-profile-page page">
     <button class="detail-back" onclick="navigate('feed')">← Voltar</button>
     
-    <!-- ✅ NOVO: Secção do Banner -->
     <div class="profile-banner" style="margin-top:1rem">
       ${bannerHtml}${bannerLockHtml}
     </div>
@@ -1557,6 +1582,7 @@ function renderPublicProfile() {
       <div style="flex:1;padding-bottom:.3rem">
         <div class="profile-name">${esc(p.name||'')}</div>
         <div class="level-badge" style="margin-top:.35rem">⭐ Nível ${lv.level} · ${lv.title}</div>
+        ${p.isBetaTester?`<span class="beta-badge">🚀 FIRST EXPLORER</span>`:''}
       </div>
     </div>
 
@@ -1660,10 +1686,8 @@ function toggleFaq(i) {
 // HISTÓRICO
 // ════════════════════════════════════════════
 function renderHistorico() {
-  // Get ALL completed quests from state (não apenas do utilizador logado)
   const allCompletedQuests = state.quests.filter(q => q.completed && q.expired);
   
-  // Combine with static historical quests
   const allHistoricalQuests = [
     ...HISTORICO_STATIC,
     ...allCompletedQuests.map(q => ({
@@ -1674,7 +1698,7 @@ function renderHistorico() {
       desc: q.description || 'Sem descrição',
       emoji: TAG_EMOJI[(q.tags || [])[0]] || '⚡',
       tags: q.tags || [],
-      imageBase64: q.imageBase64 || null  // Adicionar imagem
+      imageBase64: q.imageBase64 || null
     }))
   ];
   
@@ -1707,6 +1731,266 @@ function renderHistorico() {
 }
 
 // ════════════════════════════════════════════
+// GALLERY PAGE - CORRIGIDO (PROBLEMAS 1, 2, 3)
+// ════════════════════════════════════════════
+let galleryImageB64 = null;
+
+function renderGaleriaPage() {
+  const photos = state.galleryPhotos || [];
+  return `<div class="gallery-page page">
+    <div style="padding:1.5rem 1.2rem .5rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border)">
+      <h1 style="font-family:var(--font-display);font-size:2.2rem;letter-spacing:2px">GALERIA<br><span style="color:var(--green-bright)">DE MEMÓRIAS.</span></h1>
+      <p style="font-size:.88rem;color:var(--ink-light);margin-top:.8rem;margin-bottom:0">Partilha as tuas melhores fotos das quests.</p>
+    </div>
+    
+    <!-- UPLOAD SECTION -->
+    <div style="padding:1.2rem;background:var(--surface2);border-bottom:1px solid var(--border);margin-bottom:2rem">
+      <div style="max-width:500px">
+        <h3 style="font-family:var(--font-display);font-size:1.3rem;letter-spacing:1px;margin-bottom:1rem;color:var(--ink)">Postar Foto</h3>
+        
+        <input type="file" id="gallery-file-input" accept="image/*" style="display:none">
+        
+        <button class="btn btn-secondary btn-icon" onclick="document.getElementById('gallery-file-input').click()" id="gallery-select-btn" style="width:100%;justify-content:center;margin-bottom:1rem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          Selecionar Foto
+        </button>
+        
+        <div id="gallery-preview-container" style="display:none;margin-bottom:1rem">
+          <img id="gallery-preview-img" style="width:100%;border-radius:var(--radius);border:1px solid var(--border);margin-bottom:.8rem">
+          <button class="btn btn-ghost btn-sm" onclick="resetGalleryUpload()" style="width:100%">Trocar Foto</button>
+        </div>
+        
+        <button class="btn btn-primary btn-icon" id="gallery-upload-btn" onclick="uploadGalleryPhoto()" style="width:100%;justify-content:center;display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Partilhar Foto
+        </button>
+      </div>
+    </div>
+    
+    <!-- GALLERY GRID COM MASONRY -->
+    <div style="padding:0 1.2rem">
+      <div class="section-label" style="margin-bottom:1rem">Galeria (${photos.length})</div>
+      
+      ${photos.length > 0 
+        ? `<div class="gallery-grid">${photos.map(p => `
+          <div class="gallery-item" onclick="showGalleryModal('${p.id}')">
+            <img class="gallery-item-img" src="${p.imageBase64}" alt="photo">
+            <div class="gallery-item-overlay">
+              <span>👁️ VER</span>
+              ${p.uploadedBy === state.user.uid ? `<button class="gallery-delete-btn" onclick="deleteGalleryPhoto(event, '${p.id}')" title="Eliminar">🗑️</button>` : ''}
+            </div>
+          </div>
+        `).join('')}</div>`
+        : `<div style="text-align:center;padding:3rem 1rem;color:var(--ink-light)">
+            <div style="font-size:2.5rem;margin-bottom:.8rem">📷</div>
+            <p>Nenhuma foto ainda. Sê o primeiro!</p>
+          </div>`
+      }
+    </div>
+  </div>`;
+}
+
+function bindGaleria() {
+  galleryImageB64 = null;
+  
+  document.getElementById('gallery-file-input')?.addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    
+    if(file.size > 5*1024*1024) {
+      showToast('Foto demasiado grande (máx 5MB)');
+      document.getElementById('gallery-file-input').value = '';
+      return;
+    }
+    
+    const btn = document.getElementById('gallery-select-btn');
+    btn.disabled = true;
+    btn.textContent = 'A comprimir...';
+    
+    try {
+      galleryImageB64 = await compressImage(file, 1000, 0.8);
+      
+      document.getElementById('gallery-preview-img').src = galleryImageB64;
+      document.getElementById('gallery-preview-container').style.display = 'block';
+      document.getElementById('gallery-upload-btn').style.display = 'flex';
+      document.getElementById('gallery-select-btn').textContent = 'Selecionar Outra Foto';
+      
+      btn.disabled = false;
+    } catch(err) {
+      showToast('Erro ao processar foto');
+      btn.disabled = false;
+      btn.textContent = 'Selecionar Foto';
+    }
+  });
+}
+
+function resetGalleryUpload() {
+  galleryImageB64 = null;
+  document.getElementById('gallery-file-input').value = '';
+  document.getElementById('gallery-preview-container').style.display = 'none';
+  document.getElementById('gallery-upload-btn').style.display = 'none';
+  document.getElementById('gallery-select-btn').textContent = 'Selecionar Foto';
+}
+
+// CORREÇÃO 1: Remover loadGallery(), usar resetGalleryUpload()
+async function uploadGalleryPhoto() {
+  if(!galleryImageB64) {
+    showToast('Seleciona uma foto.');
+    return;
+  }
+  
+  const btn = document.getElementById('gallery-upload-btn');
+  btn.disabled = true;
+  btn.textContent = 'A partilhar...';
+  
+  try {
+    const photoData = {
+      imageBase64: galleryImageB64,
+      uploadedBy: state.user.uid,
+      uploadedByName: state.profile?.name || state.user.email?.split('@')[0] || 'Anónimo',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    await db.collection('gallery').add(photoData);
+    
+    galleryImageB64 = null;
+    resetGalleryUpload();
+    
+    showToast('✓ Foto partilhada!');
+    // ✅ NÃO CHAMAR loadGallery() - o listener real-time atualiza automaticamente
+  } catch(e) {
+    showToast('Erro: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Partilhar Foto';
+  }
+}
+
+// CORREÇÃO 3: Delete photo function
+async function deleteGalleryPhoto(event, photoId) {
+  event.stopPropagation();
+  
+  if(!confirm('Tens a certeza que queres eliminar esta foto?')) {
+    return;
+  }
+  
+  try {
+    await db.collection('gallery').doc(photoId).delete();
+    showToast('✓ Foto eliminada');
+  } catch(e) {
+    showToast('Erro: ' + e.message);
+  }
+}
+
+// CORREÇÃO 3: Show gallery modal with delete option
+function showGalleryModal(photoId) {
+  const photo = state.galleryPhotos.find(p => p.id === photoId);
+  if(!photo) return;
+  
+  const modal = `
+    <div class="modal-overlay" id="gallery-modal" onclick="closeGalleryModal()">
+      <div style="position:relative;max-width:600px;width:100%;max-height:90vh;overflow-y:auto" onclick="event.stopPropagation()">
+        <button onclick="closeGalleryModal()" style="position:absolute;top:-.8rem;right:-.8rem;width:32px;height:32px;border-radius:50%;border:none;background:var(--green);color:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10">✕</button>
+        <img src="${photo.imageBase64}" style="width:100%;border-radius:var(--radius);display:block;margin-bottom:1.2rem">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem">
+          <div style="font-size:.75rem;color:var(--ink-light);font-family:var(--font-mono)">
+            Por <strong>${esc(photo.uploadedByName)}</strong> · ${new Date(photo.createdAt?.toDate?.() || photo.createdAt).toLocaleDateString('pt-PT')}
+          </div>
+          ${photo.uploadedBy === state.user.uid ? `
+            <button class="btn btn-danger btn-sm" style="margin-top:1rem;width:100%" onclick="deleteGalleryPhoto(event, '${photo.id}'); closeGalleryModal()">
+              🗑️ Eliminar esta foto
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', modal);
+}
+
+function closeGalleryModal() {
+  document.getElementById('gallery-modal')?.remove();
+}
+
+let galleryUnsub = null;
+
+function loadGallery() {
+  if(galleryUnsub) galleryUnsub();
+  
+  galleryUnsub = db.collection('gallery').orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => {
+    state.galleryPhotos = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+    if(state.currentPage === 'galeria') {
+      const pc = document.getElementById('page-container');
+      if(pc) {
+        pc.innerHTML = renderGaleriaPage();
+        bindGaleria();
+      }
+    }
+  });
+}
+
+// ════════════════════════════════════════════
+// PASSWORD RESET
+// ════════════════════════════════════════════
+function showPasswordResetModal() {
+  const modal = `
+    <div class="modal-overlay" id="password-reset-modal">
+      <div class="modal-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+          <div class="modal-title" style="margin-bottom:0">RECUPERAR PASSWORD</div>
+          <button class="btn-ghost btn btn-sm" onclick="closePasswordResetModal()">✕</button>
+        </div>
+        <p style="font-size:.85rem;color:var(--ink-light);line-height:1.6;margin-bottom:1.5rem">
+          Introduz o teu email e te enviaremos um link para criares uma nova password.
+        </p>
+        <div id="reset-error" class="auth-error hidden"></div>
+        <div class="form-group">
+          <label class="label-field">Email</label>
+          <input class="input" id="reset-email" type="email" placeholder="email@exemplo.com" autocomplete="email">
+        </div>
+        <button class="btn btn-primary btn-full" id="reset-btn" onclick="sendPasswordResetEmail()">Enviar Link de Reset</button>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modal);
+}
+
+function closePasswordResetModal() {
+  document.getElementById('password-reset-modal')?.remove();
+}
+
+async function sendPasswordResetEmail() {
+  const email = document.getElementById('reset-email')?.value.trim();
+  const errEl = document.getElementById('reset-error');
+  const btn = document.getElementById('reset-btn');
+  
+  if(!email) {
+    errEl.textContent = 'Introduz o teu email.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = 'A enviar...';
+  
+  try {
+    await auth.sendPasswordResetEmail(email);
+    errEl.classList.add('hidden');
+    showToast('✓ Email enviado! Verifica a tua caixa de correio.');
+    setTimeout(() => closePasswordResetModal(), 2000);
+  } catch(e) {
+    const msgs = {
+      'auth/user-not-found': 'Email não encontrado.',
+      'auth/invalid-email': 'Email inválido.',
+    };
+    errEl.textContent = msgs[e.code] || e.message;
+    errEl.classList.remove('hidden');
+    btn.disabled = false;
+    btn.textContent = 'Enviar Link de Reset';
+  }
+}
+
+// ════════════════════════════════════════════
 // AUTH PAGES
 // ════════════════════════════════════════════
 function renderAuth(app) {
@@ -1714,7 +1998,7 @@ function renderAuth(app) {
   const themeIcon=currentTheme==='dark'?'☀️':'🌙';
   app.innerHTML=`<div class="auth-page">
     <div style="position:fixed;top:1rem;right:1rem">
-      <button class="theme-toggle" onclick="toggleTheme()" style="border:1px solid var(--border)"><span id="theme-icon">${themeIcon}</span></button>
+      <button class="theme-toggle" onclick="toggleTheme()" style="border:1px solid var(--border);display:flex"><span id="theme-icon">${themeIcon}</span></button>
     </div>
     <div class="auth-box">
       <div class="auth-logo"><div class="nav-logo-dot"></div>SIDEQUEST</div>
@@ -1730,7 +2014,8 @@ function renderLoginForm() {
   <div class="form-group"><label class="label-field">Email</label><input class="input" id="auth-email" type="email" placeholder="email@exemplo.com" autocomplete="email"></div>
   <div class="form-group"><label class="label-field">Password</label><input class="input" id="auth-pass" type="password" placeholder="A tua password" autocomplete="current-password"></div>
   <button class="btn btn-primary btn-full" id="auth-btn">Entrar</button>
-  <div class="auth-switch">Não tens conta? <a href="#" onclick="window._showRegister=true;renderAuth(document.getElementById('app'))">Regista-te</a></div>`;
+  <div class="auth-switch">Não tens conta? <a href="#" onclick="window._showRegister=true;renderAuth(document.getElementById('app'))">Regista-te</a></div>
+  <div style="text-align:center;margin-top:1rem"><a href="#" onclick="showPasswordResetModal();return false" style="font-size:.8rem;color:var(--green-bright);text-decoration:underline">Esqueceu a password?</a></div>`;
 }
 function renderRegisterForm() {
   return `<h2>CRIAR CONTA</h2>
@@ -1814,7 +2099,6 @@ function loadQuests() {
   state.questsUnsub=db.collection('quests').orderBy('createdAt','desc').limit(100).onSnapshot(async snap=>{
     state.quests=snap.docs.map(doc=>{return {id:doc.id,...doc.data()}});
     
-    // Pre-load user data for all participants
     const allUserIds = new Set();
     state.quests.forEach(q => {
       (q.members || []).forEach(uid => allUserIds.add(uid));
@@ -1842,9 +2126,7 @@ async function checkExpiredQuests() {
   for(const quest of creatorQuests) {
     const questTime = new Date(quest.date?.toDate?.() || new Date(quest.date));
     if(questTime <= now && !quest.expired) {
-      // Mark quest as expired
       await db.collection('quests').doc(quest.id).update({ expired: true });
-      // Show modal
       showExpiredQuestModal(quest);
       break;
     }
@@ -1885,10 +2167,8 @@ function showExpiredQuestModal(quest) {
   document.body.insertAdjacentHTML('beforeend', modalHTML);
   state.expiredQuestModal = quest.id;
   
-  // Initialize all checkboxes as checked
   state.selectedParticipants[quest.id] = [...participants];
   
-  // Load participant data asynchronously
   participants.forEach(async uid => {
     const userData = await getUserData(uid);
     const nameEl = document.getElementById(`participant-name-${uid}`);
@@ -1897,7 +2177,6 @@ function showExpiredQuestModal(quest) {
     if (emailEl) emailEl.textContent = userData.email || '';
   });
   
-  // Bind checkbox events
   document.querySelectorAll(`[data-quest="${quest.id}"]`).forEach(checkbox => {
     checkbox.checked = true;
     checkbox.addEventListener('change', (e) => {
@@ -1942,21 +2221,18 @@ async function confirmQuestCompletion(questId) {
   const selectedParticipants = state.selectedParticipants[questId] || [];
   
   try {
-    // Update quest as completed
     await db.collection('quests').doc(questId).update({
       completed: true,
       completedAt: firebase.firestore.FieldValue.serverTimestamp(),
       presentMembers: selectedParticipants
     });
     
-    // Update creator profile - add to completedQuests
     const creatorRef = db.collection('users').doc(state.user.uid);
     await creatorRef.update({
       completedQuests: firebase.firestore.FieldValue.arrayUnion(questId),
       xp: firebase.firestore.FieldValue.increment(XP_PER_QUEST)
     });
     
-    // Update each participant's profile
     for(const uid of selectedParticipants) {
       const participantRef = db.collection('users').doc(uid);
       await participantRef.update({
@@ -1968,7 +2244,6 @@ async function confirmQuestCompletion(questId) {
     closeExpiredModal();
     showToast('✓ Quest marcada como realizada!');
     
-    // Reload data
     await loadProfile(state.user.uid);
     loadQuests();
   } catch(e) {
@@ -1991,9 +2266,9 @@ auth.onAuthStateChanged(async user=>{
   if(user) {
     await loadProfile(user.uid);
     loadQuests();
+    loadGallery();
     state.currentPage = 'feed';
     render();
-    // Check for expired quests every 10 seconds
     setInterval(checkExpiredQuests, 10000);
   } else {
     if(state.questsUnsub){ state.questsUnsub(); state.questsUnsub = null; }
