@@ -501,15 +501,18 @@ button, .btn, .bnav-item, .nav-link { min-height: 36px; }
 const firebaseConfig = {
   apiKey: "AIzaSyDu5q84MerI1X6XBasaPQmTR3mmfHqeRcA",
   authDomain: "sidequest-8d699.firebaseapp.com",
+  databaseURL: "https://sidequest-8d699-default-rtdb.europe-west1.firebasedatabase.app/",
   projectId: "sidequest-8d699",
   storageBucket: "sidequest-8d699.firebasestorage.app",
   messagingSenderId: "540051485733",
   appId: "1:540051485733:web:667b1671ffd81303877bcc"
 };
 firebase.initializeApp(firebaseConfig);
+firebase.database.enableLogging(true);
 const auth = firebase.auth();
 const db = firebase.firestore();
 const rtdb = firebase.database();
+
 
 // ════════════════════════════════════════════
 // THEME
@@ -1127,40 +1130,192 @@ async function deleteQuest(questId) {
 // ════════════════════════════════════════════
 // CHAT
 // ════════════════════════════════════════════
-function initChat(questId) {
-  const chatRef=rtdb.ref(`chats/${questId}/messages`);
-  const unsub=chatRef.limitToLast(60).on('value',snap=>{
-    const msgs=[]; snap.forEach(child=>msgs.push({id:child.key,...child.val()}));
-    renderChatMessages(msgs);
+let chatListener = null;
+let currentChatQuestId = null;
+
+// Debug Firebase connection
+if (typeof rtdb !== 'undefined') {
+  rtdb.ref('.info/connected').on('value', (snap) => {
+    console.log('🔥 Firebase connected?', snap.val());
   });
-  state.chatUnsub=()=>chatRef.off('value',unsub);
-  document.getElementById('chat-send')?.addEventListener('click',sendChatMsg);
-  document.getElementById('chat-input')?.addEventListener('keydown',e=>{if(e.key==='Enter')sendChatMsg();});
-}
-function renderChatMessages(msgs) {
-  const box=document.getElementById('chat-messages'); if(!box) return;
-  if(!msgs.length){box.innerHTML='<div style="text-align:center;color:var(--ink-light);font-size:.78rem;padding:1rem">Nenhuma mensagem. Sê o primeiro! 👋</div>';return;}
-  box.innerHTML=msgs.map(m=>{
-    const own=m.uid===state.user?.uid; const col=getAvatarColor(m.uid||''); const init=getInitials(m.name||'?');
-    const timeStr=new Date(m.ts||Date.now()).toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
-    return `<div class="chat-msg ${own?'own':''}">
-      <div class="chat-avatar" style="background:${col}">${init}</div>
-      <div>${!own?`<div class="chat-name">${esc(m.name||'Anónimo')}</div>`:''}
-        <div class="chat-bubble">${esc(m.text||'')}</div>
-        <div class="chat-time">${timeStr}</div>
-      </div>
-    </div>`;
-  }).join('');
-  box.scrollTop=box.scrollHeight;
-}
-async function sendChatMsg() {
-  const input=document.getElementById('chat-input'); if(!input||!input.value.trim()) return;
-  const text=input.value.trim(); input.value='';
-  await rtdb.ref(`chats/${state.activeQuest?.id}/messages`).push({
-    uid:state.user.uid, name:state.profile?.name||state.user.email?.split('@')[0]||'Anónimo', text, ts:Date.now()
-  });
+
+  console.log('Database URL:', firebase.app().options.databaseURL);
 }
 
+function initChat(questId) {
+  console.log('🔧 initChat chamado com questId:', questId);
+
+  if (!questId) {
+    console.error('❌ ERRO: questId é undefined!');
+    return;
+  }
+
+  currentChatQuestId = questId;
+
+  // Remove listener anterior
+  if (chatListener) {
+    console.log('🧹 Removendo listener anterior');
+    chatListener();
+    chatListener = null;
+  }
+
+  const chatPath = `chats/${questId}/messages`;
+  console.log('📍 Path Firebase:', chatPath);
+
+  const chatRef = rtdb.ref(chatPath);
+  const query = chatRef.limitToLast(60);
+
+  const callback = (snap) => {
+    console.log('✅ Dados recebidos do Firebase!');
+    console.log('📦 Snapshot:', snap.val());
+
+    const msgs = [];
+
+    snap.forEach((child) => {
+      msgs.push({
+        id: child.key,
+        ...child.val()
+      });
+    });
+
+    console.log('📨 Mensagens parseadas:', msgs);
+    renderChatMessages(msgs);
+  };
+
+  const errorCallback = (error) => {
+    console.error('❌ Erro ao ler Firebase:', error.code, error.message);
+  };
+
+  query.on('value', callback, errorCallback);
+
+  chatListener = () => {
+    console.log('❌ A desligar chat listener');
+    query.off('value', callback);
+  };
+
+  bindChatEvents();
+}
+
+function bindChatEvents() {
+  const sendBtn = document.getElementById('chat-send');
+  const input = document.getElementById('chat-input');
+
+  console.log('🔗 Send button encontrado?', !!sendBtn);
+  console.log('🔗 Input encontrado?', !!input);
+
+  if (sendBtn) {
+    sendBtn.onclick = () => {
+      console.log('🖱️ Botão clicado!');
+      sendChatMsg();
+    };
+  }
+
+  if (input) {
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        console.log('⌨️ Enter pressionado!');
+        sendChatMsg();
+      }
+    };
+  }
+}
+
+async function sendChatMsg() {
+  const input = document.getElementById('chat-input');
+
+  if (!input || !input.value.trim()) {
+    console.warn('⚠️ Sem input ou mensagem vazia');
+    return;
+  }
+
+  if (!state.user) {
+    console.error('❌ User não autenticado');
+    showToast('Tens de iniciar sessão para enviar mensagens');
+    return;
+  }
+
+  const questId = currentChatQuestId || state.activeQuest?.id;
+
+  if (!questId) {
+    console.error('❌ Sem quest ID');
+    showToast('Erro: Quest não carregada');
+    return;
+  }
+
+  const text = input.value.trim();
+  input.value = '';
+
+  const data = {
+    uid: state.user.uid,
+    name: state.profile?.name || state.user.email?.split('@')[0] || 'Anónimo',
+    text: text,
+    ts: firebase.database.ServerValue.TIMESTAMP
+  };
+
+  const path = `chats/${questId}/messages`;
+  const ref = rtdb.ref(path).push();
+
+  console.log('📍 Enviar para path:', path);
+  console.log('🆔 Nova message key:', ref.key);
+  console.log('📤 Enviando:', data);
+
+  try {
+    await Promise.race([
+      ref.set(data),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Firebase write timeout after 8s')), 8000)
+      )
+    ]);
+
+    console.log('✅✅✅ MENSAGEM ENVIADA COM SUCESSO!');
+    showToast('✓ Enviada');
+
+  } catch (error) {
+    console.error('❌ Erro Firebase:', error.code, error.message);
+    showToast('Erro: ' + error.message);
+
+    input.value = text;
+  }
+}
+
+function renderChatMessages(msgs) {
+  const box = document.getElementById('chat-messages');
+
+  if (!box) {
+    console.error('❌ Elemento #chat-messages não encontrado');
+    return;
+  }
+
+  box.innerHTML = '';
+
+  if (!msgs.length) {
+    const empty = document.createElement('div');
+    empty.className = 'chat-empty';
+    empty.textContent = 'Ainda não há mensagens.';
+    box.appendChild(empty);
+    return;
+  }
+
+  msgs.forEach((msg) => {
+    const row = document.createElement('div');
+    row.className = 'chat-message';
+
+    const name = document.createElement('strong');
+    name.className = 'chat-name';
+    name.textContent = `${msg.name || 'Anónimo'}: `;
+
+    const text = document.createElement('span');
+    text.className = 'chat-text';
+    text.textContent = msg.text || '';
+
+    row.appendChild(name);
+    row.appendChild(text);
+    box.appendChild(row);
+  });
+
+  box.scrollTop = box.scrollHeight;
+}
 // ════════════════════════════════════════════
 // MESSAGES PAGE
 // ════════════════════════════════════════════
