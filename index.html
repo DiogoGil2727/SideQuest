@@ -71,6 +71,34 @@ img{max-width:100%;display:block;}
 .nav-msg-btn:hover{border-color:var(--green-mid);color:var(--green-bright);background:var(--green-pale);}
 .nav-msg-badge{position:absolute;top:-3px;right:-3px;width:14px;height:14px;border-radius:50%;background:var(--green-bright);color:#000;font-size:.55rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);}
 
+/* ══ HAMBURGER MENU ══ */
+.nav-hamburger{display:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);color:var(--ink-light);font-size:1.3rem;transition:all .2s;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;}
+.nav-hamburger:hover{border-color:var(--green-mid);color:var(--green-bright);background:var(--green-pale);}
+.nav-hamburger.open{border-color:var(--green);color:var(--green-bright);background:var(--green-pale);}
+
+/* MENU SIDEBAR */
+.menu-sidebar{position:fixed;left:0;top:0;width:280px;height:100vh;background:var(--surface);border-right:1px solid var(--border);z-index:300;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto;}
+.menu-sidebar.open{transform:translateX(0);}
+.menu-sidebar-header{padding:1.3rem 1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;margin-top:.3rem;}
+.menu-sidebar-title{font-family:var(--font-display);font-size:1rem;letter-spacing:2px;color:var(--ink);font-weight:700;}
+.menu-close-btn{width:32px;height:32px;border:none;background:none;color:var(--ink-light);font-size:1.4rem;cursor:pointer;transition:color .2s;display:flex;align-items:center;justify-content:center;}
+.menu-close-btn:hover{color:var(--ink);}
+.menu-sidebar-content{padding:0;}
+.menu-section{padding:1.2rem 0;}
+.menu-section-title{font-size:.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-light);padding:0 1.2rem 0.6rem;margin-bottom:0.4rem;}
+.menu-item{padding:.75rem 1.2rem;color:var(--ink-light);font-size:.9rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent;display:flex;align-items:center;gap:.6rem;border:none;background:none;width:100%;}
+.menu-item:hover{color:var(--green-bright);background:var(--green-pale);border-left-color:var(--green);}
+.menu-item.active{color:var(--green-bright);background:var(--green-pale);border-left-color:var(--green-bright);}
+.menu-divider{height:1px;background:var(--border);margin:0.8rem 0;}
+
+/* OVERLAY MENU */
+.menu-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:250;backdrop-filter:blur(2px);}
+.menu-overlay.open{display:block;}
+
+/* ══ FEED ICON - CLEAN ══ */
+.feed-icon{display:flex;flex-direction:column;gap:3px;width:22px;height:22px;justify-content:center;}
+.feed-icon span{height:2px;background:currentColor;border-radius:1px;transition:all .2s;}
+
 /* ══ BOTTOM NAV ══ */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--bnav-bg);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:.55rem .4rem;}
 .bnav-item{display:flex;flex-direction:column;align-items:center;gap:.18rem;padding:.28rem .7rem;border-radius:var(--radius-sm);color:var(--ink-light);font-size:.58rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:all .2s;background:none;border:none;}
@@ -484,6 +512,41 @@ button, .btn, .bnav-item, .nav-link { min-height: 36px; }
 }
 .page { overflow-x: hidden; }
 .feed-filters { -webkit-overflow-scrolling: touch; }
+
+/* ══ RESPONSIVENESS - HAMBURGER MENU ══ */
+@media(min-width:768px) {
+  .nav-hamburger { display: none !important; }
+  .nav-desktop-links { display: flex !important; }
+  .menu-sidebar { display: none !important; }
+  .menu-overlay { display: none !important; }
+}
+
+@media(max-width:767px) {
+  .nav-hamburger { display: flex !important; }
+  .nav-desktop-links { display: none !important; }
+  .top-nav { padding: .7rem .8rem; gap: .3rem; }
+  .nav-logo { font-size: 1rem; gap: .3rem; }
+  .nav-logo-socials { display: none; }
+  .nav-actions { gap: .25rem; }
+  .theme-toggle, .nav-msg-btn { width: 34px; height: 34px; font-size: .9rem; }
+  .nav-avatar.nav-avatar-desktop { width: 34px; height: 34px; font-size: .65rem; }
+  .menu-sidebar { width: 270px; }
+  .page { padding-top: 3.3rem; }
+}
+
+@media(max-width:480px) {
+  .top-nav { padding: .65rem .6rem; gap: .25rem; }
+  .nav-logo { font-size: .95rem; gap: .25rem; }
+  .nav-actions { gap: .2rem; }
+  .nav-hamburger, .theme-toggle, .nav-msg-btn { width: 34px; height: 34px; font-size: .95rem; }
+  .nav-avatar.nav-avatar-desktop { width: 34px; height: 34px; }
+  .menu-sidebar { width: 260px; }
+  .bnav-item { gap: .15rem; padding: .25rem .5rem; font-size: .5rem; }
+  .bnav-item svg { width: 18px; height: 18px; }
+  .feed-icon { width: 20px; height: 20px; gap: 2px; }
+  .feed-icon span { height: 1.5px; }
+  .page { padding-top: 3.2rem; padding-bottom: 4.5rem; }
+}
 </style>
 </head>
 <body>
@@ -665,6 +728,68 @@ function getTodayString() {
 // ════════════════════════════════════════════
 // RENDER ENGINE
 // ════════════════════════════════════════════
+// ════════════════════════════════════════════
+// MENU SIDEBAR FUNCTIONS
+// ════════════════════════════════════════════
+function renderMenuSidebar() {
+  return `<aside class="menu-sidebar" id="menu-sidebar">
+    <div class="menu-sidebar-header">
+      <div class="menu-sidebar-title">MENU</div>
+      <button class="menu-close-btn" id="menu-close">✕</button>
+    </div>
+    <div class="menu-sidebar-content">
+      <div class="menu-section">
+        <button class="menu-item ${state.currentPage==='quemsomos'?'active':''}" onclick="navigate('quemsomos')">👥 Quem Somos</button>
+        <button class="menu-item ${state.currentPage==='comofunciona'?'active':''}" onclick="navigate('comofunciona')">⚙️ Como Funciona</button>
+        <button class="menu-item ${state.currentPage==='galeria'?'active':''}" onclick="navigate('galeria')">📸 Galeria</button>
+        <button class="menu-item ${state.currentPage==='historico'?'active':''}" onclick="navigate('historico')">📚 Histórico</button>
+      </div>
+      
+      <div class="menu-divider"></div>
+      
+      <div class="menu-section">
+        <button class="menu-item" onclick="logout()">🚪 Sair</button>
+      </div>
+    </div>
+  </aside>`;
+}
+
+function renderMenuOverlay() {
+  return `<div class="menu-overlay" id="menu-overlay"></div>`;
+}
+
+function toggleMenu() {
+  const sidebar = document.getElementById('menu-sidebar');
+  const overlay = document.getElementById('menu-overlay');
+  const hamburger = document.getElementById('menu-toggle-btn');
+  
+  if(sidebar) sidebar.classList.toggle('open');
+  if(overlay) overlay.classList.toggle('open');
+  if(hamburger) hamburger.classList.toggle('open');
+}
+
+function closeMenu() {
+  const sidebar = document.getElementById('menu-sidebar');
+  const overlay = document.getElementById('menu-overlay');
+  const hamburger = document.getElementById('menu-toggle-btn');
+  
+  if(sidebar) sidebar.classList.remove('open');
+  if(overlay) overlay.classList.remove('open');
+  if(hamburger) hamburger.classList.remove('open');
+}
+
+function bindMenuHandlers() {
+  const menuToggle = document.getElementById('menu-toggle-btn');
+  const menuClose = document.getElementById('menu-close');
+  const menuOverlay = document.getElementById('menu-overlay');
+  const menuItems = document.querySelectorAll('.menu-item');
+  
+  if(menuToggle) menuToggle.addEventListener('click', toggleMenu);
+  if(menuClose) menuClose.addEventListener('click', closeMenu);
+  if(menuOverlay) menuOverlay.addEventListener('click', closeMenu);
+  menuItems.forEach(item => item.addEventListener('click', closeMenu));
+}
+
 function render() {
   const app=document.getElementById('app');
   if(!state.user){ renderAuth(app); return; }
@@ -676,6 +801,7 @@ function render() {
   `;
   document.getElementById('fab-btn').onclick=()=>navigate('create');
   renderPage();
+  bindMenuHandlers();
   checkExpiredQuests();
 }
 
@@ -684,7 +810,6 @@ function renderNav() {
   const init=getInitials(p.name||state.user.email);
   const col=getAvatarColor(state.user.uid);
   const avatarHtml=p.photoURL?`<img src="${esc(p.photoURL)}" alt="av">`:`<span>${init}</span>`;
-  const themeIcon=currentTheme==='dark'?'☀️':'🌙';
   const myQuests=state.quests.filter(q=>(q.members||[]).includes(state.user.uid));
   return `<nav class="top-nav">
     <div class="nav-logo" onclick="navigate('feed')">
@@ -696,34 +821,35 @@ function renderNav() {
       </div>
     </div>
     <div class="nav-actions">
-      <button class="nav-link ${state.currentPage==='quemsomos'?'active':''}" onclick="navigate('quemsomos')">Quem Somos</button>
-      <button class="nav-link ${state.currentPage==='comofunciona'?'active':''}" onclick="navigate('comofunciona')">Como Funciona</button>
-      <button class="nav-link nav-link-galeria-desktop ${state.currentPage==='galeria'?'active':''}" onclick="navigate('galeria')">Galeria</button>
-      <button class="nav-link ${state.currentPage==='historico'?'active':''}" onclick="navigate('historico')">Histórico</button>
+      <div class="nav-desktop-links" style="display:flex;gap:.3rem;align-items:center;">
+        <button class="nav-link ${state.currentPage==='quemsomos'?'active':''}" onclick="navigate('quemsomos')">Quem Somos</button>
+        <button class="nav-link ${state.currentPage==='comofunciona'?'active':''}" onclick="navigate('comofunciona')">Como Funciona</button>
+        <button class="nav-link nav-link-galeria-desktop ${state.currentPage==='galeria'?'active':''}" onclick="navigate('galeria')">Galeria</button>
+        <button class="nav-link ${state.currentPage==='historico'?'active':''}" onclick="navigate('historico')">Histórico</button>
+      </div>
       <button class="nav-msg-btn" onclick="navigate('messages')" title="Mensagens">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         ${myQuests.length>0?`<span class="nav-msg-badge">${myQuests.length}</span>`:''}
       </button>
-      <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn" style="display:flex"><span id="theme-icon">${themeIcon}</span></button>
       <div class="nav-avatar nav-avatar-desktop" style="background:${col}" onclick="navigate('profile')">${avatarHtml}</div>
+      <button class="nav-hamburger" id="menu-toggle-btn" title="Menu">☰</button>
     </div>
-  </nav>`;
+  </nav>
+  ${renderMenuSidebar()}
+  ${renderMenuOverlay()}`;
 }
 
 function renderBottomNav() {
   const p=state.currentPage;
   return `<nav class="bottom-nav">
     <button class="bnav-item ${p==='feed'?'active':''}" onclick="navigate('feed')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Feed
+      <div class="feed-icon"><span></span><span></span><span></span></div>Feed
     </button>
     <button class="bnav-item ${p==='explore'?'active':''}" onclick="navigate('explore')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Explorar
     </button>
     <button class="bnav-item ${p==='messages'?'active':''}" onclick="navigate('messages')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chats
-    </button>
-    <button class="bnav-item ${p==='create'?'active':''}" onclick="navigate('create')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Criar
     </button>
     <button class="bnav-item ${p==='galeria'?'active':''}" onclick="navigate('galeria')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>Galeria
@@ -752,6 +878,7 @@ function renderPage() {
 }
 
 function navigate(page,data=null) {
+  closeMenu();
   if(state.chatUnsub){state.chatUnsub();state.chatUnsub=null;}
   state.currentPage=page;
   if(data) {
@@ -762,7 +889,9 @@ function navigate(page,data=null) {
     const app=document.getElementById('app');
     app.innerHTML=`${renderNav()}<div id="page-container"></div>${renderBottomNav()}<button class="fab" id="fab-btn">＋</button>`;
     document.getElementById('fab-btn').onclick=()=>navigate('create');
-    renderPage(); window.scrollTo(0,0);
+    renderPage();
+    bindMenuHandlers();
+    window.scrollTo(0,0);
   }
 }
 
