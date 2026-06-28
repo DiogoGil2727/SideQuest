@@ -1107,11 +1107,12 @@ function navigate(page,data=null) {
   }
   if(state.user) {
     const app=document.getElementById('app');
-    app.innerHTML=`${renderNav()}<div id="page-container"></div>${renderBottomNav()}<button class="fab" id="fab-btn">＋</button>`;
+    app.innerHTML=`${renderNav()}<div id="page-container"></div>${renderBottomNav()}<button class="fab" id="fab-btn">＋</button>${renderFooter()}`;
     document.getElementById('fab-btn').onclick=()=>navigate('create');
     renderPage();
     bindMenuHandlers();
     window.scrollTo(0,0);
+    setTimeout(() => updateFooterStats(), 500);
   }
 }
 
@@ -1773,6 +1774,10 @@ function renderProfilePage() {
 
     <!-- Actions -->
     <div style="display:flex;gap:.7rem;margin-bottom:1.5rem;flex-wrap:wrap">
+      <button class="btn btn-secondary btn-sm btn-icon" onclick="toggleTheme()" title="Alternar tema">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        ${currentTheme === 'dark' ? 'Light' : 'Dark'}
+      </button>
       <button class="btn btn-secondary btn-sm btn-icon" id="edit-profile-btn">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         Editar Perfil
