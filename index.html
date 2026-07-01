@@ -66,7 +66,6 @@ img{max-width:100%;display:block;}
 .nav-link:hover,.nav-link.active{color:var(--green-bright);background:var(--green-pale);}
 .theme-toggle{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--ink-light);font-size:.95rem;transition:all .2s;flex-shrink:0;}
 .theme-toggle:hover{border-color:var(--green-mid);color:var(--green-bright);background:var(--green-pale);}
-/* Messages icon in nav */
 .nav-msg-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--ink-light);transition:all .2s;flex-shrink:0;position:relative;}
 .nav-msg-btn:hover{border-color:var(--green-mid);color:var(--green-bright);background:var(--green-pale);}
 .nav-msg-badge{position:absolute;top:-3px;right:-3px;width:14px;height:14px;border-radius:50%;background:var(--green-bright);color:#000;font-size:.55rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);}
@@ -200,11 +199,9 @@ input[type="file"]{display:none;}
 
 /* ── Hero Banner (collage) ── */
 .feed-hero{position:relative;overflow:hidden;height:clamp(280px,46vw,460px);border-bottom:1px solid var(--border);}
-/* 4 fotos lado a lado — strip horizontal */
 .hero-collage{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;grid-template-rows:1fr;gap:2px;}
 .hero-collage-img{width:100%;height:100%;object-fit:cover;object-position:center 40%;transition:transform 8s ease-out;transform:scale(1.04);}
 .hero-collage-img.loaded{transform:scale(1);}
-/* Dark overlay over the whole collage */
 .feed-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.5) 40%,rgba(0,0,0,.2) 100%),linear-gradient(to right,rgba(0,0,0,.5) 0%,transparent 60%);}
 .feed-hero-inner{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:2rem 1.5rem 1.8rem;max-width:680px;}
 .feed-hero-title{font-family:var(--font-display);font-size:clamp(2.4rem,6.5vw,4.4rem);letter-spacing:2px;line-height:.93;color:#fff;margin-bottom:.9rem;text-shadow:0 2px 24px rgba(0,0,0,.5);}
@@ -225,7 +222,7 @@ input[type="file"]{display:none;}
 .fab{position:fixed;bottom:5rem;right:1.2rem;z-index:100;width:52px;height:52px;border-radius:50%;background:var(--green);border:none;color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(34,197,94,.3);transition:all .2s;}
 .fab:hover{background:#145f2e;transform:scale(1.1);}
 
-/* ══ GALLERY - MASONRY LAYOUT (CORREÇÃO 2) ══ */
+/* ══ GALLERY - MASONRY LAYOUT ══ */
 .gallery-page{padding-top:4.5rem;}
 .gallery-grid{column-count:3;column-gap:1rem;padding:1rem;}
 @media(max-width:1024px){.gallery-grid{column-count:2;}}
@@ -283,34 +280,146 @@ input[type="file"]{display:none;}
 .create-page{padding-top:4.5rem;max-width:600px;margin:0 auto;padding-left:1rem;padding-right:1rem;}
 .create-header{padding:1.5rem 0 .5rem;}
 
-/* ══ PROFILE (expanded) ══ */
+/* ══ PROFILE (LORE - REDESENHADO) ══ */
 .profile-page{padding-top:4.5rem;max-width:800px;margin:0 auto;padding-left:1rem;padding-right:1rem;}
-/* Profile banner */
 .profile-banner{position:relative;width:100%;height:160px;border-radius:var(--radius);overflow:hidden;margin-bottom:0;background:linear-gradient(135deg,var(--green-pale),var(--surface2));}
 .profile-banner img{width:100%;height:100%;object-fit:cover;}
 .profile-banner-default{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;}
 .profile-banner-lock{position:absolute;bottom:.6rem;right:.7rem;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);border-radius:99px;padding:.25rem .7rem;font-size:.62rem;color:rgba(255,255,255,.6);font-family:var(--font-mono);letter-spacing:1px;display:flex;align-items:center;gap:.3rem;}
-/* Avatar row overlapping banner */
 .profile-avatar-row{display:flex;align-items:flex-end;gap:1rem;padding:0 1rem;margin-top:-32px;margin-bottom:.8rem;position:relative;z-index:2;}
 .profile-avatar-big{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;border:3px solid var(--bg);}
 .profile-avatar-big img{width:100%;height:100%;object-fit:cover;}
 .profile-name{font-family:var(--font-display);font-size:1.8rem;letter-spacing:2px;line-height:1;}
 .profile-bio{font-size:.84rem;color:var(--ink-light);margin-top:.4rem;line-height:1.6;word-wrap:break-word;overflow-wrap:break-word;max-width:100%;}
-/* XP section in profile */
 .profile-xp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem 1.4rem;margin:1rem 0;}
 .profile-xp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;}
 .quests-section{margin:1.5rem 0;}
 
-/* ══ CALENDAR / UPCOMING ══ */
-.calendar-section{margin:1.5rem 0;}
-.calendar-grid{display:flex;flex-direction:column;gap:.6rem;}
-.cal-item{display:flex;gap:.9rem;align-items:center;padding:.9rem 1.1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);transition:all .2s;cursor:pointer;}
-.cal-item:hover{border-color:var(--green-mid);background:var(--green-pale);}
-.cal-date-box{min-width:44px;text-align:center;background:var(--green-pale);border:1px solid var(--green-mid);border-radius:var(--radius-sm);padding:.4rem .3rem;flex-shrink:0;}
-.cal-date-day{font-family:var(--font-display);font-size:1.4rem;letter-spacing:1px;color:var(--green-bright);line-height:1;}
-.cal-date-mon{font-family:var(--font-mono);font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--ink-light);}
-.cal-quest-title{font-size:.88rem;font-weight:700;color:var(--ink);}
-.cal-quest-meta{font-size:.72rem;color:var(--ink-light);font-family:var(--font-mono);margin-top:.15rem;}
+/* ══════════════════════════════════════════════════════════════
+   LORE — O LIVRO DA TUA VIDA (REDESENHADO)
+   ══════════════════════════════════════════════════════════════ */
+.lore-page{padding-top:4.5rem;max-width:720px;margin:0 auto;padding-left:1rem;padding-right:1rem;}
+.lore-reveal{animation:loreUp .6s cubic-bezier(.2,.7,.2,1) both;}
+.lore-reveal-2{animation:loreUp .6s cubic-bezier(.2,.7,.2,1) .06s both;}
+.lore-reveal-3{animation:loreUp .6s cubic-bezier(.2,.7,.2,1) .12s both;}
+@keyframes loreUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+
+/* banner + identidade */
+.lore-banner{position:relative;width:100%;height:150px;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,#0a0c08,var(--surface));margin-top:1rem;}
+.lore-banner img{width:100%;height:100%;object-fit:cover;}
+.lore-banner-default{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.4rem;opacity:.5;}
+.lore-banner-lock{position:absolute;bottom:.6rem;right:.7rem;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.12);border-radius:99px;padding:.25rem .7rem;font-size:.6rem;color:rgba(255,255,255,.55);font-family:var(--font-mono);letter-spacing:1px;}
+.lore-id-row{display:flex;align-items:flex-end;gap:1rem;padding:0 .4rem;margin-top:-34px;position:relative;z-index:2;}
+.lore-avatar{width:78px;height:78px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;border:3px solid var(--bg);cursor:pointer;}
+.lore-avatar img{width:100%;height:100%;object-fit:cover;}
+.lore-cam{position:absolute;bottom:0;right:0;width:24px;height:24px;border-radius:50%;background:var(--green);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.lore-name{font-family:var(--font-display);font-size:2rem;letter-spacing:2px;line-height:.95;color:var(--ink);}
+.lore-chapter-tag{display:block;margin-top:.5rem;font-family:var(--font-mono);font-size:.66rem;letter-spacing:2px;line-height:1.5;text-transform:uppercase;color:var(--ink-light);}
+.lore-chapter-tag b{color:var(--ink-mid);font-weight:500;}
+.lore-bio{font-size:.86rem;color:var(--ink-light);line-height:1.65;margin:.9rem .4rem 0;}
+
+/* XP subtil - barra simples */
+.lore-xp-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;margin:1rem 0;display:flex;align-items:center;gap:1rem;}
+.lore-xp-bar-content{flex:1;}
+.lore-xp-bar-top{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--font-mono);font-size:.62rem;letter-spacing:1px;color:var(--ink-light);margin-bottom:.5rem;}
+.lore-xp-bar-top b{color:var(--ink);}
+.lore-xp-bar-level{font-family:var(--font-display);font-size:2.2rem;letter-spacing:1px;color:var(--green-bright);line-height:1;}
+
+/* Action buttons (editar, tema, sair) */
+.lore-action-buttons{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0;}
+
+/* eyebrow / labels de secção */
+.lore-eyebrow{font-family:var(--font-mono);font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--ink-light);display:flex;align-items:center;gap:.6rem;}
+.lore-eyebrow::before{content:'';width:16px;height:1px;background:var(--border-strong);}
+.lore-section{margin-top:2.4rem;}
+.lore-section > .lore-eyebrow{margin-bottom:1rem;}
+
+/* HERO — O TEU LORE com stats HORIZONTAIS */
+.lore-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.6rem 1.5rem 1.3rem;margin-top:1.4rem;position:relative;overflow:hidden;}
+.lore-hero::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(var(--green-bright),transparent);opacity:.5;}
+.lore-hero-title{font-family:var(--font-mono);font-size:.62rem;letter-spacing:4px;text-transform:uppercase;color:var(--green-bright);margin-bottom:1.1rem;}
+.lore-stats{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;}
+@media(min-width:600px){.lore-stats{grid-template-columns:repeat(4,1fr);}}
+.lore-stat{display:flex;flex-direction:column;text-align:center;}
+.lore-stat-num{font-family:var(--font-display);font-size:2.2rem;letter-spacing:1px;color:var(--green-bright);line-height:1;}
+.lore-stat-label{font-size:.72rem;color:var(--ink-light);margin-top:.4rem;line-height:1.3;}
+.lore-firsts{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.8rem;padding-top:1rem;border-top:1px solid var(--border);}
+.lore-first-chip{font-size:.74rem;color:var(--ink-mid);background:var(--surface2);border:1px solid var(--border);border-radius:99px;padding:.32rem .7rem;display:inline-flex;gap:.35rem;align-items:center;}
+
+/* share */
+.lore-share{width:100%;margin-top:1rem;display:flex;align-items:center;justify-content:center;gap:.6rem;background:var(--green);color:#fff;border:none;border-radius:var(--radius-sm);padding:.95rem;font-weight:700;font-size:.9rem;letter-spacing:.3px;transition:all .2s;}
+.lore-share:hover{background:#157032;transform:translateY(-1px);box-shadow:0 8px 26px rgba(26,122,60,.3);}
+
+/* card genérico */
+.lore-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.3rem 1.4rem;}
+
+/* AINDA QUERO VIVER — bucket list */
+.lore-bucket{display:flex;flex-direction:column;gap:.1rem;}
+.lore-bucket .lore-goal-auto{margin-left:auto;font-family:var(--font-mono);font-size:.55rem;letter-spacing:1px;color:var(--green-bright);background:var(--green-pale);border:1px solid var(--green-mid);border-radius:99px;padding:.12rem .45rem;text-transform:uppercase;}
+.lore-bucket-del{margin-left:auto;background:none;border:none;color:var(--silver);font-size:1rem;cursor:pointer;opacity:0;transition:opacity .2s;padding:0 .2rem;line-height:1;}
+.lore-goal:hover .lore-bucket-del{opacity:1;}
+.lore-bucket-add{display:flex;gap:.6rem;margin-top:1rem;}
+.lore-bucket-add input{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.7rem .9rem;color:var(--ink);font-size:.86rem;outline:none;}
+.lore-bucket-add input:focus{border-color:var(--green);}
+.lore-bucket-add button{background:var(--surface2);border:1px solid var(--border-strong);color:var(--ink);border-radius:var(--radius-sm);width:44px;font-size:1.3rem;line-height:1;flex-shrink:0;transition:all .2s;}
+.lore-bucket-add button:hover{border-color:var(--green-mid);background:var(--green-pale);color:var(--green-bright);}
+.lore-goal{display:flex;align-items:center;gap:.75rem;padding:.65rem .1rem;cursor:pointer;}
+.lore-goal:not(:last-child){border-bottom:1px solid var(--border);}
+.lore-tick{width:19px;height:19px;border-radius:6px;border:1.5px solid var(--border-strong);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;color:transparent;}
+.lore-goal.done .lore-tick{background:var(--green);border-color:var(--green);color:#fff;}
+.lore-goal-text{font-size:.9rem;color:var(--ink-mid);}
+.lore-goal.done .lore-goal-text{color:var(--ink-light);text-decoration:line-through;text-decoration-color:var(--silver-light);}
+
+/* LINHA TEMPORAL — o fio da história */
+.lore-timeline{position:relative;padding-left:1.7rem;}
+.lore-timeline::before{content:'';position:absolute;left:6px;top:6px;bottom:18px;width:1.5px;background:linear-gradient(var(--border-strong),var(--border-strong) 70%,transparent);}
+.lore-tl-node{position:relative;padding-bottom:1.7rem;}
+.lore-tl-node:last-child{padding-bottom:0;}
+.lore-tl-dot{position:absolute;left:-1.7rem;top:3px;width:13px;height:13px;border-radius:50%;background:var(--bg);border:2px solid var(--silver-light);}
+.lore-tl-node.first .lore-tl-dot{border-color:var(--green-bright);background:var(--green-pale);}
+.lore-tl-node.now .lore-tl-dot{border-color:var(--green-bright);background:var(--green-bright);box-shadow:0 0 0 4px rgba(34,197,94,.18);animation:loreNow 2.4s ease-in-out infinite;}
+@keyframes loreNow{0%,100%{box-shadow:0 0 0 4px rgba(34,197,94,.18);}50%{box-shadow:0 0 0 7px rgba(34,197,94,.05);}}
+.lore-tl-month{font-family:var(--font-mono);font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--ink-light);margin-bottom:.25rem;}
+.lore-tl-title{font-size:.96rem;font-weight:700;color:var(--ink);line-height:1.2;}
+.lore-tl-title .lore-tl-emoji{margin-right:.4rem;}
+.lore-tl-cap{font-size:.78rem;color:var(--ink-light);margin-top:.2rem;line-height:1.5;}
+.lore-tl-cap .lore-tl-place{color:var(--ink-mid);}
+.lore-tl-first-tag{display:inline-block;margin-top:.35rem;font-family:var(--font-mono);font-size:.55rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--green-bright);}
+
+/* PESSOAS DA TUA HISTÓRIA — HORIZONTAL */
+.lore-people-container{display:flex;gap:1rem;overflow-x:auto;padding-bottom:.5rem;margin-bottom:1rem;}
+.lore-people-container::-webkit-scrollbar{height:4px;}
+.lore-people-container::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px;}
+.lore-person{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:90px;cursor:pointer;padding:.8rem .6rem;border-radius:var(--radius-sm);transition:background .2s;flex-shrink:0;}
+.lore-person:hover{background:var(--green-pale);}
+.lore-person-av{width:50px;height:50px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1rem;overflow:hidden;margin-bottom:.5rem;}
+.lore-person-av img{width:100%;height:100%;object-fit:cover;}
+.lore-person-name{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:.2rem;word-break:break-word;}
+.lore-person-meta{font-size:.65rem;color:var(--ink-light);font-family:var(--font-mono);}
+.lore-person-count{font-family:var(--font-display);font-size:1.2rem;letter-spacing:1px;color:var(--green-bright);margin-top:.3rem;}
+
+/* MEMÓRIAS (badges) */
+.lore-badges{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+.lore-badge{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.1rem 1rem;}
+.lore-badge-emoji{font-size:1.6rem;line-height:1;}
+.lore-badge-name{font-family:var(--font-display);font-size:1.05rem;letter-spacing:1px;color:var(--ink);margin-top:.5rem;}
+.lore-badge-desc{font-size:.74rem;color:var(--ink-light);line-height:1.5;margin-top:.3rem;}
+.lore-badge-date{font-family:var(--font-mono);font-size:.55rem;letter-spacing:1px;color:var(--silver);margin-top:.5rem;}
+.lore-badge.locked{opacity:.45;}
+.lore-badge.locked .lore-badge-emoji{filter:grayscale(1);}
+
+/* empty states */
+.lore-empty{font-size:.86rem;color:var(--ink-light);line-height:1.65;padding:.2rem .1rem;}
+.lore-empty b{color:var(--ink-mid);font-weight:600;}
+
+/* utilitários */
+.lore-utils{margin-top:2.6rem;padding-top:1.4rem;border-top:1px solid var(--border);}
+.lore-utils-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.9rem;}
+
+/* share modal */
+.lore-share-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);z-index:600;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.2rem;gap:1rem;}
+.lore-share-modal img{max-width:min(360px,80vw);max-height:64vh;border-radius:16px;border:1px solid var(--border-strong);box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.lore-share-actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;}
 
 /* ══ MESSAGES PAGE ══ */
 .messages-page{padding-top:4.5rem;max-width:680px;margin:0 auto;padding-left:1rem;padding-right:1rem;}
@@ -435,7 +544,6 @@ input[type="file"]{display:none;}
 .modal-title{font-family:var(--font-display);font-size:1.6rem;letter-spacing:2px;margin-bottom:1.5rem;}
 
 /* ══ TOAST ══ */
-/* ══ TOAST ══ */
 .notif-toast{position:fixed;top:1.5rem;left:50%;transform:translateX(-50%) translateY(-100px);z-index:999;background:var(--surface2);border:1px solid var(--green-mid);border-radius:var(--radius-sm);padding:.75rem 1.5rem;font-size:.82rem;color:var(--green-bright);transition:transform .3s;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2);}
 .notif-toast.show{transform:translateX(-50%) translateY(0);}
 @media(max-width:767px){
@@ -470,6 +578,7 @@ input[type="file"]{display:none;}
   .detail-meta-grid{grid-template-columns:1fr 1fr;}
   .values-grid{grid-template-columns:1fr;}
   .historico-grid{grid-template-columns:1fr;}
+  .lore-stats{grid-template-columns:1fr 1fr;}
   .theme-toggle { display:none; }
   .nav-msg-btn { display:none; }
   .nav-link-galeria-desktop { display:none !important; }
@@ -571,6 +680,8 @@ button, .btn, .bnav-item, .nav-link { min-height: 36px; }
   .cal-date-day { font-size: 1.2rem; }
   .notif-toast { font-size: .76rem; padding: .55rem 1rem; max-width: 90vw; white-space: normal; text-align: center; }
   .fab { width: 46px; height: 46px; font-size: 1.4rem; right: .9rem; bottom: 4.8rem; }
+  .lore-action-buttons { margin: .8rem 0; }
+  .lore-people-container { padding-bottom: 0.3rem; }
 }
 .page { overflow-x: hidden; }
 .feed-filters { -webkit-overflow-scrolling: touch; }
@@ -609,6 +720,157 @@ button, .btn, .bnav-item, .nav-link { min-height: 36px; }
   .feed-icon span { height: 1.5px; }
   .page { padding-top: 3.2rem; padding-bottom: 4.5rem; }
 }
+
+/* ══ CALENDÁRIO ══ */
+.calendar-section { margin: 1.5rem 0; }
+.calendar-section .lore-eyebrow { margin-bottom: 1.6rem; }
+.calendar-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem 1.4rem; }
+.calendar-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 1.2rem;
+  gap: 1rem;
+}
+.calendar-month-year { 
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  flex: 1;
+  text-align: center;
+}
+.calendar-nav-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  width: 36px;
+  height: 36px;
+  color: var(--ink-light);
+  cursor: pointer;
+  transition: all .2s;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.calendar-nav-btn:hover { 
+  border-color: var(--green-mid);
+  color: var(--green-bright);
+  background: var(--green-pale);
+}
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+.calendar-weekday {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  color: var(--ink-light);
+  font-weight: 700;
+  padding: 0.5rem 0;
+  text-transform: uppercase;
+}
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.calendar-day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  position: relative;
+  transition: all .2s;
+}
+.calendar-day-cell:hover {
+  border-color: var(--green-mid);
+  background: var(--green-pale);
+  color: var(--green-bright);
+}
+.calendar-day-cell.other-month {
+  color: var(--ink-light);
+  background: transparent;
+  border: 1px solid transparent;
+}
+.calendar-day-cell.today {
+  background: var(--green-bright);
+  color: #fff;
+  border-color: var(--green-bright);
+  font-weight: 700;
+}
+.calendar-day-cell.has-quests {
+  border-color: var(--green);
+  background: var(--green-pale);
+}
+.calendar-day-dot {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  bottom: 4px;
+  right: 4px;
+}
+.calendar-expanded-day {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+}
+.calendar-expanded-day-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: var(--green-bright);
+  margin-bottom: 0.8rem;
+}
+.calendar-quest-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.calendar-quest-item:hover {
+  border-color: var(--green-mid);
+  background: var(--green-pale);
+}
+.calendar-quest-title {
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+  font-size: 0.95rem;
+}
+.calendar-quest-meta {
+  font-size: 0.75rem;
+  color: var(--ink-light);
+  font-family: var(--font-mono);
+}
+.calendar-no-quests {
+  text-align: center;
+  color: var(--ink-light);
+  padding: 1rem;
+  font-size: 0.85rem;
+}
+
+/* ════════════════════════════════════════════ */
 </style>
 </head>
 <body>
@@ -620,6 +882,8 @@ button, .btn, .bnav-item, .nav-link { min-height: 36px; }
 <div class="notif-toast" id="toast"></div>
 
 <script>
+// [O código JavaScript completo segue aqui — é idêntico ao anterior, mas com alterações ao renderProfilePage]
+
 // ════════════════════════════════════════════
 // FIREBASE CONFIG
 // ════════════════════════════════════════════
@@ -712,7 +976,7 @@ let state = {
   quests: [], activeQuest: null, chatUnsub: null, questsUnsub: null,
   filterTag: 'all', searchQuery: '', viewingUserId: null, otherUserProfile: null,
   expiredQuestModal: null, selectedParticipants: {}, galleryPhotos: [],
-  showGalleryUpload: false
+  showGalleryUpload: false, currentCalendarMonth: new Date(), expandedCalendarDay: null
 };
 
 // ════════════════════════════════════════════
@@ -785,6 +1049,158 @@ function getTodayString() {
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   return now.toISOString().slice(0, 16);
+}
+
+// ════════════════════════════════════════════
+// CALENDÁRIO - FUNÇÕES PRINCIPAIS
+// ════════════════════════════════════════════
+
+// Devolve a chave de data LOCAL (não UTC) no formato AAAA-MM-DD.
+// Usar toISOString() aqui introduzia um desfasamento de 1 dia em
+// timezones à frente de UTC (ex: Lisboa em horário de verão),
+// fazendo com que uma quest do dia 16 aparecesse no dia 17.
+function toLocalDateKey(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function getQuestsForDay(date) {
+  const dayStr = toLocalDateKey(date);
+  return state.quests.filter(q => {
+    if(!q.date) return false;
+    const qDate = q.date.toDate ? q.date.toDate() : new Date(q.date);
+    const qDateStr = toLocalDateKey(qDate);
+    return qDateStr === dayStr && (q.members || []).includes(state.user?.uid);
+  });
+}
+ 
+function renderCalendarSection() {
+  const month = state.currentCalendarMonth.getMonth();
+  const year = state.currentCalendarMonth.getFullYear();
+  const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const monthYear = `${monthNames[month]} ${year}`;
+  
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startDate = new Date(firstDay);
+  startDate.setDate(startDate.getDate() - firstDay.getDay());
+  
+  const days = [];
+  const current = new Date(startDate);
+  while(current <= lastDay || current.getDay() !== 0) {
+    days.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+  
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  
+  let daysHTML = '';
+  days.forEach(day => {
+    const quests = getQuestsForDay(day);
+    const isToday = day.getTime() === today.getTime();
+    const isCurrentMonth = day.getMonth() === month;
+    const questCount = quests.length;
+    
+    let className = 'calendar-day-cell';
+    if(!isCurrentMonth) className += ' other-month';
+    if(isToday) className += ' today';
+    if(questCount > 0) className += ' has-quests';
+    
+    daysHTML += `
+      <div class="${className}" ${questCount > 1 ? `data-count="${questCount}"` : ''} onclick="expandCalendarDay(new Date(${day.getFullYear()}, ${day.getMonth()}, ${day.getDate()}))">
+        ${day.getDate()}
+        ${questCount > 0 ? '<div class="calendar-day-dot"></div>' : ''}
+      </div>
+    `;
+  });
+  
+  const expandedHTML = state.expandedCalendarDay ? renderExpandedCalendarDay(state.expandedCalendarDay) : '';
+  
+  return `
+    <div class="calendar-section" id="calendar-section-wrap">
+      <div class="lore-eyebrow">Calendário de Quests</div>
+      <div class="calendar-card">
+        <div class="calendar-header">
+          <button class="calendar-nav-btn" onclick="previousCalendarMonth()" title="Mês anterior">◀</button>
+          <div class="calendar-month-year">${monthYear}</div>
+          <button class="calendar-nav-btn" onclick="nextCalendarMonth()" title="Próximo mês">▶</button>
+        </div>
+        <div class="calendar-weekdays">
+          <div class="calendar-weekday">Dom</div>
+          <div class="calendar-weekday">Seg</div>
+          <div class="calendar-weekday">Ter</div>
+          <div class="calendar-weekday">Qua</div>
+          <div class="calendar-weekday">Qui</div>
+          <div class="calendar-weekday">Sex</div>
+          <div class="calendar-weekday">Sab</div>
+        </div>
+        <div class="calendar-days">
+          ${daysHTML}
+        </div>
+        ${expandedHTML}
+      </div>
+    </div>
+  `;
+}
+ 
+function renderExpandedCalendarDay(date) {
+  const quests = getQuestsForDay(date);
+  const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const dayStr = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+  
+  if(quests.length === 0) {
+    return `<div class="calendar-expanded-day"><div class="calendar-no-quests">Nenhuma quest neste dia</div></div>`;
+  }
+  
+  const questsHTML = quests.map(q => `
+    <div class="calendar-quest-item" onclick="navigate('quest', state.quests.find(x=>x.id==='${q.id}'))">
+      <div class="calendar-quest-title">${esc(q.title)}</div>
+      <div class="calendar-quest-meta">
+        ${q.location ? `📍 ${esc(q.location)}` : 'Localização a definir'} · 
+        ${formatTime(q.date) || 'Hora a definir'}
+      </div>
+    </div>
+  `).join('');
+  
+  return `
+    <div class="calendar-expanded-day">
+      <div class="calendar-expanded-day-title">📅 ${dayStr}</div>
+      ${questsHTML}
+    </div>
+  `;
+}
+
+// Substitui apenas o bloco do calendário no DOM, sem re-renderizar
+// a página inteira nem fazer scroll para o topo.
+function refreshCalendarSection() {
+  const container = document.getElementById('calendar-section-wrap');
+  if(container) {
+    container.outerHTML = renderCalendarSection();
+  } else if(state.currentPage === 'profile') {
+    navigate('profile');
+  }
+}
+ 
+function expandCalendarDay(date) {
+  if(state.expandedCalendarDay && state.expandedCalendarDay.getTime() === date.getTime()) {
+    state.expandedCalendarDay = null;
+  } else {
+    state.expandedCalendarDay = date;
+  }
+  refreshCalendarSection();
+}
+ 
+function previousCalendarMonth() {
+  state.currentCalendarMonth.setMonth(state.currentCalendarMonth.getMonth() - 1);
+  refreshCalendarSection();
+}
+ 
+function nextCalendarMonth() {
+  state.currentCalendarMonth.setMonth(state.currentCalendarMonth.getMonth() + 1);
+  refreshCalendarSection();
 }
 
 // ════════════════════════════════════════════
@@ -1017,7 +1433,6 @@ function render() {
   bindMenuHandlers();
   checkExpiredQuests();
   
-  // 🎨 ATUALIZAR STATS DO FOOTER
   setTimeout(() => updateFooterStats(), 500);
 }
 
@@ -1057,7 +1472,6 @@ function renderNav() {
   ${renderMenuSidebar()}
   ${renderMenuOverlay()}`;
 }
- 
 
 function renderBottomNav() {
   const p=state.currentPage;
@@ -1483,7 +1897,6 @@ async function deleteQuest(questId) {
 let chatListener = null;
 let currentChatQuestId = null;
 
-// Debug Firebase connection
 if (typeof rtdb !== 'undefined') {
   rtdb.ref('.info/connected').on('value', (snap) => {
     console.log('🔥 Firebase connected?', snap.val());
@@ -1502,7 +1915,6 @@ function initChat(questId) {
 
   currentChatQuestId = questId;
 
-  // Remove listener anterior
   if (chatListener) {
     console.log('🧹 Removendo listener anterior');
     chatListener();
@@ -1697,131 +2109,372 @@ function renderMessagesPage() {
 function bindMessages() {}
 
 // ════════════════════════════════════════════
-// PROFILE PAGE (expanded with XP, calendar, banner)
+// PROFILE PAGE (LORE - REDESENHADO COM ALTERAÇÕES)
 // ════════════════════════════════════════════
 let editInterests=[], profileImageB64=null;
 
+const LORE_BADGES = {
+  Natureza:{emoji:'🌿',name:'Wild at Heart',desc:'A primeira vez que trocaste o ecrã pela floresta.'},
+  Aventura:{emoji:'⚡',name:'First Leap',desc:'O primeiro sim impulsivo da tua história.'},
+  'Água':{emoji:'🌊',name:'Into the Blue',desc:'O primeiro mergulho. A água lembra-se de ti.'},
+  Extremo:{emoji:'🔥',name:'No Fear',desc:'A primeira vez que o medo valeu a pena.'},
+  Noturno:{emoji:'🌙',name:'Under the Stars',desc:'A primeira noite que recusou acabar cedo.'},
+  Viagem:{emoji:'✈️',name:'Road Warrior',desc:'A primeira vez que o caminho era o destino.'},
+  Desporto:{emoji:'🏃',name:'Above the Clouds',desc:'O primeiro corpo cansado e feliz.'},
+  Social:{emoji:'🤝',name:'Strangers to Stories',desc:'As primeiras caras que viraram pessoas.'},
+  Urbano:{emoji:'🏙️',name:'City Hunter',desc:'A primeira cidade que viste a sério.'},
+  Cultural:{emoji:'🎭',name:'Time Traveller',desc:'A primeira história mais antiga do que tu.'}
+};
+
+const LORE_DEFAULT_BUCKET = [
+  'Saltar de paraquedas','Dormir numa tenda','Ver a Via Láctea',
+  'Fazer uma roadtrip pela Europa','Escalar uma montanha','Dormir numa praia',
+  'Aprender a surfar','Fazer canyoning'
+];
+
+function loreTs(q){ const v=q.completedAt||q.date; if(!v) return 0; const d=v.toDate?v.toDate():new Date(v); return d.getTime()||0; }
+function loreStrip(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+
+function computeLore(){
+  const uid=state.user?.uid;
+  const all=state.quests||[];
+  const mine=all.filter(q=>(q.members||[]).includes(uid));
+  const lived=mine.filter(q=>q.completed).sort((a,b)=>loreTs(a)-loreTs(b));
+  const peopleSet=new Set();
+  const peopleCount={};
+  mine.forEach(q=>(q.members||[]).forEach(m=>{ if(m&&m!==uid){ peopleSet.add(m); peopleCount[m]=(peopleCount[m]||0)+1; } }));
+  const people=Object.entries(peopleCount).map(([id,n])=>({id,n})).sort((a,b)=>b.n-a.n);
+  const locSet=new Set(lived.map(q=>(q.location||'').trim()).filter(Boolean));
+  const firsts={};
+  lived.forEach(q=>(q.tags||[]).forEach(t=>{ if(!firsts[t]) firsts[t]={ts:loreTs(q),title:q.title}; }));
+  return { mine, lived, peopleCount:peopleSet.size, people, locations:[...locSet], firsts };
+}
+
+// ── Bucket list (localStorage por utilizador) ──
+function loreBucketKey(){ return 'sq-bucket-'+(state.user?.uid||''); }
+function loreGetBucket(){
+  try{ const raw=localStorage.getItem(loreBucketKey()); if(raw) return JSON.parse(raw); }catch(e){}
+  return LORE_DEFAULT_BUCKET.map(t=>({text:t,done:false,touched:false}));
+}
+function loreSaveBucket(list){ try{ localStorage.setItem(loreBucketKey(),JSON.stringify(list)); }catch(e){} }
+function loreAutoUnlock(list,lored){
+  const hay=lored.map(q=>loreStrip((q.title||'')+' '+(q.tags||[]).join(' ')+' '+(q.location||'')));
+  let changed=false;
+  list.forEach(it=>{
+    if(it.touched||it.done) return;
+    const words=loreStrip(it.text).split(/\s+/).filter(w=>w.length>3);
+    if(words.some(w=>hay.some(h=>h.includes(w)))){ it.done=true; it.auto=true; changed=true; }
+  });
+  if(changed) loreSaveBucket(list);
+  return list;
+}
+function loreToggleBucket(i){
+  const list=loreGetBucket();
+  if(!list[i]) return;
+  list[i].done=!list[i].done; list[i].touched=true; list[i].auto=false;
+  loreSaveBucket(list);
+  navigate('profile');
+}
+function loreAddBucket(){
+  const inp=document.getElementById('lore-bucket-input');
+  const v=(inp?.value||'').trim();
+  if(!v) return;
+  const list=loreGetBucket();
+  list.unshift({text:v,done:false,touched:true});
+  loreSaveBucket(list);
+  navigate('profile');
+}
+function loreBucketKeydown(e){ if(e.key==='Enter') loreAddBucket(); }
+function loreDelBucket(i,e){
+  e.stopPropagation();
+  const list=loreGetBucket();
+  list.splice(i,1);
+  loreSaveBucket(list);
+  navigate('profile');
+}
+
 function renderProfilePage() {
   const p=state.profile||{};
-  const col=getAvatarColor(state.user?.uid||'');
+  const uid=state.user?.uid||'';
+  const col=getAvatarColor(uid);
   const init=getInitials(p.name||state.user?.email||'');
-  const avatarInner=p.photoURL?`<img src="${esc(p.photoURL)}" alt="av" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:1.5rem;font-weight:700">${init}</span>`;
-  const myQuests=state.quests.filter(q=>q.createdBy===state.user?.uid);
-  const joinedQuests=state.quests.filter(q=>(q.members||[]).includes(state.user?.uid)&&q.createdBy!==state.user?.uid);
-  const xp = p.xp||0;
-  const lvData = getLevelData(xp);
-  const lv = lvData.current;
-  const frameClass = `frame-${lv.frame}`;
-  
-  const now=Date.now();
-  const upcomingQuests=state.quests.filter(q=>(q.members||[]).includes(state.user?.uid)&&q.date).map(q=>{
-    const d=q.date.toDate?q.date.toDate():new Date(q.date);
-    return {...q,_ts:d.getTime()};
-  }).filter(q=>q._ts>=now).sort((a,b)=>a._ts-b._ts);
+  const avatarInner=p.photoURL?`<img src="${esc(p.photoURL)}" alt="av">`:`<span>${init}</span>`;
+  const xp=p.xp||0;
+  const lvData=getLevelData(xp);
+  const lv=lvData.current;
+  const frameClass=`frame-${lv.frame}`;
+  const lore=computeLore();
 
-  const bannerUnlocked = lv.bannerUnlocked;
-  const bannerHtml = bannerUnlocked
-    ? (p.bannerURL?`<img src="${esc(p.bannerURL)}" alt="banner">`:`<div class="profile-banner-default">🌍</div>`)
-    : `<div class="profile-banner-default" style="opacity:.4">🔒</div>`;
-  const bannerLockHtml = !bannerUnlocked
-    ? `<div class="profile-banner-lock">🔒 Nível 3 para desbloquear</div>` : '';
+  // banner (mantém desbloqueio ao nível 3)
+  const bannerUnlocked=lv.bannerUnlocked;
+  const bannerHtml=bannerUnlocked
+    ? (p.bannerURL?`<img src="${esc(p.bannerURL)}" alt="banner">`:`<div class="lore-banner-default">🌍</div>`)
+    : `<div class="lore-banner-default">🔒</div>`;
+  const bannerLock=!bannerUnlocked?`<div class="lore-banner-lock">🔒 Capítulo 3 para desbloquear</div>`:'';
 
-  return `<div class="profile-page page">
-    <!-- Banner -->
-    <div class="profile-banner" id="profile-banner" style="margin-top:1rem;${bannerUnlocked?'cursor:pointer':''}">
-      ${bannerHtml}${bannerLockHtml}
+  // ── HERO stats (HORIZONTAIS - 2x2 ou 4 em linha) ──
+  const heroStats=`
+    <div class="lore-stat">
+      <div class="lore-stat-num">${lore.lived.length}</div>
+      <div class="lore-stat-label">aventuras vividas</div>
     </div>
-    ${bannerUnlocked?`<input type="file" id="banner-img-input" accept="image/*">`:''}
+    <div class="lore-stat">
+      <div class="lore-stat-num">${lore.peopleCount}</div>
+      <div class="lore-stat-label">pessoas na história</div>
+    </div>
+    <div class="lore-stat">
+      <div class="lore-stat-num">${lore.locations.length}</div>
+      <div class="lore-stat-label">locais explorados</div>
+    </div>
+    <div class="lore-stat">
+      <div class="lore-stat-num">${Object.keys(lore.firsts).length}</div>
+      <div class="lore-stat-label">primeiras vezes</div>
+    </div>`;
 
-    <!-- Avatar row -->
-    <div class="profile-avatar-row">
+  const heroEmpty=`<div class="lore-empty"><b>A tua história ainda agora começou.</b><br>Vive a tua primeira SideQuest e a primeira página escreve-se sozinha.</div>`;
+
+
+  
+  // ── AINDA QUERO VIVER ──
+  const bucket=loreAutoUnlock(loreGetBucket(),lore.lived);
+  const bucketCard=`
+    <div class="lore-card">
+      <div class="lore-bucket">
+        ${bucket.map((b,i)=>`<div class="lore-goal ${b.done?'done':''}" onclick="loreToggleBucket(${i})">
+          <div class="lore-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <span class="lore-goal-text">${esc(b.text)}</span>
+          ${b.auto&&b.done?`<span class="lore-goal-auto">vivido</span>`:`<button class="lore-bucket-del" onclick="loreDelBucket(${i},event)" title="Remover">×</button>`}
+        </div>`).join('')}
+      </div>
+      <div class="lore-bucket-add">
+        <input id="lore-bucket-input" placeholder="Adiciona algo que ainda queres viver…" maxlength="60" onkeydown="loreBucketKeydown(event)">
+        <button onclick="loreAddBucket()" title="Adicionar">+</button>
+      </div>
+    </div>`;
+
+  // ── LINHA TEMPORAL ──
+  let timelineCard;
+  if(lore.lived.length){
+    const seenTags={};
+    const nodes=lore.lived.map((q,idx)=>{
+      const ts=loreTs(q);
+      const d=ts?new Date(ts):null;
+      const month=d?d.toLocaleDateString('pt-PT',{month:'long',year:'numeric'}).toUpperCase():'DATA DESCONHECIDA';
+      const tag=(q.tags||[])[0];
+      const emoji=LORE_BADGES[tag]?LORE_BADGES[tag].emoji:(TAG_EMOJI[tag]||'⚡');
+      let firstTag=null;
+      (q.tags||[]).forEach(t=>{ if(lore.firsts[t]&&lore.firsts[t].ts===ts&&!seenTags[t]){ seenTags[t]=1; if(!firstTag&&LORE_BADGES[t]) firstTag=LORE_BADGES[t]; } });
+      const isNow=idx===lore.lived.length-1;
+      return `<div class="lore-tl-node ${firstTag?'first':''} ${isNow?'now':''}">
+        <div class="lore-tl-dot"></div>
+        <div class="lore-tl-month">${month}</div>
+        <div class="lore-tl-title"><span class="lore-tl-emoji">${emoji}</span>${esc(q.title)}</div>
+        ${q.location?`<div class="lore-tl-cap"><span class="lore-tl-place">📍 ${esc(q.location)}</span></div>`:''}
+        ${firstTag?`<div class="lore-tl-first-tag">⭐ Primeira vez · ${firstTag.name}</div>`:''}
+      </div>`;
+    }).join('');
+    timelineCard=`<div class="lore-timeline">${nodes}</div>`;
+  } else {
+    timelineCard=`<div class="lore-empty">Aqui vai nascer o fio da tua vida. <b>Cada SideQuest concluída vira um momento desta linha</b> — e um dia vais querer voltar a percorrê-la.</div>`;
+  }
+
+  // ── PESSOAS DA TUA HISTÓRIA — HORIZONTAL ──
+  let peopleCard;
+  if(lore.people.length){
+    peopleCard=`<div class="lore-people-container">
+      ${lore.people.slice(0,8).map(pp=>{
+        const pcol=getAvatarColor(pp.id); const pinit=getInitials(pp.id.slice(0,4));
+        return `<div class="lore-person" id="lore-person-${pp.id}" data-uid="${pp.id}" onclick="viewUserProfile('${pp.id}')">
+          <div class="lore-person-av" style="background:${pcol}">${pinit}</div>
+          <div class="lore-person-name">A carregar…</div>
+          <div class="lore-person-meta">${pp.n} quest${pp.n>1?'s':''}</div>
+          <div class="lore-person-count">${pp.n}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  } else {
+    peopleCard=`<div class="lore-empty">Ainda não há ninguém no teu livro. <b>As melhores histórias trazem sempre gente nova.</b></div>`;
+  }
+
+  // ── MEMÓRIAS (badges) ──
+  const badgeTags=Object.keys(LORE_BADGES);
+  const badgesCard=`<div class="lore-badges">
+    ${badgeTags.map(t=>{
+      const b=LORE_BADGES[t]; const f=lore.firsts[t]; const unlocked=!!f;
+      const dateStr=unlocked&&f.ts?new Date(f.ts).toLocaleDateString('pt-PT',{day:'2-digit',month:'short',year:'numeric'}):'';
+      return `<div class="lore-badge ${unlocked?'':'locked'}">
+        <div class="lore-badge-emoji">${b.emoji}</div>
+        <div class="lore-badge-name">${b.name}</div>
+        <div class="lore-badge-desc">${unlocked?esc(b.desc):'Ainda por escrever.'}</div>
+        ${dateStr?`<div class="lore-badge-date">${dateStr}</div>`:''}
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  return `<div class="lore-page page">
+    <!-- BANNER + IDENTIDADE -->
+    <div class="lore-banner lore-reveal" id="profile-banner" style="${bannerUnlocked?'cursor:pointer':''}">${bannerHtml}${bannerLock}</div>
+    ${bannerUnlocked?`<input type="file" id="banner-img-input" accept="image/*" style="display:none">`:''}
+    <div class="lore-id-row lore-reveal">
       <div style="position:relative;flex-shrink:0">
-        <div class="profile-avatar-big ${frameClass}" id="profile-avatar-display" style="background:${col};cursor:pointer" onclick="document.getElementById('profile-photo-input').click()" title="Mudar foto">
-          ${avatarInner}
-        </div>
-        <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;border-radius:50%;background:var(--green);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;pointer-events:none">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        </div>
+        <div class="lore-avatar ${frameClass}" id="profile-avatar-display" style="background:${col}" onclick="document.getElementById('profile-photo-input').click()" title="Mudar foto">${avatarInner}</div>
+        <div class="lore-cam"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
         <input type="file" id="profile-photo-input" accept="image/*" style="display:none">
       </div>
-      <div style="flex:1;padding-bottom:.3rem">
-        <div class="profile-name">${esc(p.name||'Sem nome')}</div>
-        <div class="level-badge" style="margin-top:.35rem">⭐ Nível ${lv.level} · ${lv.title}</div>
-        ${p.isBetaTester?`<span class="beta-badge" style="margin-top:.4rem;display:inline-block">🚀 FIRST EXPLORER</span>`:''}
+      <div style="flex:1;min-width:0;padding-bottom:.2rem">
+        <div class="lore-name">${esc(p.name||'Sem nome')}</div>
+        <div class="lore-chapter-tag">CAPÍTULO ${lv.level} · <b>${esc(lv.title)}</b>${p.isBetaTester?' · <b style="color:var(--beta)">FIRST EXPLORER</b>':''}</div>
       </div>
     </div>
+    ${p.bio?`<div class="lore-bio lore-reveal">${esc(p.bio)}</div>`:''}
 
-    <div style="padding:0 .2rem">
-      ${p.bio?`<div class="profile-bio">${esc(p.bio)}</div>`:''}
-      ${p.interests?.length?`<div class="tag-list" style="margin-top:.6rem">${p.interests.map(t=>`<span class="tag">${TAG_EMOJI[t]||''} ${t}</span>`).join('')}</div>`:''}
-    </div>
-
-    <!-- XP Card -->
-    <div class="profile-xp-card">
-      <div class="profile-xp-header">
-        <div>
-          <span style="font-family:var(--font-display);font-size:1.3rem;letter-spacing:1px;color:var(--xp)">${xp} XP</span>
-          <span style="font-size:.75rem;color:var(--ink-light);margin-left:.6rem">·  Nível ${lv.level}</span>
+    <!-- XP SUBTIL - BARRA SIMPLES -->
+    <div class="lore-xp-bar lore-reveal-2">
+      <div class="lore-xp-bar-content">
+        <div class="lore-xp-bar-top">
+          <span>Capítulo <b>${lv.level}</b> · ${esc(lv.title)}</span>
+          ${lvData.next?`<span>→ ${lvData.next.level}</span>`:'<span>🏆 Final</span>'}
         </div>
-        <button class="info-btn" onclick="openXpInfo()" title="Como funciona o XP?">i</button>
+        <div class="xp-bar-wrap"><div class="xp-bar-fill" style="width:${lvData.pct}%"></div></div>
       </div>
-      <div class="xp-bar-wrap"><div class="xp-bar-fill" style="width:${lvData.pct}%"></div></div>
-      <div style="display:flex;justify-content:space-between;margin-top:.4rem;font-size:.72rem;color:var(--ink-light);font-family:var(--font-mono)">
-        <span>${lvData.xpIntoLevel} / ${lvData.xpNeeded} XP</span>
-        ${lvData.next?`<span>→ Nível ${lvData.next.level} (${lvData.next.title})</span>`:`<span>Nível máximo! 🏆</span>`}
-      </div>
+      <div class="lore-xp-bar-level">${xp.toLocaleString('pt-PT')}</div>
     </div>
 
-    <!-- Actions -->
-    <div style="display:flex;gap:.7rem;margin-bottom:1.5rem;flex-wrap:wrap">
-      <button class="btn btn-secondary btn-sm btn-icon" onclick="toggleTheme()" title="Alternar tema">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        ${currentTheme === 'dark' ? 'Light' : 'Dark'}
-      </button>
+    <!-- ACTION BUTTONS (Editar, Tema, Sair) -->
+    <div class="lore-action-buttons">
       <button class="btn btn-secondary btn-sm btn-icon" id="edit-profile-btn">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Editar Perfil
+        Editar
+      </button>
+      <button class="btn btn-secondary btn-sm btn-icon" onclick="toggleTheme()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        ${currentTheme==='dark'?'Claro':'Escuro'}
       </button>
       <button class="btn btn-ghost btn-sm" onclick="logout()">Sair</button>
     </div>
 
-    <!-- Upcoming Calendar -->
-    ${upcomingQuests.length?`
-    <div class="calendar-section">
-      <div class="section-label">Próximas Quests</div>
-      <div class="calendar-grid">
-        ${upcomingQuests.slice(0,6).map(q=>{
-          const d=new Date(q._ts);
-          const day=d.getDate();
-          const mon=d.toLocaleDateString('pt-PT',{month:'short'}).toUpperCase();
-          const time=d.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
-          const tags=(q.tags||[]).slice(0,1).map(t=>TAG_EMOJI[t]||'').join('');
-          return `<div class="cal-item" onclick="navigate('quest',state.quests.find(x=>x.id==='${q.id}'))">
-            <div class="cal-date-box"><div class="cal-date-day">${day}</div><div class="cal-date-mon">${mon}</div></div>
-            <div style="flex:1;min-width:0">
-              <div class="cal-quest-title">${tags} ${esc(q.title)}</div>
-              <div class="cal-quest-meta">🕐 ${time}${q.location?` · 📍${esc(q.location)}`:''} · 👥${(q.members||[]).length}/${q.maxPeople||10}</div>
-            </div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--ink-light);flex-shrink:0"><path d="m9 18 6-6-6-6"/></svg>
-          </div>`;
-        }).join('')}
+    <!-- HERO: O TEU LORE com stats HORIZONTAIS -->
+    <div class="lore-hero lore-reveal-2">
+      <div class="lore-hero-title">O teu LORE</div>
+      <div class="lore-stats">
+        ${lore.lived.length||lore.peopleCount?heroStats:heroEmpty}
       </div>
-    </div>`:''}
+      <button class="lore-share lore-reveal-2" onclick="shareLore()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Partilhar o meu LORE
+      </button>
+    </div>
 
-    <!-- My quests -->
-    <div class="quests-section">
-      <div class="section-label">As Minhas Quests (${myQuests.length})</div>
-      ${myQuests.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:.8rem">${myQuests.map(q=>renderQuestCard(q)).join('')}</div>`:`<div class="card" style="color:var(--ink-light);font-size:.85rem">Ainda não criaste nenhuma quest.</div>`}
+    <!-- ★ CALENDÁRIO DE QUESTS ★ -->
+    ${renderCalendarSection()}
+
+
+    <!-- AINDA QUERO VIVER -->
+    <div class="lore-section">
+      <div class="lore-eyebrow">Ainda quero viver</div>
+      ${bucketCard}
     </div>
-    <div class="quests-section" style="margin-top:2rem">
-      <div class="section-label">Quests a que me Juntei (${joinedQuests.length})</div>
-      ${joinedQuests.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:.8rem">${joinedQuests.map(q=>renderQuestCard(q)).join('')}</div>`:`<div class="card" style="color:var(--ink-light);font-size:.85rem">Ainda não entraste em nenhuma quest.</div>`}
+
+    <!-- LINHA TEMPORAL -->
+    <div class="lore-section">
+      <div class="lore-eyebrow">A tua linha temporal</div>
+      ${timelineCard}
     </div>
-    <!-- Promo Code Section -->
+
+    <!-- PESSOAS -->
+    <div class="lore-section">
+      <div class="lore-eyebrow">Pessoas da tua história</div>
+      ${peopleCard}
+    </div>
+
+    <!-- MEMÓRIAS / BADGES -->
+    <div class="lore-section">
+      <div class="lore-eyebrow">Memórias desbloqueadas</div>
+      ${badgesCard}
+    </div>
+
     ${renderPromoCodeSection()}
     ${renderEditProfileModal()}
     ${renderXpInfoModal()}
   </div>`;
+}
+
+// ── Partilhar LORE: gera imagem estilo Wrapped (canvas, sem libs) ──
+async function shareLore(){
+  const p=state.profile||{};
+  const lore=computeLore();
+  const lv=getLevelData(p.xp||0).current;
+  showToast('A criar o teu LORE\u2026');
+  try{ if(document.fonts&&document.fonts.ready) await document.fonts.ready; }catch(e){}
+
+  const W=1080,H=1920,cv=document.createElement('canvas');
+  cv.width=W; cv.height=H;
+  const x=cv.getContext('2d');
+  // fundo
+  x.fillStyle='#0a0c08'; x.fillRect(0,0,W,H);
+  const g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,'rgba(34,197,94,.10)'); g.addColorStop(.4,'rgba(0,0,0,0)'); x.fillStyle=g; x.fillRect(0,0,W,H);
+  x.fillStyle='#22c55e'; x.fillRect(110,150,70,6);
+  // header
+  x.fillStyle='#9aa896'; x.font="600 30px 'DM Mono',monospace"; x.textAlign='left';
+  x.fillText('O TEU LORE',110,225);
+  // nome
+  x.fillStyle='#e8ede4'; x.font="120px 'Bebas Neue',sans-serif";
+  x.fillText((p.name||'Explorador').toUpperCase().slice(0,16),108,360);
+  x.fillStyle='#9aa896'; x.font="500 34px 'DM Mono',monospace";
+  x.fillText('CAP\u00cdTULO '+lv.level+' \u00b7 '+lv.title.toUpperCase(),110,420);
+
+  // stats grandes
+  const stats=[
+    [lore.lived.length, 'aventuras vividas'],
+    [lore.peopleCount, 'pessoas na tua hist\u00f3ria'],
+    [lore.locations.length, 'locais explorados'],
+    [Object.keys(lore.firsts).length, 'primeiras vezes']
+  ];
+  let yy=620;
+  stats.forEach(s=>{
+    x.fillStyle='#22c55e'; x.font="150px 'Bebas Neue',sans-serif"; x.textAlign='left';
+    x.fillText(String(s[0]),110,yy);
+    const nw=x.measureText(String(s[0])).width;
+    x.fillStyle='#cfd8c8'; x.font="500 44px 'Outfit',sans-serif";
+    x.fillText(s[1],110+nw+34,yy-22);
+    yy+=190;
+  });
+
+  // memórias
+  const mem=Object.keys(lore.firsts).slice(0,3).map(t=>LORE_BADGES[t]?LORE_BADGES[t].name:t);
+  if(mem.length){
+    x.fillStyle='#9aa896'; x.font="600 30px 'DM Mono',monospace";
+    x.fillText('MEM\u00d3RIAS',110,yy+10);
+    x.fillStyle='#e8ede4'; x.font="500 46px 'Outfit',sans-serif";
+    mem.forEach((m,i)=>{ x.fillText('\u2726  '+m,110,yy+75+i*68); });
+  }
+
+  // rodapé
+  x.textAlign='center';
+  x.fillStyle='#e8ede4'; x.font="90px 'Bebas Neue',sans-serif";
+  x.fillText('SIDEQUEST',W/2,H-180);
+  x.fillStyle='#22c55e'; x.font="500 40px 'Outfit',sans-serif";
+  x.fillText('Coleciona hist\u00f3rias.',W/2,H-110);
+
+  cv.toBlob(async (blob)=>{
+    if(!blob){ showToast('Erro ao gerar imagem'); return; }
+    const url=URL.createObjectURL(blob);
+    const file=new File([blob],'sidequest-lore.png',{type:'image/png'});
+    const overlay=document.createElement('div');
+    overlay.className='lore-share-modal';
+    overlay.innerHTML=`
+      <img src="${url}" alt="O teu LORE">
+      <div class="lore-share-actions">
+        <button class="btn btn-primary btn-sm" id="lore-dl">Guardar imagem</button>
+        ${navigator.canShare&&navigator.canShare({files:[file]})?'<button class="btn btn-secondary btn-sm" id="lore-sh">Partilhar</button>':''}
+        <button class="btn btn-ghost btn-sm" id="lore-cl">Fechar</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click',e=>{ if(e.target===overlay){ overlay.remove(); URL.revokeObjectURL(url); }});
+    document.getElementById('lore-dl').onclick=()=>{ const a=document.createElement('a'); a.href=url; a.download='sidequest-lore.png'; a.click(); };
+    const sh=document.getElementById('lore-sh'); if(sh) sh.onclick=async()=>{ try{ await navigator.share({files:[file],title:'O meu LORE',text:'A minha hist\u00f3ria na SideQuest \ud83c\udf0c'}); }catch(e){} };
+    document.getElementById('lore-cl').onclick=()=>{ overlay.remove(); URL.revokeObjectURL(url); };
+  },'image/png');
 }
 
 // ── XP Info Modal ──
@@ -1933,39 +2586,49 @@ async function applyPromoCode() {
 }
 
 function bindProfile() {
-  document.querySelectorAll('.quest-card').forEach(card=>{
-    card.addEventListener('click',()=>{
-      const quest=state.quests.find(q=>q.id===card.dataset.id);
-      if(quest) navigate('quest',quest);
-    });
-  });
   document.getElementById('edit-profile-btn')?.addEventListener('click',openEditModal);
-  
+
+  // Resolver nomes/fotos das "Pessoas da tua história"
+  document.querySelectorAll('.lore-person[data-uid]').forEach(async el=>{
+    const uid=el.dataset.uid;
+    try{
+      const d=await getUserData(uid);
+      const nameEl=el.querySelector('.lore-person-name');
+      if(nameEl) nameEl.textContent=d?.name||'Aventureiro';
+      if(d?.photoURL){
+        const av=el.querySelector('.lore-person-av');
+        if(av) av.innerHTML=`<img src="${esc(d.photoURL)}" alt="av">`;
+      }
+    }catch(e){}
+  });
+
+  // Foto de perfil
   document.getElementById('profile-photo-input')?.addEventListener('change',async e=>{
     const file=e.target.files[0]; if(!file) return;
     if(file.size>5*1024*1024){showToast('Foto demasiado grande');return;}
-    showToast('A processar...');
+    showToast('A processar\u2026');
     const b64=await compressImage(file,400,0.85);
     await db.collection('users').doc(state.user.uid).set({photoURL:b64},{merge:true});
     state.profile={...state.profile,photoURL:b64};
     const d=document.getElementById('profile-avatar-display');
-    if(d) d.innerHTML=`<img src="${b64}" alt="av" style="width:100%;height:100%;object-fit:cover">`;
+    if(d) d.innerHTML=`<img src="${b64}" alt="av">`;
     const na=document.querySelector('.nav-avatar'); if(na) na.innerHTML=`<img src="${b64}" alt="av">`;
-    showToast('Foto atualizada! ✓');
+    showToast('Foto atualizada \u2713');
   });
 
+  // Banner
   const bannerEl=document.getElementById('profile-banner');
   const bannerInput=document.getElementById('banner-img-input');
   if(bannerEl&&bannerInput) {
     bannerEl.addEventListener('click',()=>bannerInput.click());
     bannerInput.addEventListener('change',async e=>{
       const file=e.target.files[0]; if(!file) return;
-      showToast('A processar banner...');
+      showToast('A processar banner\u2026');
       const b64=await compressImage(file,1200,0.8);
       await db.collection('users').doc(state.user.uid).set({bannerURL:b64},{merge:true});
       state.profile={...state.profile,bannerURL:b64};
       navigate('profile');
-      showToast('Banner atualizado! ✓');
+      showToast('Banner atualizado \u2713');
     });
   }
 }
