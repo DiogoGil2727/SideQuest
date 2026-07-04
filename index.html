@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- SECURITY: CSP restringe origens de scripts/ligações. 'unsafe-inline' é necessário porque a app é single-file com handlers inline; a proteção principal contra XSS é feita via escaping (esc/safeImg). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app; frame-src https://sidequest-8d699.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>SideQuest</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -897,7 +900,6 @@ const firebaseConfig = {
   appId: "1:540051485733:web:667b1671ffd81303877bcc"
 };
 firebase.initializeApp(firebaseConfig);
-firebase.database.enableLogging(true);
 const auth = firebase.auth();
 const db = firebase.firestore();
 const rtdb = firebase.database();
@@ -1029,7 +1031,18 @@ function showToast(msg) {
   t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2800);
 }
-function esc(str='') { return String(str).replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+// SECURITY: escaping completo (&, <, >, ", ') — seguro em contexto de texto E de atributos HTML
+function esc(str='') { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+// SECURITY: só permite data:image/* ou https:// em atributos src (bloqueia javascript:, quebra de atributo, etc.)
+function safeImg(src){ const s=String(src||''); if(/["'<>\s\\]/.test(s)) return ''; if(s.startsWith('data:image/')||s.startsWith('https://')) return s; return ''; }
+const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+function isImageFile(f){ return !!f && /^image\/(png|jpe?g|gif|webp)$/.test(f.type); }
+// SECURITY: rate limiting soft no cliente (a proteção real está nas Security Rules)
+const _cooldowns={};
+function rateLimit(key,ms){ const now=Date.now(); if(_cooldowns[key]&&now-_cooldowns[key]<ms) return false; _cooldowns[key]=now; return true; }
+// SECURITY: nunca expor mensagens de erro internas ao utilizador
+function friendlyError(e){ console.error('Erro:', e&&e.code?e.code:'unknown'); return 'Ocorreu um erro. Tenta novamente.'; }
+function maskEmail(em){ const s=String(em||''); const i=s.indexOf('@'); return i<1?'':s.slice(0,2)+'•••'+s.slice(i); }
 function readFileAsDataURL(file) {
   return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=e=>res(e.target.result); r.onerror=()=>rej(new Error('fail')); r.readAsDataURL(file); });
 }
@@ -1306,9 +1319,9 @@ function renderFooter() {
       <a class="footer-link" href="#" onclick="showToast('Em breve!')">Hall of LEGENDS</a>
       <a class="footer-link" href="#" onclick="showToast('Guias em breve!')">Guias</a>
       <a class="footer-link" href="#" onclick="showToast('Programa em breve!')">Embaixadores</a>
-      <a class="footer-link" href="https://discord.gg/sidequest" target="_blank">Discord</a>
-      <a class="footer-link" href="https://www.instagram.com/sidequest.pt/" target="_blank">Instagram</a>
-      <a class="footer-link" href="https://tiktok.com/@sidequest" target="_blank">TikTok</a>
+      <a class="footer-link" href="https://discord.gg/sidequest" target="_blank" rel="noopener noreferrer">Discord</a>
+      <a class="footer-link" href="https://www.instagram.com/sidequest.pt/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a class="footer-link" href="https://tiktok.com/@sidequest" target="_blank" rel="noopener noreferrer">TikTok</a>
     </div>
 
     <!-- SEGURANÇA -->
@@ -1338,10 +1351,10 @@ function renderFooter() {
       <h3 class="footer-section-title">Segue-nos</h3>
       <div class="footer-social-heading">Descobre novas SideQuests todas as semanas.</div>
       <div class="footer-social-icons">
-        <a href="https://www.instagram.com/sidequest.pt/" target="_blank" class="footer-social-icon" title="Instagram">
+        <a href="https://www.instagram.com/sidequest.pt/" target="_blank" rel="noopener noreferrer" class="footer-social-icon" title="Instagram">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
         </a>
-        <a href="https://tiktok.com/@sidequest" target="_blank" class="footer-social-icon" title="TikTok">
+        <a href="https://tiktok.com/@sidequest" target="_blank" rel="noopener noreferrer" class="footer-social-icon" title="TikTok">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.86 2.86 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-.54-.05z"/></svg>
         </a>
       </div>
@@ -1440,15 +1453,15 @@ function renderNav() {
   const p=state.profile||{};
   const init=getInitials(p.name||state.user.email);
   const col=getAvatarColor(state.user.uid);
-  const avatarHtml=p.photoURL?`<img src="${esc(p.photoURL)}" alt="av">`:`<span>${init}</span>`;
+  const avatarHtml=p.photoURL?`<img src="${safeImg(p.photoURL)}" alt="av">`:`<span>${init}</span>`;
   const myQuests=state.quests.filter(q=>(q.members||[]).includes(state.user.uid));
   return `<nav class="top-nav">
     <div class="nav-logo" onclick="navigate('feed')">
       <div class="nav-logo-dot"></div>
       SIDEQUEST
       <div class="nav-logo-socials">
-        <a href="https://www.instagram.com/sidequest.pt/" target="_blank" class="nav-social-btn" title="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
-        <a href="https://tiktok.com/@sidequest" target="_blank" class="nav-social-btn" title="TikTok"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.86 2.86 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-.54-.05z"/></svg></a>
+        <a href="https://www.instagram.com/sidequest.pt/" target="_blank" rel="noopener noreferrer" class="nav-social-btn" title="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+        <a href="https://tiktok.com/@sidequest" target="_blank" rel="noopener noreferrer" class="nav-social-btn" title="TikTok"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.86 2.86 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-.54-.05z"/></svg></a>
       </div>
     </div>
     <div class="nav-actions">
@@ -1597,7 +1610,7 @@ function renderQuestCard(q) {
   const members=q.members||[]; const max=q.maxPeople||10; 
   const spots = Math.max(0, max - members.length);
   const tags=(q.tags||[]).slice(0,2); const isMember=members.includes(state.user?.uid);
-  const imgHtml=q.imageBase64?`<img class="quest-card-img" src="${q.imageBase64}" alt="${esc(q.title)}" loading="lazy">`:`<div class="quest-card-img-placeholder">${TAG_EMOJI[tags[0]]||'⚡'}</div>`;
+  const imgHtml=q.imageBase64?`<img class="quest-card-img" src="${safeImg(q.imageBase64)}" alt="${esc(q.title)}" loading="lazy">`:`<div class="quest-card-img-placeholder">${TAG_EMOJI[tags[0]]||'⚡'}</div>`;
   return `<div class="quest-card" data-id="${q.id}">
     ${imgHtml}
     <div class="quest-card-header">
@@ -1641,7 +1654,7 @@ function renderAvatarStack(uids) {
     const col=getAvatarColor(uid); const init=getInitials(uid.slice(0,4));
     const userData = userCache[uid];
     const content = userData?.photoURL 
-      ? `<img src="${esc(userData.photoURL)}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`
+      ? `<img src="${safeImg(userData.photoURL)}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`
       : init;
     return `<div class="avatar-sm" style="background:${!userData?.photoURL ? col : 'transparent'}" title="${userData?.name || 'Participante'}">${content}</div>`;
   }).join('');
@@ -1698,12 +1711,12 @@ function renderCreatePage() {
       <input type="file" id="quest-img-input" accept="image/*">
     </div>
     <div class="form-group"><label class="label-field">Nome da Quest *</label><input class="input" id="q-title" placeholder="Ex: Mergulho ao nascer do sol..." maxlength="80"></div>
-    <div class="form-group"><label class="label-field">Descrição *</label><textarea class="input" id="q-desc" placeholder="O que vão fazer? O que precisam de levar?"></textarea></div>
+    <div class="form-group"><label class="label-field">Descrição *</label><textarea class="input" id="q-desc" maxlength="1000" placeholder="O que vão fazer? O que precisam de levar?"></textarea></div>
     <div class="form-group">
       <label class="label-field">Tags (até 3) *</label>
       <div class="tag-list" id="tag-selector">${TAGS.map(t=>`<button class="tag-select-btn" data-tag="${t}">${TAG_EMOJI[t]||''} ${t}</button>`).join('')}</div>
     </div>
-    <div class="form-group"><label class="label-field">Localização</label><input class="input" id="q-location" placeholder="Ex: Praia de Carcavelos..."></div>
+    <div class="form-group"><label class="label-field">Localização</label><input class="input" id="q-location" maxlength="100" placeholder="Ex: Praia de Carcavelos..."></div>
     <div class="form-group"><label class="label-field">Data e Hora *</label><input class="input" id="q-date" type="datetime-local" min="${getTodayString()}" required></div>
     <div class="form-group"><label class="label-field">Máximo de participantes * (mín. 2)</label><input class="input" id="q-max" type="number" min="2" max="50" value="8" onchange="if(this.value<2) this.value=2; if(this.value>50) this.value=50;"></div>
     <button class="btn btn-primary btn-full btn-icon" id="create-btn" style="margin-bottom:2rem">
@@ -1723,6 +1736,7 @@ function bindCreate() {
   });
   document.getElementById('quest-img-input')?.addEventListener('change',async e=>{
     const file=e.target.files[0]; if(!file) return;
+    if(!isImageFile(file)){showToast('Apenas imagens (JPG, PNG, GIF, WebP).');return;}
     if(file.size>5*1024*1024){showToast('Foto demasiado grande');return;}
     const btn=document.getElementById('create-btn'); btn.disabled=true; btn.textContent='A processar...';
     createImageB64=await compressImage(file);
@@ -1742,9 +1756,14 @@ async function submitCreateQuest() {
   const dateVal=document.getElementById('q-date')?.value;
   const maxP=parseInt(document.getElementById('q-max')?.value)||8;
   if(!title||!desc){errEl.textContent='Título e descrição são obrigatórios.';errEl.classList.remove('hidden');return;}
+  if(title.length>80){errEl.textContent='Título demasiado longo (máx. 80).';errEl.classList.remove('hidden');return;}
+  if(desc.length>1000){errEl.textContent='Descrição demasiado longa (máx. 1000).';errEl.classList.remove('hidden');return;}
+  if(loc&&loc.length>100){errEl.textContent='Localização demasiado longa (máx. 100).';errEl.classList.remove('hidden');return;}
   if(selectedTags.length===0){errEl.textContent='Seleciona pelo menos uma tag.';errEl.classList.remove('hidden');return;}
   if(!dateVal){errEl.textContent='Data e hora são obrigatórias.';errEl.classList.remove('hidden');return;}
-  if(maxP<2){errEl.textContent='Mínimo 2 participantes.';errEl.classList.remove('hidden');return;}
+  if(new Date(dateVal).getTime()<Date.now()-60000){errEl.textContent='A data tem de ser no futuro.';errEl.classList.remove('hidden');return;}
+  if(maxP<2||maxP>50){errEl.textContent='Participantes: entre 2 e 50.';errEl.classList.remove('hidden');return;}
+  if(!rateLimit('createQuest',30000)){errEl.textContent='Calma! Espera 30s entre quests.';errEl.classList.remove('hidden');return;}
   btn.disabled=true; btn.textContent='A publicar...';
   try {
     const currentXp = state.profile?.xp || 0;
@@ -1761,7 +1780,7 @@ async function submitCreateQuest() {
     state.profile={...state.profile,xp:newXp};
     showToast('⚡ Quest publicada! +'+XP_CREATE_QUEST+' XP');
     navigate('feed');
-  } catch(e) { errEl.textContent='Erro: '+e.message; errEl.classList.remove('hidden'); btn.disabled=false; btn.textContent='Publicar Quest'; }
+  } catch(e) { errEl.textContent=friendlyError(e); errEl.classList.remove('hidden'); btn.disabled=false; btn.textContent='Publicar Quest'; }
 }
 
 // ════════════════════════════════════════════
@@ -1773,7 +1792,7 @@ function renderQuestDetail() {
   const members=q.members||[]; const isCreator=q.createdBy===state.user?.uid;
   const isMember=members.includes(state.user?.uid); 
   const spots = Math.max(0, (q.maxPeople||10) - members.length);
-  const imgHtml=q.imageBase64?`<img class="detail-cover" src="${q.imageBase64}" alt="${esc(q.title)}">`:`<div class="detail-cover-placeholder">${TAG_EMOJI[(q.tags||[])[0]]||'⚡'}</div>`;
+  const imgHtml=q.imageBase64?`<img class="detail-cover" src="${safeImg(q.imageBase64)}" alt="${esc(q.title)}">`:`<div class="detail-cover-placeholder">${TAG_EMOJI[(q.tags||[])[0]]||'⚡'}</div>`;
   return `<div class="detail-page page">
     <button class="detail-back" onclick="navigate('feed')">← Voltar ao feed</button>
     ${imgHtml}
@@ -1832,7 +1851,7 @@ function renderMemberItem(uid,creatorUid) {
   const photoURL = userData?.photoURL;
   
   const photoHtml = photoURL 
-    ? `<img src="${esc(photoURL)}" alt="avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover">`
+    ? `<img src="${safeImg(photoURL)}" alt="avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover">`
     : `<div class="member-avatar" style="background:${col}">${init}</div>`;
   
   return `<div class="member-item" onclick="viewUserProfile('${uid}')">
@@ -1871,7 +1890,7 @@ async function joinQuest(questId) {
     if(pc) { pc.innerHTML=renderQuestDetail(); bindQuestDetail(); }
     showToast('⚡ Entraste na quest!');
     joinBtnDisabled=false;
-  } catch(e){showToast('Erro: '+e.message);joinBtnDisabled=false;}
+  } catch(e){showToast(friendlyError(e));joinBtnDisabled=false;}
 }
 async function leaveQuest(questId) {
   if(!confirm('Sair desta quest?')) return;
@@ -1880,7 +1899,7 @@ async function leaveQuest(questId) {
     state.activeQuest=null;
     navigate('feed');
     showToast('Saíste da quest.');
-  } catch(e){showToast('Erro: '+e.message);}
+  } catch(e){showToast(friendlyError(e));}
 }
 async function deleteQuest(questId) {
   if(!confirm('Eliminar esta quest?')) return;
@@ -1888,7 +1907,7 @@ async function deleteQuest(questId) {
     await db.collection('quests').doc(questId).delete();
     await rtdb.ref(`chats/${questId}`).remove();
     showToast('Quest eliminada.'); navigate('feed');
-  } catch(e){showToast('Erro: '+e.message);}
+  } catch(e){showToast(friendlyError(e));}
 }
 
 // ════════════════════════════════════════════
@@ -2006,6 +2025,9 @@ async function sendChatMsg() {
   }
 
   const text = input.value.trim();
+  if(!text) return;
+  if(text.length>500){ showToast('Mensagem demasiado longa (máx. 500).'); return; }
+  if(!rateLimit('chatMsg',1200)){ showToast('Calma! Estás a enviar demasiado rápido.'); return; }
   input.value = '';
 
   const data = {
@@ -2018,10 +2040,6 @@ async function sendChatMsg() {
   const path = `chats/${questId}/messages`;
   const ref = rtdb.ref(path).push();
 
-  console.log('📍 Enviar para path:', path);
-  console.log('🆔 Nova message key:', ref.key);
-  console.log('📤 Enviando:', data);
-
   try {
     await Promise.race([
       ref.set(data),
@@ -2030,12 +2048,10 @@ async function sendChatMsg() {
       )
     ]);
 
-    console.log('✅✅✅ MENSAGEM ENVIADA COM SUCESSO!');
     showToast('✓ Enviada');
 
   } catch (error) {
-    console.error('❌ Erro Firebase:', error.code, error.message);
-    showToast('Erro: ' + error.message);
+    showToast(friendlyError(error));
 
     input.value = text;
   }
@@ -2198,7 +2214,7 @@ function renderProfilePage() {
   const uid=state.user?.uid||'';
   const col=getAvatarColor(uid);
   const init=getInitials(p.name||state.user?.email||'');
-  const avatarInner=p.photoURL?`<img src="${esc(p.photoURL)}" alt="av">`:`<span>${init}</span>`;
+  const avatarInner=p.photoURL?`<img src="${safeImg(p.photoURL)}" alt="av">`:`<span>${init}</span>`;
   const xp=p.xp||0;
   const lvData=getLevelData(xp);
   const lv=lvData.current;
@@ -2208,7 +2224,7 @@ function renderProfilePage() {
   // banner (mantém desbloqueio ao nível 3)
   const bannerUnlocked=lv.bannerUnlocked;
   const bannerHtml=bannerUnlocked
-    ? (p.bannerURL?`<img src="${esc(p.bannerURL)}" alt="banner">`:`<div class="lore-banner-default">🌍</div>`)
+    ? (p.bannerURL?`<img src="${safeImg(p.bannerURL)}" alt="banner">`:`<div class="lore-banner-default">🌍</div>`)
     : `<div class="lore-banner-default">🔒</div>`;
   const bannerLock=!bannerUnlocked?`<div class="lore-banner-lock">🔒 Capítulo 3 para desbloquear</div>`:'';
 
@@ -2582,7 +2598,7 @@ async function applyPromoCode() {
     msgEl.style.color='var(--green-bright)';
     msgEl.textContent = `✓ ${promo.description}`;
     setTimeout(()=>navigate('profile'), 1200);
-  } catch(e) { msgEl.style.color='var(--red)'; msgEl.textContent='Erro: ' + e.message; }
+  } catch(e) { msgEl.style.color='var(--red)'; msgEl.textContent=friendlyError(e); }
 }
 
 function bindProfile() {
@@ -2597,7 +2613,7 @@ function bindProfile() {
       if(nameEl) nameEl.textContent=d?.name||'Aventureiro';
       if(d?.photoURL){
         const av=el.querySelector('.lore-person-av');
-        if(av) av.innerHTML=`<img src="${esc(d.photoURL)}" alt="av">`;
+        if(av) av.innerHTML=`<img src="${safeImg(d.photoURL)}" alt="av">`;
       }
     }catch(e){}
   });
@@ -2605,6 +2621,7 @@ function bindProfile() {
   // Foto de perfil
   document.getElementById('profile-photo-input')?.addEventListener('change',async e=>{
     const file=e.target.files[0]; if(!file) return;
+    if(!isImageFile(file)){showToast('Apenas imagens (JPG, PNG, GIF, WebP).');return;}
     if(file.size>5*1024*1024){showToast('Foto demasiado grande');return;}
     showToast('A processar\u2026');
     const b64=await compressImage(file,400,0.85);
@@ -2623,6 +2640,8 @@ function bindProfile() {
     bannerEl.addEventListener('click',()=>bannerInput.click());
     bannerInput.addEventListener('change',async e=>{
       const file=e.target.files[0]; if(!file) return;
+      if(!isImageFile(file)){showToast('Apenas imagens (JPG, PNG, GIF, WebP).');return;}
+      if(file.size>5*1024*1024){showToast('Foto demasiado grande');return;}
       showToast('A processar banner\u2026');
       const b64=await compressImage(file,1200,0.8);
       await db.collection('users').doc(state.user.uid).set({bannerURL:b64},{merge:true});
@@ -2640,8 +2659,8 @@ function renderEditProfileModal() {
     <div class="modal-box">
       <div class="modal-title">EDITAR PERFIL</div>
       <div id="edit-error" class="auth-error hidden"></div>
-      <div class="form-group"><label class="label-field">Nome</label><input class="input" id="edit-name" value="${esc(p.name||'')}" placeholder="O teu nome"></div>
-      <div class="form-group"><label class="label-field">Bio (máx. 50 palavras)</label><textarea class="input" id="edit-bio" placeholder="Fala sobre ti..." onkeyup="updateBioWordCount()">${esc(p.bio||'')}</textarea><div style="font-size:.7rem;color:var(--ink-light);margin-top:.3rem">Palavras: <span id="bio-word-count">0</span>/50</div></div>
+      <div class="form-group"><label class="label-field">Nome</label><input class="input" id="edit-name" maxlength="40" value="${esc(p.name||'')}" placeholder="O teu nome"></div>
+      <div class="form-group"><label class="label-field">Bio (máx. 50 palavras)</label><textarea class="input" id="edit-bio" maxlength="600" placeholder="Fala sobre ti..." onkeyup="updateBioWordCount()">${esc(p.bio||'')}</textarea><div style="font-size:.7rem;color:var(--ink-light);margin-top:.3rem">Palavras: <span id="bio-word-count">0</span>/50</div></div>
       <div class="form-group">
         <label class="label-field">Género (opcional)</label>
         <select class="input" id="edit-gender">
@@ -2693,6 +2712,8 @@ async function saveProfile() {
   const gender=document.getElementById('edit-gender')?.value;
   const errEl=document.getElementById('edit-error');
   if(!name){errEl.textContent='Nome é obrigatório.';errEl.classList.remove('hidden');return;}
+  if(name.length>40){errEl.textContent='Nome demasiado longo (máx. 40).';errEl.classList.remove('hidden');return;}
+  if(bio.length>600){errEl.textContent='Bio demasiado longa.';errEl.classList.remove('hidden');return;}
   
   const bioWords = bio.split(/\s+/).filter(w => w.length > 0).length;
   if(bioWords > 50){errEl.textContent='Bio pode ter no máximo 50 palavras.';errEl.classList.remove('hidden');return;}
@@ -2733,7 +2754,7 @@ function renderPublicProfile() {
   
   const bannerUnlocked = lv.bannerUnlocked;
   const bannerHtml = bannerUnlocked
-    ? (p.bannerURL?`<img src="${esc(p.bannerURL)}" alt="banner">`:`<div class="profile-banner-default">🌍</div>`)
+    ? (p.bannerURL?`<img src="${safeImg(p.bannerURL)}" alt="banner">`:`<div class="profile-banner-default">🌍</div>`)
     : `<div class="profile-banner-default" style="opacity:.4">🔒</div>`;
   const bannerLockHtml = !bannerUnlocked
     ? `<div class="profile-banner-lock">🔒 Nível 3 para desbloquear</div>` : '';
@@ -2882,7 +2903,7 @@ function renderHistorico() {
     <div class="section-label">Arquivo</div>
     <div class="historico-grid">
       ${allHistoricalQuests.map(h=>`<div class="historico-card">
-        <div class="historico-img-placeholder" style="${h.imageBase64 ? `background:transparent;overflow:hidden;padding:0;margin:0` : ''}">${h.imageBase64 ? `<img src="${h.imageBase64}" alt="${esc(h.title)}" style="width:100%;height:120px;object-fit:cover">` : h.emoji}</div>
+        <div class="historico-img-placeholder" style="${h.imageBase64 ? `background:transparent;overflow:hidden;padding:0;margin:0` : ''}">${h.imageBase64 ? `<img src="${safeImg(h.imageBase64)}" alt="${esc(h.title)}" style="width:100%;height:120px;object-fit:cover">` : h.emoji}</div>
         <div class="historico-body">
           <div class="historico-date">📅 ${h.date} · 📍 ${esc(h.location)}</div>
           <div class="historico-title">${esc(h.title)}</div>
@@ -2945,7 +2966,7 @@ function renderGaleriaPage() {
       ${photos.length > 0 
         ? `<div class="gallery-grid">${photos.map(p => `
           <div class="gallery-item" onclick="showGalleryModal('${p.id}')">
-            <img class="gallery-item-img" src="${p.imageBase64}" alt="photo">
+            <img class="gallery-item-img" src="${safeImg(p.imageBase64)}" alt="photo">
             <div class="gallery-item-overlay">
               <span>👁️ VER</span>
               ${p.uploadedBy === state.user.uid ? `<button class="gallery-delete-btn" onclick="deleteGalleryPhoto(event, '${p.id}')" title="Eliminar">🗑️</button>` : ''}
@@ -2968,6 +2989,8 @@ function bindGaleria() {
     const file = e.target.files[0];
     if(!file) return;
     
+    if(!isImageFile(file)) { showToast('Apenas imagens (JPG, PNG, GIF, WebP).'); return; }
+    if(!rateLimit('galleryUpload',15000)) { showToast('Espera 15s entre uploads.'); return; }
     if(file.size > 5*1024*1024) {
       showToast('Foto demasiado grande (máx 5MB)');
       document.getElementById('gallery-file-input').value = '';
@@ -3030,7 +3053,7 @@ async function uploadGalleryPhoto() {
     showToast('✓ Foto partilhada!');
     // ✅ NÃO CHAMAR loadGallery() - o listener real-time atualiza automaticamente
   } catch(e) {
-    showToast('Erro: ' + e.message);
+    showToast(friendlyError(e));
     btn.disabled = false;
     btn.textContent = 'Partilhar Foto';
   }
@@ -3048,7 +3071,7 @@ async function deleteGalleryPhoto(event, photoId) {
     await db.collection('gallery').doc(photoId).delete();
     showToast('✓ Foto eliminada');
   } catch(e) {
-    showToast('Erro: ' + e.message);
+    showToast(friendlyError(e));
   }
 }
 
@@ -3061,7 +3084,7 @@ function showGalleryModal(photoId) {
     <div class="modal-overlay" id="gallery-modal" onclick="closeGalleryModal()">
       <div style="position:relative;max-width:600px;width:100%;max-height:90vh;overflow-y:auto" onclick="event.stopPropagation()">
         <button onclick="closeGalleryModal()" style="position:absolute;top:-.8rem;right:-.8rem;width:32px;height:32px;border-radius:50%;border:none;background:var(--green);color:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10">✕</button>
-        <img src="${photo.imageBase64}" style="width:100%;border-radius:var(--radius);display:block;margin-bottom:1.2rem">
+        <img src="${safeImg(photo.imageBase64)}" style="width:100%;border-radius:var(--radius);display:block;margin-bottom:1.2rem">
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem">
           <div style="font-size:.75rem;color:var(--ink-light);font-family:var(--font-mono)">
             Por <strong>${esc(photo.uploadedByName)}</strong> · ${new Date(photo.createdAt?.toDate?.() || photo.createdAt).toLocaleDateString('pt-PT')}
@@ -3144,17 +3167,17 @@ async function sendPasswordResetEmail() {
   btn.disabled = true;
   btn.textContent = 'A enviar...';
   
+  if(!EMAIL_RE.test(email)){ errEl.textContent='Email inválido.'; errEl.classList.remove('hidden'); return; }
   try {
     await auth.sendPasswordResetEmail(email);
     errEl.classList.add('hidden');
-    showToast('✓ Email enviado! Verifica a tua caixa de correio.');
+    showToast('✓ Se o email existir, receberás um link. Verifica a caixa de correio.');
     setTimeout(() => closePasswordResetModal(), 2000);
   } catch(e) {
-    const msgs = {
-      'auth/user-not-found': 'Email não encontrado.',
-      'auth/invalid-email': 'Email inválido.',
-    };
-    errEl.textContent = msgs[e.code] || e.message;
+    // SECURITY: resposta neutra — não revelar se o email existe (anti-enumeração)
+    if(e.code==='auth/user-not-found'){ errEl.classList.add('hidden'); showToast('✓ Se o email existir, receberás um link. Verifica a caixa de correio.'); setTimeout(() => closePasswordResetModal(), 2000); return; }
+    const msgs = { 'auth/invalid-email': 'Email inválido.', 'auth/too-many-requests':'Demasiadas tentativas. Aguarda uns minutos.' };
+    errEl.textContent = msgs[e.code] || friendlyError(e);
     errEl.classList.remove('hidden');
     btn.disabled = false;
     btn.textContent = 'Enviar Link de Reset';
@@ -3191,9 +3214,9 @@ function renderLoginForm() {
 function renderRegisterForm() {
   return `<h2>CRIAR CONTA</h2>
   <div id="auth-error" class="auth-error hidden"></div>
-  <div class="form-group"><label class="label-field">Nome *</label><input class="input" id="auth-name" placeholder="O teu nome"></div>
+  <div class="form-group"><label class="label-field">Nome *</label><input class="input" id="auth-name" maxlength="40" placeholder="O teu nome"></div>
   <div class="form-group"><label class="label-field">Email *</label><input class="input" id="auth-email" type="email" placeholder="email@exemplo.com" autocomplete="email"></div>
-  <div class="form-group"><label class="label-field">Password *</label><input class="input" id="auth-pass" type="password" placeholder="Min. 6 caracteres" autocomplete="new-password"></div>
+  <div class="form-group"><label class="label-field">Password *</label><input class="input" id="auth-pass" type="password" placeholder="Mín. 8 caracteres (letras e números)" autocomplete="new-password"></div>
   <div class="form-group"><label class="label-field">Interesses (opcional)</label>
     <div class="tag-list" id="reg-tags">${TAGS.map(t=>`<button class="tag-select-btn" data-tag="${t}" type="button">${TAG_EMOJI[t]||''} ${t}</button>`).join('')}</div>
   </div>
@@ -3223,8 +3246,9 @@ async function doLogin() {
   const btn=document.getElementById('auth-btn'); btn.disabled=true; btn.textContent='A entrar...';
   try { await auth.signInWithEmailAndPassword(email,pass); }
   catch(e) {
-    const msgs={'auth/user-not-found':'Email não encontrado.','auth/wrong-password':'Password incorreta.','auth/invalid-email':'Email inválido.','auth/invalid-credential':'Email ou password incorretos.'};
-    errEl.textContent=msgs[e.code]||e.message; errEl.classList.remove('hidden');
+    // SECURITY: mensagem única evita enumeração de contas; nunca expor e.message
+    const msgs={'auth/invalid-email':'Email inválido.','auth/too-many-requests':'Demasiadas tentativas. Aguarda uns minutos.'};
+    errEl.textContent=msgs[e.code]||'Email ou password incorretos.'; errEl.classList.remove('hidden');
     btn.disabled=false; btn.textContent='Entrar';
   }
 }
@@ -3234,10 +3258,14 @@ async function doRegister() {
   const pass=document.getElementById('auth-pass')?.value;
   const errEl=document.getElementById('auth-error');
   if(!name||!email||!pass){errEl.textContent='Preenche todos os campos.';errEl.classList.remove('hidden');return;}
-  if(pass.length<6){errEl.textContent='Password com mínimo 6 caracteres.';errEl.classList.remove('hidden');return;}
+  if(name.length>40){errEl.textContent='Nome demasiado longo (máx. 40 caracteres).';errEl.classList.remove('hidden');return;}
+  if(!EMAIL_RE.test(email)){errEl.textContent='Email inválido.';errEl.classList.remove('hidden');return;}
+  if(pass.length<8){errEl.textContent='Password com mínimo 8 caracteres.';errEl.classList.remove('hidden');return;}
+  if(!/[0-9]/.test(pass)||!/[a-zA-Z]/.test(pass)){errEl.textContent='A password deve incluir letras e números.';errEl.classList.remove('hidden');return;}
   const btn=document.getElementById('auth-btn'); btn.disabled=true; btn.textContent='A criar conta...';
   try {
     const cred=await auth.createUserWithEmailAndPassword(email,pass);
+    try{ await cred.user.sendEmailVerification(); }catch(_){/* não bloquear o registo */}
     await db.collection('users').doc(cred.user.uid).set({
       name,email,interests:regInterests,bio:'',gender:null,xp:0,
       createdAt:firebase.firestore.FieldValue.serverTimestamp()
@@ -3245,7 +3273,7 @@ async function doRegister() {
     window._showRegister=false;
   } catch(e) {
     const msgs={'auth/email-already-in-use':'Email já em uso.','auth/invalid-email':'Email inválido.','auth/weak-password':'Password muito fraca.'};
-    errEl.textContent=msgs[e.code]||e.message; errEl.classList.remove('hidden');
+    errEl.textContent=msgs[e.code]||friendlyError(e); errEl.classList.remove('hidden');
     btn.disabled=false; btn.textContent='Criar Conta';
   }
 }
@@ -3384,7 +3412,7 @@ function renderParticipantCheckbox(questId, uid) {
   const photoURL = userData?.photoURL;
   
   const photoHtml = photoURL 
-    ? `<img src="${esc(photoURL)}" alt="avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover">`
+    ? `<img src="${safeImg(photoURL)}" alt="avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover">`
     : `<div style="width:36px;height:36px;border-radius:50%;background:${getAvatarColor(uid)};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem">${getInitials(uid.slice(0,4))}</div>`;
   
   return `
@@ -3395,7 +3423,7 @@ function renderParticipantCheckbox(questId, uid) {
       </div>
       <div class="participant-info">
         <div class="participant-name" id="participant-name-${uid}">${esc(name)}</div>
-        <div class="participant-email" id="participant-email-${uid}">${esc(email)}</div>
+        <div class="participant-email" id="participant-email-${uid}">${esc(maskEmail(email))}</div>
       </div>
     </div>
   `;
@@ -3501,6 +3529,8 @@ function closeFeedbackModal() {
 async function sendFeedback() {
   const text = document.getElementById('feedback-text')?.value.trim();
   if(!text) { showToast('Escreve uma sugestão'); return; }
+  if(text.length>500) { showToast('Máximo 500 caracteres.'); return; }
+  if(!rateLimit('feedback',60000)) { showToast('Espera 1 minuto entre sugestões.'); return; }
   
   const btn = event.target;
   btn.disabled = true;
@@ -3520,7 +3550,7 @@ async function sendFeedback() {
     showToast('✓ Obrigado pela sugestão!');
     closeFeedbackModal();
   } catch(e) {
-    showToast('Erro ao enviar: ' + e.message);
+    showToast(friendlyError(e));
     btn.disabled = false;
     btn.textContent = 'Enviar';
   }
