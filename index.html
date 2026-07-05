@@ -51,6 +51,8 @@ a{color:inherit;text-decoration:none;}
 img{max-width:100%;display:block;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px;}
 .hidden{display:none!important;}
+.sq-spinner{width:34px;height:34px;margin:0 auto;border:3px solid var(--border);border-top-color:var(--green-bright);border-radius:50%;animation:sqspin .8s linear infinite;}
+@keyframes sqspin{to{transform:rotate(360deg)}}
 #app{min-height:100vh;}
 .page{min-height:100vh;padding-bottom:5rem;}
 
@@ -256,6 +258,8 @@ input[type="file"]{display:none;}
 .member-list{display:flex;flex-direction:column;gap:.55rem;}
 .member-item{display:flex;align-items:center;gap:.8rem;padding:.65rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;}
 .member-item:hover{border-color:var(--green-mid);background:var(--green-pale);}
+.member-kick-btn{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:1px solid var(--border-strong);background:transparent;color:var(--ink-light);font-size:.8rem;line-height:1;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.member-kick-btn:hover{border-color:var(--red);color:var(--red);background:rgba(231,76,60,.08);}
 .member-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;}
 .member-avatar img{width:100%;height:100%;object-fit:cover;}
 .creator-badge{font-family:var(--font-mono);font-size:.56rem;letter-spacing:1px;text-transform:uppercase;background:var(--green-pale);color:var(--green-bright);border:1px solid var(--green-mid);padding:.18rem .5rem;border-radius:99px;margin-left:auto;}
@@ -374,11 +378,12 @@ input[type="file"]{display:none;}
 .lore-goal.done .lore-goal-text{color:var(--ink-light);text-decoration:line-through;text-decoration-color:var(--silver-light);}
 
 /* LINHA TEMPORAL — o fio da história */
-.lore-timeline{position:relative;padding-left:1.7rem;}
-.lore-timeline::before{content:'';position:absolute;left:6px;top:6px;bottom:18px;width:1.5px;background:linear-gradient(var(--border-strong),var(--border-strong) 70%,transparent);}
-.lore-tl-node{position:relative;padding-bottom:1.7rem;}
-.lore-tl-node:last-child{padding-bottom:0;}
-.lore-tl-dot{position:absolute;left:-1.7rem;top:3px;width:13px;height:13px;border-radius:50%;background:var(--bg);border:2px solid var(--silver-light);}
+/* TIMELINE HORIZONTAL — linha corre da esquerda para a direita, scroll lateral */
+.lore-timeline{position:relative;display:flex;gap:1.6rem;overflow-x:auto;padding:.4rem .3rem 1rem;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;}
+.lore-timeline::before{content:'';position:absolute;left:0;right:0;top:.75rem;height:1.5px;background:linear-gradient(90deg,var(--border-strong),var(--border-strong) 75%,transparent);}
+.lore-timeline::-webkit-scrollbar{height:4px;}
+.lore-tl-node{position:relative;flex:0 0 190px;max-width:190px;padding-top:1.6rem;scroll-snap-align:start;}
+.lore-tl-dot{position:absolute;left:0;top:.35rem;width:13px;height:13px;border-radius:50%;background:var(--bg);border:2px solid var(--silver-light);}
 .lore-tl-node.first .lore-tl-dot{border-color:var(--green-bright);background:var(--green-pale);}
 .lore-tl-node.now .lore-tl-dot{border-color:var(--green-bright);background:var(--green-bright);box-shadow:0 0 0 4px rgba(34,197,94,.18);animation:loreNow 2.4s ease-in-out infinite;}
 @keyframes loreNow{0%,100%{box-shadow:0 0 0 4px rgba(34,197,94,.18);}50%{box-shadow:0 0 0 7px rgba(34,197,94,.05);}}
@@ -977,6 +982,7 @@ let state = {
   user: null, profile: null, currentPage: 'feed',
   quests: [], activeQuest: null, chatUnsub: null, questsUnsub: null,
   filterTag: 'all', searchQuery: '', viewingUserId: null, otherUserProfile: null,
+
   expiredQuestModal: null, selectedParticipants: {}, galleryPhotos: [],
   showGalleryUpload: false, currentCalendarMonth: new Date(), expandedCalendarDay: null
 };
@@ -1338,11 +1344,11 @@ function renderFooter() {
       <h3 class="footer-section-title">Contacto</h3>
       <div style="margin-bottom:1.5rem">
         <div style="font-size:.78rem;color:var(--ink-light);margin-bottom:.4rem;font-family:var(--font-mono);letter-spacing:1px;text-transform:uppercase">Geral</div>
-        <a href="mailto:sidequest.info.mail@gmail.com" class="footer-link" style="margin-bottom:0;color:var(--green-bright);font-weight:600">contact@sidequest.pt</a>
+        <a href="mailto:sidequest.info.mail@gmail.com" class="footer-link" style="margin-bottom:0;color:var(--green-bright);font-weight:600">sidequest.info.mail@gmail.com</a>
       </div>
       <div>
         <div style="font-size:.78rem;color:var(--ink-light);margin-bottom:.4rem;font-family:var(--font-mono);letter-spacing:1px;text-transform:uppercase">Parcerias & Imprensa</div>
-        <a href="mailto:sidequest.info.mail@gmail.com" class="footer-link" style="margin-bottom:0;color:var(--green-bright);font-weight:600">partnerships@sidequest.pt</a>
+        <a href="mailto:sidequest.info.mail@gmail.com" class="footer-link" style="margin-bottom:0;color:var(--green-bright);font-weight:600">sidequest.info.mail@gmail.com</a>
       </div>
     </div>
 
@@ -1354,7 +1360,7 @@ function renderFooter() {
         <a href="https://www.instagram.com/sidequest.pt/" target="_blank" rel="noopener noreferrer" class="footer-social-icon" title="Instagram">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
         </a>
-        <a href="https://www.tiktok.com/@sidequest.pt?lang=pt" target="_blank" rel="noopener noreferrer" class="footer-social-icon" title="TikTok">
+        <a href="https://tiktok.com/@sidequest" target="_blank" rel="noopener noreferrer" class="footer-social-icon" title="TikTok">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.86 2.86 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-.54-.05z"/></svg>
         </a>
       </div>
@@ -1461,7 +1467,7 @@ function renderNav() {
       SIDEQUEST
       <div class="nav-logo-socials">
         <a href="https://www.instagram.com/sidequest.pt/" target="_blank" rel="noopener noreferrer" class="nav-social-btn" title="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
-        <a href="https://www.tiktok.com/@sidequest.pt?lang=pt" target="_blank" rel="noopener noreferrer" class="nav-social-btn" title="TikTok"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.86 2.86 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-.54-.05z"/></svg></a>
+        <a href="https://tiktok.com/@sidequest" target="_blank" rel="noopener noreferrer" class="nav-social-btn" title="TikTok"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.86 2.86 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-.54-.05z"/></svg></a>
       </div>
     </div>
     <div class="nav-actions">
@@ -1520,7 +1526,7 @@ function renderPage() {
     case 'historico':    pc.innerHTML=renderHistorico();                         break;
     case 'messages':     pc.innerHTML=renderMessagesPage();   bindMessages();    break;
     case 'public-profile': pc.innerHTML=renderPublicProfile(); bindPublicProfile(); break;
-    case 'galeria':      pc.innerHTML=renderGaleriaPage();    bindGaleria();     break;
+    case 'galeria':      if(!galleryUnsub) loadGallery(); pc.innerHTML=renderGaleriaPage();    bindGaleria();     break;
   }
 }
 
@@ -1571,7 +1577,7 @@ function renderFeedPage() {
       ${TAGS.map(t=>`<button class="filter-btn ${state.filterTag===t?'active':''}" onclick="setFilter('${t}')">${(TAG_EMOJI[t]||'')} ${t.toUpperCase()}</button>`).join('')}
     </div>
     <div class="feed-grid" id="feed-grid">
-      ${filtered.length?filtered.map(q=>renderQuestCard(q)).join(''):`<div class="feed-empty" style="grid-column:1/-1"><div class="big">NADA</div><p style="margin-top:1rem">Nenhuma quest. Cria a primeira!</p></div>`}
+      ${filtered.length?filtered.map(q=>renderQuestCard(q)).join(''):state.questsLoaded?`<div class="feed-empty" style="grid-column:1/-1"><div class="big">NADA</div><p style="margin-top:1rem">Nenhuma quest. Cria a primeira!</p></div>`:`<div class="feed-empty" style="grid-column:1/-1"><div class="sq-spinner"></div><p style="margin-top:1rem">A carregar quests…</p></div>`}
     </div>
   </div>`;
 }
@@ -1678,7 +1684,7 @@ function renderExplorePage() {
       ${TAGS.map(t=>`<button class="filter-btn ${state.filterTag===t?'active':''}" onclick="setFilter('${t}')">${(TAG_EMOJI[t]||'')} ${t.toUpperCase()}</button>`).join('')}
     </div>
     <div class="feed-grid" id="feed-grid" style="padding:0 1rem">
-      ${filtered.length?filtered.map(q=>renderQuestCard(q)).join(''):`<div class="feed-empty" style="grid-column:1/-1"><div class="big">NADA</div><p>Sem resultados.</p></div>`}
+      ${filtered.length?filtered.map(q=>renderQuestCard(q)).join(''):state.questsLoaded?`<div class="feed-empty" style="grid-column:1/-1"><div class="big">NADA</div><p>Sem resultados.</p></div>`:`<div class="feed-empty" style="grid-column:1/-1"><div class="sq-spinner"></div><p style="margin-top:1rem">A carregar quests…</p></div>`}
     </div>
   </div>`;
 }
@@ -1854,11 +1860,35 @@ function renderMemberItem(uid,creatorUid) {
     ? `<img src="${safeImg(photoURL)}" alt="avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover">`
     : `<div class="member-avatar" style="background:${col}">${init}</div>`;
   
+  // O criador da quest pode expulsar qualquer membro (exceto ele próprio)
+  const iAmCreator = state.activeQuest?.createdBy === state.user?.uid;
+  const kickBtn = (iAmCreator && uid !== creatorUid)
+    ? `<button class="member-kick-btn" title="Remover da quest" onclick="event.stopPropagation();expelMember('${state.activeQuest?.id}','${uid}')">✕</button>`
+    : '';
   return `<div class="member-item" onclick="viewUserProfile('${uid}')">
     ${photoHtml}
-    <div><div class="member-name" id="member-name-${uid}">${name}</div><div style="font-size:.7rem;color:var(--ink-light);font-family:var(--font-mono)">${userData?.email || uid.slice(0,8)}</div></div>
+    <div style="flex:1;min-width:0"><div class="member-name" id="member-name-${uid}">${name}</div><div style="font-size:.7rem;color:var(--ink-light);font-family:var(--font-mono)">${userData?.email ? esc(maskEmail(userData.email)) : uid.slice(0,8)}</div></div>
     ${uid===creatorUid?'<span class="creator-badge">CRIADOR</span>':''}
+    ${kickBtn}
   </div>`;
+}
+
+async function expelMember(questId, uid) {
+  const q = state.quests.find(x => x.id === questId);
+  if(!q || q.createdBy !== state.user?.uid) return; // só o criador
+  if(uid === q.createdBy) return; // nunca o próprio criador
+  const name = userCache[uid]?.name || 'este membro';
+  if(!confirm(`Remover ${name} da quest?`)) return;
+  try {
+    await db.collection('quests').doc(questId).update({
+      members: firebase.firestore.FieldValue.arrayRemove(uid)
+    });
+    // refletir localmente sem esperar pelo snapshot
+    q.members = (q.members || []).filter(m => m !== uid);
+    if(state.activeQuest?.id === questId) state.activeQuest = q;
+    showToast('Membro removido da quest');
+    if(state.currentPage === 'quest') navigate('quest', q);
+  } catch(e) { showToast(friendlyError(e)); }
 }
 
 async function loadMemberNames(memberIds) {
@@ -2128,6 +2158,7 @@ function bindMessages() {}
 // PROFILE PAGE (LORE - REDESENHADO COM ALTERAÇÕES)
 // ════════════════════════════════════════════
 let editInterests=[], profileImageB64=null;
+var galleryUnsub = null;
 
 const LORE_BADGES = {
   Natureza:{emoji:'🌿',name:'Wild at Heart',desc:'A primeira vez que trocaste o ecrã pela floresta.'},
@@ -2143,16 +2174,14 @@ const LORE_BADGES = {
 };
 
 const LORE_DEFAULT_BUCKET = [
-  'Saltar de paraquedas','Dormir numa tenda','Ver a Via Láctea',
-  'Fazer uma roadtrip pela Europa','Escalar uma montanha','Dormir numa praia',
-  'Aprender a surfar','Fazer canyoning'
+  'Dormir na praia'
 ];
 
 function loreTs(q){ const v=q.completedAt||q.date; if(!v) return 0; const d=v.toDate?v.toDate():new Date(v); return d.getTime()||0; }
 function loreStrip(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 
-function computeLore(){
-  const uid=state.user?.uid;
+function computeLore(uid){
+  uid = uid || state.user?.uid;
   const all=state.quests||[];
   const mine=all.filter(q=>(q.members||[]).includes(uid));
   const lived=mine.filter(q=>q.completed).sort((a,b)=>loreTs(a)-loreTs(b));
@@ -2744,20 +2773,59 @@ function renderPublicProfile() {
   
   const col = getAvatarColor(uid||'');
   const init = getInitials(p.name||'');
-  const avatarInner = p.photoURL?`<img src="${esc(p.photoURL)}" alt="av" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:1.5rem;font-weight:700">${init}</span>`;
+  const avatarInner = p.photoURL?`<img src="${safeImg(p.photoURL)}" alt="av" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:1.5rem;font-weight:700">${init}</span>`;
   const xp = p.xp||0;
   const lvData = getLevelData(xp);
   const lv = lvData.current;
   const frameClass = `frame-${lv.frame}`;
   
   const userQuests = state.quests.filter(q => q.createdBy === uid);
+  const lore = computeLore(uid);
+  const firstName = esc((p.name||'').split(' ')[0] || 'Explorador');
+
+  // ── LORE stats (mesma grelha do perfil próprio) ──
+  const loreStatsHtml = `
+    <div class="lore-card" style="margin-bottom:1.5rem">
+      <div class="lore-stats" style="margin-bottom:0">
+        <div class="lore-stat"><div class="lore-stat-num">${lore.lived.length}</div><div class="lore-stat-label">aventuras vividas</div></div>
+        <div class="lore-stat"><div class="lore-stat-num">${lore.peopleCount}</div><div class="lore-stat-label">pessoas na história</div></div>
+        <div class="lore-stat"><div class="lore-stat-num">${lore.locations.length}</div><div class="lore-stat-label">locais explorados</div></div>
+        <div class="lore-stat"><div class="lore-stat-num">${Object.keys(lore.firsts).length}</div><div class="lore-stat-label">primeiras vezes</div></div>
+      </div>
+    </div>`;
+
+  // ── Timeline (só leitura, terceira pessoa) ──
+  let loreTimelineHtml;
+  if(lore.lived.length){
+    const seenTags={};
+    const nodes=lore.lived.map((q,idx)=>{
+      const ts=loreTs(q);
+      const d=ts?new Date(ts):null;
+      const month=d?d.toLocaleDateString('pt-PT',{month:'long',year:'numeric'}).toUpperCase():'DATA DESCONHECIDA';
+      const tag=(q.tags||[])[0];
+      const emoji=LORE_BADGES[tag]?LORE_BADGES[tag].emoji:(TAG_EMOJI[tag]||'⚡');
+      let firstTag=null;
+      (q.tags||[]).forEach(t=>{ if(lore.firsts[t]&&lore.firsts[t].ts===ts&&!seenTags[t]){ seenTags[t]=1; if(!firstTag&&LORE_BADGES[t]) firstTag=LORE_BADGES[t]; } });
+      const isNow=idx===lore.lived.length-1;
+      return `<div class="lore-tl-node ${firstTag?'first':''} ${isNow?'now':''}">
+        <div class="lore-tl-dot"></div>
+        <div class="lore-tl-month">${month}</div>
+        <div class="lore-tl-title"><span class="lore-tl-emoji">${emoji}</span>${esc(q.title)}</div>
+        ${q.location?`<div class="lore-tl-cap"><span class="lore-tl-place">📍 ${esc(q.location)}</span></div>`:''}
+        ${firstTag?`<div class="lore-tl-first-tag">⭐ Primeira vez · ${firstTag.name}</div>`:''}
+      </div>`;
+    }).join('');
+    loreTimelineHtml=`<div class="lore-timeline">${nodes}</div>`;
+  } else {
+    loreTimelineHtml=`<div class="lore-empty">A história de ${firstName} ainda agora começou. <b>A primeira SideQuest concluída escreve a primeira página.</b></div>`;
+  }
   
   const bannerUnlocked = lv.bannerUnlocked;
   const bannerHtml = bannerUnlocked
     ? (p.bannerURL?`<img src="${safeImg(p.bannerURL)}" alt="banner">`:`<div class="profile-banner-default">🌍</div>`)
     : `<div class="profile-banner-default" style="opacity:.4">🔒</div>`;
   const bannerLockHtml = !bannerUnlocked
-    ? `<div class="profile-banner-lock">🔒 Nível 3 para desbloquear</div>` : '';
+    ? `<div class="profile-banner-lock">🔒 Capítulo 3 para desbloquear</div>` : '';
 
   return `<div class="public-profile-page page">
     <button class="detail-back" onclick="navigate('feed')">← Voltar</button>
@@ -2774,7 +2842,7 @@ function renderPublicProfile() {
       </div>
       <div style="flex:1;padding-bottom:.3rem">
         <div class="profile-name">${esc(p.name||'')}</div>
-        <div class="level-badge" style="margin-top:.35rem">⭐ Nível ${lv.level} · ${lv.title}</div>
+        <div class="lore-chapter-tag">CAPÍTULO ${lv.level} · <b>${esc(lv.title)}</b></div>
         ${p.isBetaTester?`<span class="beta-badge">🚀 FIRST EXPLORER</span>`:''}
       </div>
     </div>
@@ -2784,13 +2852,28 @@ function renderPublicProfile() {
       ${p.interests?.length?`<div class="tag-list" style="margin-top:.6rem">${p.interests.map(t=>`<span class="tag">${TAG_EMOJI[t]||''} ${t}</span>`).join('')}</div>`:''}
     </div>
 
-    <!-- XP Card -->
-    <div class="profile-xp-card">
-      <div style="margin-bottom:1rem">
-        <span style="font-family:var(--font-display);font-size:1.1rem;letter-spacing:1px;color:var(--xp)">${xp} XP</span>
-        <span style="font-size:.75rem;color:var(--ink-light);margin-left:.4rem">·  Nível ${lv.level}</span>
+    <!-- Progressão de capítulo (mesma linguagem do resto do site) -->
+    <div class="lore-xp-bar" style="margin-bottom:1.8rem">
+      <div class="lore-xp-bar-content">
+        <div class="lore-xp-bar-top">
+          <span>Capítulo <b>${lv.level}</b> · ${esc(lv.title)}</span>
+          ${lvData.next?`<span>→ ${lvData.next.level}</span>`:'<span>🏆 Final</span>'}
+        </div>
+        <div class="xp-bar-wrap"><div class="xp-bar-fill" style="width:${lvData.pct}%"></div></div>
       </div>
-      <div class="xp-bar-wrap"><div class="xp-bar-fill" style="width:${lvData.pct}%"></div></div>
+      <div class="lore-xp-bar-level">${xp.toLocaleString('pt-PT')}</div>
+    </div>
+
+    <!-- LORE -->
+    <div class="quests-section" style="margin-bottom:1.8rem">
+      <div class="section-label">O LORE DE ${firstName.toUpperCase()}</div>
+      ${loreStatsHtml}
+    </div>
+
+    <!-- Timeline -->
+    <div class="quests-section" style="margin-bottom:1.8rem">
+      <div class="section-label">A História até Agora</div>
+      ${loreTimelineHtml}
     </div>
 
     <!-- Quests -->
@@ -3082,10 +3165,10 @@ function showGalleryModal(photoId) {
   
   const modal = `
     <div class="modal-overlay" id="gallery-modal" onclick="closeGalleryModal()">
-      <div style="position:relative;max-width:600px;width:100%;max-height:90vh;overflow-y:auto" onclick="event.stopPropagation()">
-        <button onclick="closeGalleryModal()" style="position:absolute;top:-.8rem;right:-.8rem;width:32px;height:32px;border-radius:50%;border:none;background:var(--green);color:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10">✕</button>
-        <img src="${safeImg(photo.imageBase64)}" style="width:100%;border-radius:var(--radius);display:block;margin-bottom:1.2rem">
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem">
+      <div style="position:relative;max-width:600px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;border-radius:var(--radius)" onclick="event.stopPropagation()">
+        <button onclick="closeGalleryModal()" style="position:absolute;top:.6rem;right:.6rem;width:32px;height:32px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10">✕</button>
+        <img src="${safeImg(photo.imageBase64)}" style="width:100%;max-height:65vh;object-fit:contain;background:var(--bg2);border-radius:var(--radius) var(--radius) 0 0;display:block">
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:1.2rem 1.5rem">
           <div style="font-size:.75rem;color:var(--ink-light);font-family:var(--font-mono)">
             Por <strong>${esc(photo.uploadedByName)}</strong> · ${new Date(photo.createdAt?.toDate?.() || photo.createdAt).toLocaleDateString('pt-PT')}
           </div>
@@ -3106,7 +3189,7 @@ function closeGalleryModal() {
   document.getElementById('gallery-modal')?.remove();
 }
 
-let galleryUnsub = null;
+// (declaração movida para junto do state para estar disponível no navigate)
 
 function loadGallery() {
   if(galleryUnsub) galleryUnsub();
@@ -3292,29 +3375,21 @@ function loadQuests() {
     
     let isFirstSnapshot = true;
     
-    state.questsUnsub = db.collection('quests').orderBy('createdAt','desc').limit(100).onSnapshot(async snap => {
+    state.questsUnsub = db.collection('quests').orderBy('createdAt','desc').limit(100).onSnapshot(snap => {
       state.quests = snap.docs.map(doc => {return {id:doc.id,...doc.data()}});
-      
-      const allUserIds = new Set();
-      state.quests.forEach(q => {
-        (q.members || []).forEach(uid => allUserIds.add(uid));
-      });
-      
-      for (const uid of allUserIds) {
-        if (!userCache[uid]) {
-          await getUserData(uid);
-        }
-      }
-      
-      // 🔥 RESOLVER PROMISE NO PRIMEIRO SNAPSHOT
+
+      // PERF: mostrar as quests JÁ — os perfis dos membros carregam em paralelo, em background
       if(isFirstSnapshot) {
         isFirstSnapshot = false;
         state.questsLoaded = true;
         resolve();
       }
-      
-      // Atualizar página se já estiver aberta
       if(['feed','explore'].includes(state.currentPage)) navigate(state.currentPage);
+
+      const allUserIds = new Set();
+      state.quests.forEach(q => (q.members || []).forEach(uid => allUserIds.add(uid)));
+      const missing = [...allUserIds].filter(uid => !userCache[uid]);
+      if(missing.length) Promise.all(missing.map(uid => getUserData(uid))).catch(()=>{});
     });
   });
 }
@@ -3615,13 +3690,15 @@ auth.onAuthStateChanged(async user=>{
   state.user = user;
   if(user) {
     await loadProfile(user.uid);
-    await loadQuests();  // 🔥 AGUARDAR QUESTS ANTES DE RENDERIZAR
-    loadGallery();
+    // PERF: renderizar já — o listener das quests re-renderiza o feed quando os dados chegarem
     state.currentPage = 'feed';
     render();
+    loadQuests();
+    // PERF: galeria só carrega quando o utilizador abre a página (lazy)
     setInterval(checkExpiredQuests, 10000);
   } else {
     if(state.questsUnsub){ state.questsUnsub(); state.questsUnsub = null; }
+    if(galleryUnsub){ galleryUnsub(); galleryUnsub = null; }
     state.quests = []; state.profile = null; state.activeQuest = null;
     state.questsLoaded = false;
     render();
