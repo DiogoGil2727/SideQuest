@@ -1776,7 +1776,7 @@ function bindMenuHandlers() {
 // Botão flutuante "Reportar bug" — sempre visível enquanto o site é novo
 function renderBugFab() {
   return `<button class="bug-fab" id="bug-fab-btn" onclick="showFeedbackModal()" title="${_t('Report a bug')}">
-    <span class="bug-fab-icon">🐞</span><span>${_t('Report a bug')}</span>
+    <span class="bug-fab-icon"></span><span>${_t('Report a bug')}</span>
   </button>`;
 }
 
@@ -1863,10 +1863,10 @@ function renderFooter() {
   <!-- BUG REPORT EM DESTAQUE -->
   <div class="footer-bug-card">
     <div>
-      <div class="footer-bug-title">🐞 ${_t('Found a bug?')}</div>
+      <div class="footer-bug-title"> ${_t('Found a bug?')}</div>
       <div class="footer-bug-text">${_t("We're in beta — every report helps make SideQuest better for everyone.")}</div>
     </div>
-    <button class="btn btn-bug btn-icon" onclick="showFeedbackModal()">🐞 ${_t('Report a bug')}</button>
+    <button class="btn btn-bug btn-icon" onclick="showFeedbackModal()"> ${_t('Report a bug')}</button>
   </div>
 
   <!-- LORE STATS -->
@@ -1923,7 +1923,7 @@ function renderFooter() {
 <div class="modal-overlay hidden" id="feedback-modal">
   <div class="modal-box">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
-      <div class="modal-title" style="margin-bottom:0">🐞 ${_t('Report a bug').toUpperCase()}</div>
+      <div class="modal-title" style="margin-bottom:0">${_t('Report a bug').toUpperCase()}</div>
       <button class="btn-ghost btn btn-sm" onclick="closeFeedbackModal()">✕</button>
     </div>
     <p style="font-size:.85rem;color:var(--ink-mid);line-height:1.65;margin-bottom:1.1rem">${_t("SideQuest is brand new, and you're helping us build it. Found something broken or have an idea? Tell us!")}</p>
